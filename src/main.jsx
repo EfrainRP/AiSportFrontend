@@ -1,7 +1,10 @@
 import { createRoot } from 'react-dom/client'
-import Formulario from './App.jsx'
-import './index.css'
+import { StrictMode } from 'react'
+
+import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
-    <Formulario />
+    <StrictMode>
+        <App />
+    </StrictMode>
 )
