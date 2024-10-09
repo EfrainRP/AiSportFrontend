@@ -9,11 +9,11 @@ return (
             <Link to="/">SportHub</Link>
         </li>
         <li>
-            {/* <Link to="/Login">Sign in</Link> */}
+            <Link to="/SignIn">Sign In</Link>
         </li>
-        {/* <li>
-            <Link to="/products">Products</Link>
-        </li> */}
+        <li>
+            <Link to="/SignUp">Sign up</Link>
+        </li>
         </ul>
     </nav>
     )

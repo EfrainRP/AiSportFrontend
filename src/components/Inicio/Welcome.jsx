@@ -1,23 +1,15 @@
-import React from 'react';
-import ReactPlayer from "react-player/"
+import React, { useEffect, useState } from 'react';
 
-import video from '/video/welcome.webm'
+
+import video from '../../assets/media/welcome.webm'
 
 function Welcome(){
   return (
-    <section>
-        <header>
-            <nav>
-              {/* <Link to="/"><h2 className="logo">Sporthub</h2></Link> */}
-              {/* <Link to="sobre-nosotros">Iniciar sesion</Link>
-              <Link to="/register">Registrarse</Link> */}
-            </nav>
-        </header>
-        <ReactPlayer url={video} loop={true} autoPlay/>
-        {/* <video autoplay loop muted>
-          <source src={video} type="video/webm"/>
+  <section>
+        <video loop muted autoPlay style={{height:'1000px', weight:'800px'}}>
+          <source src={video} type='video/webm;'/>
             Your browser does not support the video tag.
-        </video> */}
+        </video>
         <div className="text">
           <h2>TORNEOS</h2>
           <h3>DE BALONCESTO</h3>
@@ -28,9 +20,9 @@ function Welcome(){
         </div>
         <footer>
           <ul className="social">
-            {/* <li><a href="#"><img src="https://i.ibb.co/x7P24fL/facebook.png"/></a></li>
+            <li><a href="#"><img src="https://i.ibb.co/x7P24fL/facebook.png"/></a></li>
             <li><a href="#"><img src="https://i.ibb.co/Wnxq2Nq/twitter.png"/></a></li>
-            <li><a href="#"><img src="https://i.ibb.co/ySwtH4B/instagram.png"/></a></li> */}
+            <li><a href="#"><img src="https://i.ibb.co/ySwtH4B/instagram.png"/></a></li>
           </ul>
         </footer>
     </section>
