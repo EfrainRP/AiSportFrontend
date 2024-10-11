@@ -9,10 +9,13 @@ return (
             <Link to="/">SportHub</Link>
         </li>
         <li>
-            <Link to="/SignIn">Sign In</Link>
+            <Link to="/signin">Sign In</Link>
         </li>
         <li>
-            <Link to="/SignUp">Sign up</Link>
+            <Link to="/signup">Sign up</Link>
+        </li>
+        <li>
+            <Link to="/dashboard">Dashboard</Link>
         </li>
         </ul>
     </nav>
