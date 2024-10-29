@@ -2,6 +2,8 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -37,7 +39,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 const SignUpContainer = styled(Stack)(({ theme }) => ({
-  height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
+  // height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
   minHeight: '100%',
   padding: theme.spacing(2),
   [theme.breakpoints.up('sm')]: {
@@ -62,15 +64,32 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 export default function SignUp(props) {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
+
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
+
+  const [nicknameError, setNicknameError] = React.useState(false);
+  const [nicknameErrorMessage, setNicknameErrorMessage] = React.useState('');
+
+  const [birthdayError, setBirthdayError] = React.useState(false);
+  const [birthdayErrorMessage, setBirthdayErrorMessage] = React.useState('');
+
+  const [gender, setGender] = React.useState('male');
+
+  const handleChange = (event) => {
+    setGender(event.target.value);
+  };
 
   const validateInputs = () => {
     const email = document.getElementById('email');
     const password = document.getElementById('password');
     const name = document.getElementById('name');
+    const nickname = document.getElementById('nickname');
+    const birthday = document.getElementById('birthday');
+    const gender = document.getElementById('gender');
 
     let isValid = true;
 
@@ -99,6 +118,24 @@ export default function SignUp(props) {
     } else {
       setNameError(false);
       setNameErrorMessage('');
+    }
+
+    if (!nickname.value || nickname.value.length < 8) {
+      setNicknameError(true);
+      setNicknameErrorMessage('Nickname is required.');
+      isValid = false;
+    } else {
+      setNicknameError(false);
+      setNicknameErrorMessage('');
+    }
+
+    if (!birthday.value || birthday.value < Date()) {
+      setBirthdayError(true);
+      setBirthdayErrorMessage('Birthday is required or incorrect.');
+      isValid = false;
+    } else {
+      setBirthdayError(false);
+      setBirthdayErrorMessage('');
     }
 
     return isValid;
@@ -144,17 +181,88 @@ export default function SignUp(props) {
             sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
           >
             <FormControl>
-              <FormLabel htmlFor="name">Full name</FormLabel>
+              <FormLabel htmlFor="name">Name:</FormLabel>
               <TextField
                 autoComplete="name"
                 name="name"
                 required
                 fullWidth
                 id="name"
-                placeholder="Jon Snow"
+                placeholder="Peter"
                 error={nameError}
                 helperText={nameErrorMessage}
                 color={nameError ? 'error' : 'primary'}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="fsurname">Fsurname</FormLabel>
+              <TextField
+                autoComplete="fsurname"
+                name="fsurname"
+                required
+                fullWidth
+                id="fsurname"
+                placeholder="Smith"
+                error={nameError}
+                helperText={nameErrorMessage}
+                color={nameError ? 'error' : 'primary'}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="msurname">Msurname</FormLabel>
+              <TextField
+                autoComplete="msurname"
+                name="msurname"
+                required
+                fullWidth
+                id="msurname"
+                placeholder="Carson"
+                error={nameError}
+                helperText={nameErrorMessage}
+                color={nameError ? 'error' : 'primary'}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="birthday">Birthday</FormLabel>
+              <TextField
+                autoComplete="birthday"
+                name="birthday"
+                required
+                fullWidth
+                id="birthday"
+                type="date"
+                error={birthdayError}
+                helperText={birthdayErrorMessage}
+                color={birthdayError ? 'error' : 'primary'}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="gender" id="demo-radio-buttons-group-label">Gender</FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="demo-radio-buttons-group-label"
+                defaultValue="male"
+                name="gender"
+                value={gender}
+                onChange={handleChange}
+              >
+                <FormControlLabel value="male" control={<Radio />} label="Male" />
+                <FormControlLabel value="female" control={<Radio />} label="Female" />
+                <FormControlLabel value="other" control={<Radio />} label="Other" />
+              </RadioGroup>
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="nickname">Nickname:</FormLabel>
+              <TextField
+                autoComplete="nickname"
+                name="nickname"
+                required
+                fullWidth
+                id="nickname"
+                placeholder="Noob"
+                error={nicknameError}
+                helperText={nicknameErrorMessage}
+                color={nicknameError ? 'error' : 'primary'}
               />
             </FormControl>
             <FormControl>
