@@ -78,8 +78,7 @@ export default function SignUp(props) {
   const [birthdayErrorMessage, setBirthdayErrorMessage] = React.useState('');
 
   const [gender, setGender] = React.useState('male');
-
-  const handleChange = (event) => {
+  const radioChange = (event) => {
     setGender(event.target.value);
   };
 
@@ -147,7 +146,7 @@ export default function SignUp(props) {
       return;
     }
     const data = new FormData(event.currentTarget);
-    console.log({
+    alert.log({
       name: data.get('name'),
       lastName: data.get('lastName'),
       email: data.get('email'),
@@ -159,6 +158,7 @@ export default function SignUp(props) {
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
+      
       <SignUpContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
         <div style={{
@@ -237,14 +237,15 @@ export default function SignUp(props) {
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="gender" id="demo-radio-buttons-group-label">Gender</FormLabel>
+              <FormLabel id="gender">Gender</FormLabel>
               <RadioGroup
                 row
-                aria-labelledby="demo-radio-buttons-group-label"
+                sx={{ display:"flex",justifyContent:"center", alignItems:"center"}}
+                aria-labelledby="gender"
                 defaultValue="male"
                 name="gender"
                 value={gender}
-                onChange={handleChange}
+                onChange={radioChange}
               >
                 <FormControlLabel value="male" control={<Radio />} label="Male" />
                 <FormControlLabel value="female" control={<Radio />} label="Female" />
@@ -312,7 +313,7 @@ export default function SignUp(props) {
               Already have an account?{' '}
               <span>
                 <Link
-                  href="/material-ui/getting-started/templates/sign-in/"
+                  href="/signin"
                   variant="body2"
                   sx={{ alignSelf: 'center' }}
                 >
