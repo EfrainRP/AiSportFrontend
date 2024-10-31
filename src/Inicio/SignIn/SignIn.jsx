@@ -18,6 +18,7 @@ import { GoogleIcon, FacebookIcon, SporthubIcon } from '../CustomIcons.jsx';
 import AppTheme from '../../shared-theme/AppTheme';
 import ColorModeSelect from '../../shared-theme/ColorModeSelect';
 
+import Header from '../../components/Header.jsx';
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -75,7 +76,7 @@ export default function SignIn(props) {
     setOpen(false);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => { //TO DO add axios
     if (emailError || passwordError) {
       event.preventDefault();
       return;
@@ -117,7 +118,7 @@ export default function SignIn(props) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      
+      <Header/>
       <SignInContainer direction="column" justifyContent="space-between">
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">

@@ -24,17 +24,17 @@ header .logo {
 }
 
 .container {
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; 
 }
 
 
 nav a {
     list-style: none;
     display: inline-grid;
-    padding: 15px 35px;
+    padding: 15px 65px;
     margin: 10px;
     font-size: 18px;
     font-weight: 500;
@@ -226,4 +226,34 @@ nav a:hover::after {
     .text h3 {
         font-size: 2em;
     }
+}
+
+/* Estilos generales de texto */
+.text h2, 
+.text h3,
+.text p i, 
+.text p:last-of-type { 
+    color: #FFD700; /* Color amarillo */
+    transition: transform 0.3s ease, font-size 0.3s ease; /* Suaviza el cambio de tamaño */
+}
+
+
+.text h2:hover, 
+.text h3:hover {
+    transform: scale(1.2); /* disminuye el tamaño */
+    font-size: 2.5em; /* disminuye el tamaño de la fuente */
+}
+
+/* Tamaño inicial del ícono de WhatsApp */
+.whatsapp-icon {
+  font-size: 24px;
+  color: #25D366; /* Color verde de WhatsApp */
+  transition: transform 0.3s ease; /* Suaviza el cambio de tamaño */
+  margin-right: 10px; /* Espacio entre el icono y el texto */
+  vertical-align: middle;
+}
+
+.whatsapp-icon:hover {
+  transform: scale(1.5); 
+  color: #25D366; 
 }
