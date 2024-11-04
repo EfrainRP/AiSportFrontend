@@ -1,9 +1,9 @@
 # The default env
 Write in ./.env.development
 
-VITE_MYPORT_SERVER=5000
+_VITE_MYPORT_SERVER=5000
 
-VITE_URL_SERVER="http://localhost:$VITE_MYPORT_SERVER/sporthub/api"
+VITE_URL_SERVER="http://localhost:$VITE_MYPORT_SERVER/sporthub/api"_
 
 
 # React + Vite
