@@ -62,7 +62,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 }));
 
 export default function ColorModeSelect(props) {
-  const { mode, setMode, systemMode } = useColorScheme("system"); // Parametros a usar: modos, modificar modo, modo del sistema
+  const { mode, setMode, systemMode } = useColorScheme('system'); // Parametros a usar: modos, modificar modo, modo del sistema
   const [checked, setChecked] = React.useState(systemMode == 'dark'); // Para el dinamismo del switch de los modos
 
   React.useEffect(() => { // Actualiza el estado checked cuando el mode cambia
@@ -79,9 +79,8 @@ export default function ColorModeSelect(props) {
 
 
   const handlePage = (event) => { // Funciona para editar el modo para useColorSchema y el Switch
-    setMode(event.target.checked? "dark" : "light"); // Solo acepta cadena para el modo
     setChecked(event.target.checked); // Solo acepta booleanos
-    console.log(event.target.checked);
+    setMode(event.target.checked? 'dark' : 'light'); // Solo acepta cadena para el modo
   };
   
   return (
