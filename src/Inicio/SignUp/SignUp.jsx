@@ -13,6 +13,7 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
+import FormHelperText from '@mui/material/FormHelperText';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from '../../shared-theme/AppTheme';
@@ -62,81 +63,132 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp(props) {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
-
-  const [nicknameError, setNicknameError] = React.useState(false);
-  const [nicknameErrorMessage, setNicknameErrorMessage] = React.useState('');
-
-  const [birthdayError, setBirthdayError] = React.useState(false);
-  const [birthdayErrorMessage, setBirthdayErrorMessage] = React.useState('');
-
-  const [gender, setGender] = React.useState('male');
-  const radioChange = (event) => {
-    setGender(event.target.value);
-  };
-
-  const validateInputs = () => {
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
+  const validateName = ()=>{
     const name = document.getElementById('name');
-    const nickname = document.getElementById('nickname');
-    const birthday = document.getElementById('birthday');
-    const gender = document.getElementById('gender');
-
-    let isValid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
-    }
-
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage('');
-    }
-
     if (!name.value || name.value.length < 1) {
       setNameError(true);
       setNameErrorMessage('Name is required.');
-      isValid = false;
+    
     } else {
       setNameError(false);
       setNameErrorMessage('');
     }
+  }
+  const [fsurnameError, setFsurnameError] = React.useState(false);
+  const [fsurnameErrorMessage, setFsurnameErrorMessage] = React.useState('');
+  const validateFsurname = ()=>{
+    const fsurname = document.getElementById('fsurname');
+    if (!fsurname.value || fsurname.value.length < 1) {
+      setFsurnameError(true);
+      setFsurnameErrorMessage('Fsurname is required.');
+    
+    } else {
+      setFsurnameError(false);
+      setFsurnameErrorMessage('');
+    }
+  }
+  const [msurnameError, setMsurnameError] = React.useState(false);
+  const [msurnameErrorMessage, setMsurnameErrorMessage] = React.useState('');
+  const validateMsurname = ()=>{
+    const msurname = document.getElementById('msurname');
+    if (!msurname.value || msurname.value.length < 1) {
+      setMsurnameError(true);
+      setMsurnameErrorMessage('Musrname is required.');
+    
+    } else {
+      setMsurnameError(false);
+      setMsurnameErrorMessage('');
+    }
+  }
+  const [birthdayError, setBirthdayError] = React.useState(false);
+  const [birthdayErrorMessage, setBirthdayErrorMessage] = React.useState('');
+  
+  const validateBirthday = ()=>{
+    const birthday = document.getElementById('birthday').value;
+    const [year, month, day] = birthday.split('-').map(Number);// Creamos la fecha localmente, evitando problemas de zona horaria
+    const birthDate = new Date(year, month, day); // Obtenemos la fecha de hoy para compararla
+    const today = new Date();
+    
+    if (isNaN(birthDate) || birthDate >= today) {
+      setBirthdayError(true);
+      setBirthdayErrorMessage(birthDate >= today? 'Birthday is incorrect.': 'Birthday is required.'); 
 
+    }else{
+      setBirthdayError(false);
+      setBirthdayErrorMessage('');
+    }
+  }
+  const [gender, setGender] = React.useState('');
+  const radioChange = (event) => { setGender(event.target.value);};
+  const [genderError, setGenderError] = React.useState(false);
+  const [genderErrorMessage, setGenderErrorMessage] = React.useState('');
+  const validateGender = ()=>{
+    const gender = document.getElementById('gender');
+    if (!gender.value){
+      setGenderError(true);
+      setGenderErrorMessage('Gender input is required.');
+    } else {
+      setGenderError(false);
+      setGenderErrorMessage('');
+    }
+  }
+  const [nicknameError, setNicknameError] = React.useState(false);
+  const [nicknameErrorMessage, setNicknameErrorMessage] = React.useState('');
+  const validateNickname = ()=>{
+    const nickname = document.getElementById('nickname');
     if (!nickname.value || nickname.value.length < 8) {
       setNicknameError(true);
       setNicknameErrorMessage('Nickname is required.');
-      isValid = false;
     } else {
       setNicknameError(false);
       setNicknameErrorMessage('');
     }
+  }
 
-    if (!birthday.value || birthday.value < Date()) {
-      setBirthdayError(true);
-      setBirthdayErrorMessage('Birthday is required or incorrect.');
-      isValid = false;
+  const [emailError, setEmailError] = React.useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
+  const validateEmail = ()=>{
+    const email = document.getElementById('email');
+    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+      setEmailError(true);
+      setEmailErrorMessage('Please enter a valid email address.');
+    
     } else {
-      setBirthdayError(false);
-      setBirthdayErrorMessage('');
+      setEmailError(false);
+      setEmailErrorMessage('');
     }
+  }
 
+  const [passwordError, setPasswordError] = React.useState(false);
+  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+  const validatePass = ()=>{
+    const password = document.getElementById('password');
+    if (!password.value || password.value.length < 6) {
+      setPasswordError(true);
+      setPasswordErrorMessage('Password must be at least 6 characters long.');
+    
+    } else {
+      setPasswordError(false);
+      setPasswordErrorMessage('');
+    }
+  }
+  const validateInputs = () => {
+    let isValid = true;
+    validateName();
+    validateFsurname();
+    validateMsurname();
+    validateBirthday();
+    validateGender();
+    validateNickname();
+    validateEmail();
+    validatePass();
+    validateGender();
+
+    if (nameError || fsurnameError || msurnameError || birthdayError || genderError || nicknameError || emailError || passwordError) {
+      isValid = false;
+    }
     return isValid;
   };
 
@@ -189,6 +241,7 @@ export default function SignUp(props) {
                 fullWidth
                 id="name"
                 placeholder="Peter"
+                onChange={validateName}
                 error={nameError}
                 helperText={nameErrorMessage}
                 color={nameError ? 'error' : 'primary'}
@@ -203,9 +256,10 @@ export default function SignUp(props) {
                 fullWidth
                 id="fsurname"
                 placeholder="Smith"
-                error={nameError}
-                helperText={nameErrorMessage}
-                color={nameError ? 'error' : 'primary'}
+                onChange={validateFsurname}
+                error={fsurnameError}
+                helperText={fsurnameErrorMessage}
+                color={fsurnameError ? 'error' : 'primary'}
               />
             </FormControl>
             <FormControl>
@@ -217,9 +271,10 @@ export default function SignUp(props) {
                 fullWidth
                 id="msurname"
                 placeholder="Carson"
-                error={nameError}
-                helperText={nameErrorMessage}
-                color={nameError ? 'error' : 'primary'}
+                onChange={validateMsurname}
+                error={msurnameError}
+                helperText={msurnameErrorMessage}
+                color={msurnameError ? 'error' : 'primary'}
               />
             </FormControl>
             <FormControl>
@@ -231,26 +286,29 @@ export default function SignUp(props) {
                 fullWidth
                 id="birthday"
                 type="date"
+                onChange={validateBirthday}
                 error={birthdayError}
                 helperText={birthdayErrorMessage}
                 color={birthdayError ? 'error' : 'primary'}
               />
             </FormControl>
-            <FormControl>
+            <FormControl >
               <FormLabel id="gender">Gender</FormLabel>
               <RadioGroup
                 row
                 sx={{ display:"flex",justifyContent:"center", alignItems:"center"}}
                 aria-labelledby="gender"
-                defaultValue="male"
                 name="gender"
                 value={gender}
+                // onChange={validateGender}
                 onChange={radioChange}
               >
                 <FormControlLabel value="male" control={<Radio />} label="Male" />
                 <FormControlLabel value="female" control={<Radio />} label="Female" />
                 <FormControlLabel value="other" control={<Radio />} label="Other" />
               </RadioGroup>
+              <FormHelperText error={genderError}>{genderErrorMessage}</FormHelperText>
+              {/* {genderError && <Typography color="error">{genderErrorMessage}</Typography>} */}
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="nickname">Nickname:</FormLabel>
@@ -261,6 +319,7 @@ export default function SignUp(props) {
                 fullWidth
                 id="nickname"
                 placeholder="Noob"
+                onChange={validateNickname}
                 error={nicknameError}
                 helperText={nicknameErrorMessage}
                 color={nicknameError ? 'error' : 'primary'}
@@ -276,6 +335,7 @@ export default function SignUp(props) {
                 name="email"
                 autoComplete="email"
                 variant="outlined"
+                onChange={validateEmail}
                 error={emailError}
                 helperText={emailErrorMessage}
                 color={passwordError ? 'error' : 'primary'}
@@ -292,6 +352,7 @@ export default function SignUp(props) {
                 id="password"
                 autoComplete="new-password"
                 variant="outlined"
+                onChange={validatePass}
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 color={passwordError ? 'error' : 'primary'}
