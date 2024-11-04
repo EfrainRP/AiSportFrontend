@@ -25,7 +25,7 @@ import ColorModeSelect from '../../shared-theme/ColorModeSelect';
 import axiosInstance from "../../axiosConfig.js";
 import Header from '../../components/Header.jsx';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../AuthContext'; // Importa el contexto
+import { useAuth } from '../../services/AuthContext.jsx'; // Importa el contexto
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',

@@ -7,4 +7,13 @@ console.log(URL_SERVER)
 const axiosInstance = axios.create({
     baseURL : URL_SERVER,
 });
+
+axiosInstance.interceptors.request.use((config)=>{
+    const token = localStorage.getItem('token'); // Recupera el token del almacenamiento local
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`; // Agrega el token al encabezado de autorización
+    }
+    return config;
+}, (error) => Promise.reject(error));
+
 export default axiosInstance;
