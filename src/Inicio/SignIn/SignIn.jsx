@@ -1,24 +1,32 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Divider from '@mui/material/Divider';
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
-import Link from '@mui/material/Link';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
+import {
+  Box,
+  Snackbar,
+  Alert,
+  Button,
+  Checkbox,
+  CssBaseline,
+  FormControlLabel,
+  Divider,
+  FormLabel,
+  FormControl,
+  Link,
+  TextField,
+  Typography,
+  Stack,
+  useTheme 
+} from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword';
 import { GoogleIcon, FacebookIcon, SporthubIcon } from '../CustomIcons.jsx';
 import AppTheme from '../../shared-theme/AppTheme';
 import ColorModeSelect from '../../shared-theme/ColorModeSelect';
-
+import axiosInstance from "../../axiosConfig.js";
 import Header from '../../components/Header.jsx';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../AuthContext'; // Importa el contexto
+
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -67,6 +75,22 @@ export default function SignIn(props) {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  
+  const [messageSignIn, setMessage] = React.useState('');
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const handleClickSnackBar = () => {
+    setOpenSnackBar(true);
+  };
+  const handleCloseSnackBar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackBar(false);
+  };
+  
+
+  const { login } = useAuth(); // Accede a la función de login
+  const navigate = useNavigate();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -77,14 +101,33 @@ export default function SignIn(props) {
   };
 
   const handleSubmit = async (event) => { //TO DO add axios
+    event.preventDefault();
     if (emailError || passwordError) {
-      event.preventDefault();
+      setMessage('Login incorrect');
+      handleClickSnackBar();
       return;
     }
+
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+    console.log(data.get("email"));
+    await axiosInstance.post('/login',{
+      email: data.get('email'), 
+      password: data.get('password')
+    })
+    .then((response)=> {
+      if (response.ok) {
+        setMessage('Login successful');
+        handleClickSnackBar();
+      login({ username: result.username }); // Guarda el usuario autenticado
+      navigate('/dashboard');
+      }else{
+        setMessage(`Error: ${result.message}`);
+      }
+    })
+    .catch((error)=> {
+      setMessage('Connection Error');
+      handleClickSnackBar();
+      console.log(error)
     });
   };
 
@@ -118,7 +161,7 @@ export default function SignIn(props) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      <Header/>
+      {/* <Header/> */}
       <SignInContainer direction="column" justifyContent="space-between">
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
@@ -192,7 +235,6 @@ export default function SignIn(props) {
                 variant="outlined"
                 color={passwordError ? 'error' : 'primary'}
               />
-            </FormControl>
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
@@ -206,6 +248,35 @@ export default function SignIn(props) {
             >
               Sign in
             </Button>
+            </FormControl>
+            <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar}
+            anchorOrigin={{ vertical:'top', horizontal:'center' }} key={ {vertical:'top'} + {horizontal:'center'} }>
+                <Alert
+                    onClose={handleCloseSnackBar}
+                    severity="error"                   
+                    // sx={[
+                    //   (theme) => ({
+                    //     backgroundColor: theme.palette.error.light,
+                    //     border: `2px solid ${theme.palette.error.light}`,
+                    //     ...theme.applyStyles('dark', {
+                    //       backgroundColor: theme.palette.error.main,
+                    //       border: `2px solid ${theme.palette.error.main}`,
+                    //     }),
+                    //     '&:hover': {
+                    //       boxShadow: theme.shadows[2],
+                    //       backgroundColor: theme.palette.error.main,
+                    //       border: `2px solid ${theme.palette.error.main}`,
+                    //       ...theme.applyStyles('dark', {
+                    //         backgroundColor: theme.palette.error.dark,
+                    //         border: `2px solid ${theme.palette.error.dark}`
+                    //       }),
+                    //     },
+                    //   }),
+                    // ]}
+                >
+                  {messageSignIn}
+                </Alert>
+            </Snackbar>
             <Typography sx={{ textAlign: 'center' }}>
               Don&apos;t have an account?{' '}
               <span>

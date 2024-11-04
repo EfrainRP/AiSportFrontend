@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 
 import { AuthProvider } from './AuthContext'; 
-import AuthRoute from './Middleware/AuthRoute.jsx'; // Middlewares
+import AuthRoute from './Middleware/AuthRoute'; // Middlewares
 
 import Welcome from './Inicio/Welcome.jsx';
 import SignUp from './Inicio/SignUp/SignUp.jsx';
