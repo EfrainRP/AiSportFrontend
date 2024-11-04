@@ -1,3 +1,10 @@
+# The default env
+Write in ./.env.development
+
+VITE_MYPORT_SERVER=5000
+VITE_URL_SERVER="http://localhost:$VITE_MYPORT_SERVER/sporthub/api"
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
