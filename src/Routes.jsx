@@ -1,13 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 
-import { AuthProvider } from './AuthContext'; 
-import AuthRoute from './Middleware/AuthRoute'; // Middlewares
+import { AuthProvider } from './services/AuthContext.jsx'; 
+import AuthRoute from './middleware/AuthRoute.jsx'; // Middlewares
 
-import Welcome from './Inicio/Welcome.jsx';
-import SignUp from './Inicio/SignUp/SignUp.jsx';
-import SignIn from "./Inicio/SignIn/SignIn.jsx";
-import Dashboard from "./Dashboard/Dashboard.jsx";
+import Welcome from './views/Inicio/Welcome.jsx';
+import SignUp from './views/Inicio/SignUp/SignUp.jsx';
+import SignIn from "./views/Inicio/SignIn/SignIn.jsx";
+import Dashboard from "./views/Dashboard/Dashboard.jsx";
 
 export default function MyRoute(){
     return (

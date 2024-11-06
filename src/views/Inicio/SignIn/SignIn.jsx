@@ -18,14 +18,13 @@ import {
 } from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-import ForgotPassword from './ForgotPassword';
-import { GoogleIcon, FacebookIcon, SporthubIcon } from '../CustomIcons.jsx';
-import AppTheme from '../../shared-theme/AppTheme';
-import ColorModeSelect from '../../shared-theme/ColorModeSelect';
-import axiosInstance from "../../axiosConfig.js";
-import Header from '../../components/Header.jsx';
+import ForgotPassword from './ForgotPassword.jsx';
+import { GoogleIcon, FacebookIcon, SporthubIcon } from '../../../components/CustomIcons.jsx';
+import AppTheme from '../../../components/shared-theme/AppTheme.jsx';
+import ColorModeSelect from '../../../components/shared-theme/ColorModeSelect.jsx';
+import axiosInstance from "../../../services/axiosConfig.js";
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../services/AuthContext.jsx'; // Importa el contexto
+import { useAuth } from '../../../services/AuthContext.jsx'; // Importa el contexto
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',

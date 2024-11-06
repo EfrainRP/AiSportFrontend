@@ -16,9 +16,9 @@ import Stack from '@mui/material/Stack';
 import FormHelperText from '@mui/material/FormHelperText';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-import AppTheme from '../../shared-theme/AppTheme';
-import { GoogleIcon, FacebookIcon, SporthubIcon } from '../CustomIcons.jsx';
-import ColorModeSelect from '../../shared-theme/ColorModeSelect';
+import AppTheme from '../../../components/shared-theme/AppTheme.jsx';
+import { GoogleIcon, FacebookIcon, SporthubIcon } from '../../../components/CustomIcons.jsx';
+import ColorModeSelect from '../../../components/shared-theme/ColorModeSelect.jsx';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',

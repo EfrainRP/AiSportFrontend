@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../services/AuthContext';
 
 const AuthRoute = ({ children, restricted = false }) => {
   const { isAuthenticated } = useAuth();

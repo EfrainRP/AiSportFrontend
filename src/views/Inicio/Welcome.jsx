@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Header from '../components/Header.jsx';
+import Header from '../../components/Header';
 
-import '../css/Sporthub.css';
-import video from '../assets/media/welcome.webm'
+import '../../css/Sporthub.css';
+import video from '../../assets/media/welcome.webm'
 
 function Welcome(){
   return (
