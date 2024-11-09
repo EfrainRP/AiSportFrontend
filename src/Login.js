@@ -1,6 +1,5 @@
-// src/Login.js
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom'; 
 import { useAuth } from './AuthContext'; // Importa el contexto
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -26,8 +25,9 @@ function Login() {
       const result = await response.json();
       if (response.ok) {
         setMessage('Login successful');
-        login({ username: result.username }); // Guarda el usuario autenticado
-        navigate('/dashboard');
+        // Guarda el usuario y token en el contexto y en el localStorage
+        login({ username: result.username }, result.token); // Pasa el token para guardarse
+        navigate('/dashboard'); // Redirigir al dashboard
       } else {
         setMessage(`Error: ${result.message}`);
       }
@@ -67,12 +67,6 @@ function Login() {
             <button type="submit" className="btn btn-primary w-100">Login</button>
           </form>
           {message && <p className="mt-3 text-danger text-center">{message}</p>}
-          <p className="text-center mt-3">
-            ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
-          </p>
-          <p className="text-center">
-            Conoce <Link to="/">Sporthub</Link>
-          </p>
         </header>
       </div>
     </div>
