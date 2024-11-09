@@ -117,10 +117,11 @@ export default function SignIn(props) {
       if (response.ok) {
         setMessage('Login successful');
         handleClickSnackBar();
-      login({ username: result.username }); // Guarda el usuario autenticado
-      navigate('/dashboard');
+        login({ username: result.username }); // Guarda el usuario autenticado
+        navigate('/dashboard');
       }else{
         setMessage(`Error: ${result.message}`);
+        handleClickSnackBar();
       }
     })
     .catch((error)=> {
