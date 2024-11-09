@@ -109,24 +109,21 @@ export default function SignIn(props) {
 
     const data = new FormData(event.currentTarget);
     console.log(data.get("email"));
+
     await axiosInstance.post('/login',{
       email: data.get('email'), 
       password: data.get('password')
     })
     .then((response)=> {
-      if (response.ok) {
-        setMessage('Login successful');
-        handleClickSnackBar();
-        login({ username: result.username }); // Guarda el usuario autenticado
+        // setMessage('Login successful');
+        // handleClickSnackBar();
+        console.log(response.data);
+        login({ username: response.data.username}, response.data.token); // Guarda el usuario autenticado
         navigate('/dashboard');
-      }else{
-        setMessage(`Error: ${result.message}`);
-        handleClickSnackBar();
-      }
     })
     .catch((error)=> {
-      setMessage('Connection Error');
-      handleClickSnackBar();
+      // setMessage(error);
+      // handleClickSnackBar();
       console.log(error)
     });
   };
