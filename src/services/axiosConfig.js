@@ -6,6 +6,9 @@ console.log(URL_SERVER);
 // Configuramos por defecto nuestra direccion del server
 const axiosInstance = axios.create({
     baseURL : URL_SERVER,
+    headers: {
+        'Content-Type': 'application/json'
+    }
 });
 
 // axiosInstance.interceptors.request.use((config)=>{

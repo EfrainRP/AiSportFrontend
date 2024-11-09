@@ -102,7 +102,7 @@ export default function SignIn(props) {
   const handleSubmit = async (event) => { //TO DO add axios
     event.preventDefault();
     if (emailError || passwordError) {
-      setMessage('Login incorrect');
+      setMessage('Empty data');
       handleClickSnackBar();
       return;
     }
@@ -115,16 +115,16 @@ export default function SignIn(props) {
       password: data.get('password')
     })
     .then((response)=> {
-        // setMessage('Login successful');
-        // handleClickSnackBar();
+        setMessage('Login successful');
+        handleClickSnackBar();
         console.log(response.data);
-        login({ username: response.data.username}, response.data.token); // Guarda el usuario autenticado
+        login(response.data.params, response.data.token); // Guarda el usuario autenticado
         navigate('/dashboard');
     })
-    .catch((error)=> {
-      // setMessage(error);
-      // handleClickSnackBar();
-      console.log(error)
+    .catch((error) => {
+      setMessage(error.response.data.message);
+      handleClickSnackBar();
+      console.log(error.response.data.message)
     });
   };
 
