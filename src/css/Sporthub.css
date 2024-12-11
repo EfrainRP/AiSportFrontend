@@ -1,11 +1,11 @@
-* {
+/* * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI';
-}
+} */
 
-header {
+/* header {
     position: absolute;
     top: 0;
     left: 0;
@@ -15,23 +15,23 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
+} */
 
-header .logo {
+/* header .logo {
     color: #ffffff;
     text-transform: uppercase;
     cursor: pointer;
-}
+} */
 
-.container {
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end; 
-}
+/* .container {
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; 
+} */
 
 
-nav a {
+/* nav a {
     list-style: none;
     display: inline-grid;
     padding: 15px 65px;
@@ -44,9 +44,9 @@ nav a {
     z-index: 2;
     transition: color 0.4s;
     text-decoration: none;
-}
+} */
 
-nav a::after {
+/* nav a::after {
     content: '';
     background: #ffffff;
     width: 100%;
@@ -58,10 +58,10 @@ nav a::after {
     transform: translate(-50%, -50%);
     z-index: -1;
     opacity: 0;
-}
+} */
 
 
-nav a:hover {
+/* nav a:hover {
 color: black;
 }
 
@@ -69,9 +69,9 @@ color: black;
 nav a:hover::after {
     top: 50%;
     opacity: 1;
-}
+} */
 
-.showcase {
+.main {
     position: absolute;
     right: 0;
     width: 100%;
@@ -86,12 +86,12 @@ nav a:hover::after {
 }
 
 
-.showcase.active {
+.main.active {
     right: 300px;
 }
 
 
-.showcase video {
+.main video {
     position: absolute;
     top: 0;
     left: 0;
@@ -101,7 +101,7 @@ nav a:hover::after {
     opacity: 0.9;
 }
 
-.overlay {
+/* .overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -109,9 +109,9 @@ nav a:hover::after {
     height: 100%;
     background: rgb(20, 20, 20);
     mix-blend-mode: overlay;
-}
+} */
 
-.text {
+/* .text {
     position: relative;
     z-index: 10;
 }
@@ -130,7 +130,7 @@ nav a:hover::after {
     color: #fff;
     line-height: 1em;
     text-transform: uppercase;
-}
+} 
 
 .text p {
     font-size: 1.1em;
@@ -214,8 +214,8 @@ nav a:hover::after {
 
 @media (max-width: 991px) {
 
-    .showcase,
-    .showcase header {
+    .main,
+    .main header {
         padding: 40px;
     }
 
@@ -226,7 +226,7 @@ nav a:hover::after {
     .text h3 {
         font-size: 2em;
     }
-}
+}*/
 
 /* Estilos generales de texto */
 .text h2, 

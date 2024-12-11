@@ -21,10 +21,10 @@ import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword.jsx';
 import { GoogleIcon, FacebookIcon, SporthubIcon } from '../../../components/CustomIcons.jsx';
 import AppTheme from '../../../components/shared-theme/AppTheme.jsx';
-import ColorModeSelect from '../../../components/shared-theme/ColorModeSelect.jsx';
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext.jsx'; // Importa el contexto
+import HeaderAppBar from '../../../components/HeaderAppBar.jsx';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -46,7 +46,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
-  height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
+  // height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
   minHeight: '100%',
   padding: theme.spacing(2),
   [theme.breakpoints.up('sm')]: {
@@ -158,9 +158,8 @@ export default function SignIn(props) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      {/* <Header/> */}
+      <HeaderAppBar />
       <SignInContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
           <div style={{
               display: 'flex',

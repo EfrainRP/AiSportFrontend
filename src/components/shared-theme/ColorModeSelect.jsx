@@ -85,7 +85,11 @@ export default function ColorModeSelect(props) {
   
   return (
     <Box
-    {...props}
+      sx={{
+        display: 'flex',
+        justifyContent: 'flex-center',
+      }}
+      {...props}
     >
     <FormControlLabel
       checked={checked}

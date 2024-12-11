@@ -1,6 +1,6 @@
 // src/Dashboard.js
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuth } from '../../services/AuthContext'; // Importa el AuthContext
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 

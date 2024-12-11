@@ -5,6 +5,7 @@ import { AuthProvider } from './services/AuthContext.jsx';
 import AuthRoute from './middleware/AuthRoute.jsx'; // Middlewares
 
 import Welcome from './views/Inicio/Welcome.jsx';
+import AboutUs from './views/Inicio/AboutUs.jsx';
 import SignUp from './views/Inicio/SignUp/SignUp.jsx';
 import SignIn from "./views/Inicio/SignIn/SignIn.jsx";
 import Dashboard from "./views/Dashboard/Dashboard.jsx";
@@ -16,6 +17,7 @@ export default function MyRoute(){
           <Routes>
             {/* Rutas con acceso general/invitados */}
             <Route index path="/" element={<Welcome/>}/>
+            <Route index path="/aboutus" element={<AboutUs/>}/>
 
             {/* Rutas que no deben ser accesibles para usuarios autenticados */}
             <Route 
