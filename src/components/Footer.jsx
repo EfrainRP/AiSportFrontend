@@ -24,17 +24,21 @@ function Copyright() {
   );
 }
 
-export default function Footer() {
+export default function Footer(prop) {
   return (
     <Container
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: { xs: 4, sm: 8 },
-        py: { xs: 8, sm: 1 },
-        textAlign: { sm: 'center', md: 'left' },
-      }}
+      component="footer"
+      position="fixed"
+      bottom="0"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: { xs: 4, sm: 8 },
+          pt: prop.myP,
+          pb: prop.myP,
+          textAlign: { sm: 'center', md: 'left' },
+        }}
     >
       <Box
         sx={{
@@ -85,10 +89,10 @@ export default function Footer() {
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
               Legal
             </Typography>
-            <Link color="text.secondary" variant="body2" href="#">
+            <Link color="text.secondary" variant="body2" href="/terms">
               Terms
             </Link>
-            <Link color="text.secondary" variant="body2" href="#">
+            <Link color="text.secondary" variant="body2" href="/privacy">
               Privacy
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
@@ -96,13 +100,13 @@ export default function Footer() {
             </Link>
           </Box>
           <div>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="/privacy">
             Privacy Policy
           </Link>
           <Typography sx={{ display: 'inline', mx: 0.5, opacity: 0.5 }}>
             &nbsp;•&nbsp;
           </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="/terms">
             Terms of Service
           </Link>
           <Copyright />
@@ -111,7 +115,7 @@ export default function Footer() {
           direction="row"
           spacing={1}
           useFlexGap
-          sx={{ justifyContent: 'left', color: 'text.secondary' }}
+          sx={{ justifyContent: 'center', color: 'text.secondary' }}
         >
           <IconButton
             color="inherit"

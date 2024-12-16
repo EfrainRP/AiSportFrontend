@@ -17,23 +17,25 @@ import { Box,
   } from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-import AppTheme from '../../../components/shared-theme/AppTheme.jsx';
 import { GoogleIcon, FacebookIcon, SporthubIcon } from '../../../components/CustomIcons.jsx';
-import HeaderAppBar from '../../../components/HeaderAppBar.jsx';
+import Layout from '../../Layout.jsx'
+
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignSelf: 'center',
   width: '100%',
-  padding: theme.spacing(4),
+  // padding: theme.spacing(4),
   gap: theme.spacing(2),
-  margin: 'auto',
-  boxShadow:
-    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
+  // margin: 'auto',
   [theme.breakpoints.up('sm')]: {
     width: '450px',
+    gap: theme.spacing(2),
   },
+  boxShadow:
+    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
+    gap: theme.spacing(2),
   ...theme.applyStyles('dark', {
     boxShadow:
       'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
@@ -41,11 +43,15 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 const SignUpContainer = styled(Stack)(({ theme }) => ({
-  // height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
-  // minHeight: '138vh',
-  padding: theme.spacing(1),
+  // height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh
+  // padding: theme.spacing(1),
+  // [theme.breakpoints.up('sm')]: {
+  //   padding: theme.spacing(2),
+  // },
+  justifyContent:"space-between",
+  margin: theme.spacing(6),
   [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(2),
+    margin: theme.spacing(3),
   },
   '&::before': {
     content: '""',
@@ -60,7 +66,10 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
       backgroundImage:
         'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
     }),
-    minHeight: '140vh'
+    height: 'calc((1 - var(--template-frame-height, 0)) * 218vh)',
+    [theme.breakpoints.up('sm')]: {
+      height: 'calc((1 - var(--template-frame-height, 0)) * 157vh)',
+    },
   },
 }));
 
@@ -209,10 +218,8 @@ export default function SignUp(props) {
   };
 
   return (
-    <AppTheme {...props}>
-      <CssBaseline enableColorScheme />
-      <HeaderAppBar />
-      <SignUpContainer direction="column" justifyContent="space-between">
+    <Layout>
+      <SignUpContainer>
         <Card variant="outlined">
         <div style={{
             display: 'flex',
@@ -407,6 +414,6 @@ export default function SignUp(props) {
           </Box>
         </Card>
       </SignUpContainer>
-    </AppTheme>
+    </Layout>
   );
 }
