@@ -56,11 +56,8 @@ export default function HeaderAppBar() {
               <Button href='/' variant="text" color="info" size="medium">
                 SPORTHUB
               </Button>
-              <Button href='/aboutus' variant="text" color="info" size="small">
-                About us
-              </Button>
-              <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>
-                Blog
+              <Button href='/aboutus' variant="text" color="info" size="medium">
+                ABOUT US
               </Button>
             </Box>
           </Box>
@@ -71,7 +68,7 @@ export default function HeaderAppBar() {
               alignItems: 'center',
             }}
           >
-            <Button href='/signin' color="primary" variant="text" size="small">
+            <Button href='/signin' color="secondary" variant="contained" size="small">
               Sign in
             </Button>
             <Button href='/signup' color="primary" variant="contained" size="small">

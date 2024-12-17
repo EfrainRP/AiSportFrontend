@@ -67,7 +67,7 @@ export default function Footer(prop) {
             }}
           >
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-              Information
+              <strong>Information</strong>
             </Typography>
             <Link color="text.secondary" variant="body2" href="/signin">
               Sign In
@@ -87,7 +87,7 @@ export default function Footer(prop) {
             }}
           >
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-              Legal
+              <strong>Legal</strong>
             </Typography>
             <Link color="text.secondary" variant="body2" href="/terms">
               Terms

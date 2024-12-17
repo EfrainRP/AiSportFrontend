@@ -11,14 +11,14 @@ import {orange} from '../../components/shared-theme/themePrimitives.jsx';
 export default function Privacy(props){
   return (
       <Layout>
-        <VideoBackground myHeight={{ xs: '9.5rem', sm: '6.5rem' }}/>
+        <VideoBackground myHeight={{ xs: '9.5rem', sm: '115%' }}/>
           <Container
             sx={{
               position: 'relative',
               minHeight: '60vh',
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center',
+              alignItems: { xs: 'center', sm: 'flex-start' },
               textAlign: { xs: 'center', sm: 'left' },
               pt: { xs: 4, sm: 5 }, //padding top, xs para pantalla chicas
               // pb: { xs: '18%', sm: "4%" }, //padding bottom, sm para pantallas anchas
@@ -27,12 +27,12 @@ export default function Privacy(props){
           >
             <Stack
               useFlexGap
-              sx={{ alignItems: 'center', width: { xs: '80vw', sm: '82%' }, spacing: 1}}
-              align='justify'
+              sx={{width: { xs: '80vw', sm: '55%' }, spacing: 1}}
+              // align='justify'
               color= 'text.primary'
               spacing={1.5}
             >
-              <Typography variant="h1" gutterBottom align='center' sx={{color:orange[300], pb: { xs: 6, sm: 2 }}}>
+              <Typography variant="h1" gutterBottom sx={{color:orange[300], pb: { xs: 6, sm: 2 }}}>
                 Privacy Policy
               </Typography>
               
@@ -43,7 +43,7 @@ export default function Privacy(props){
               </Typography>
 
               {/* Section 1 */}
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" color='orange' gutterBottom>
                 Information We Collect
               </Typography>
               <Typography variant="body2" paragraph>
@@ -62,7 +62,7 @@ export default function Privacy(props){
               </Typography>
 
               {/* Section 2 */}
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" color='orange' gutterBottom>
                 How We Use Your Information
               </Typography>
               <Typography variant="body2" paragraph>
@@ -71,7 +71,7 @@ export default function Privacy(props){
               </Typography>
 
               {/* Section 3 */}
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" color='orange' gutterBottom>
                 Sharing Your Information
               </Typography>
               <Typography variant="body2" paragraph>
@@ -80,7 +80,7 @@ export default function Privacy(props){
               </Typography>
 
               {/* Additional Sections */}
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" color='orange' gutterBottom>
                 Data Security
               </Typography>
               <Typography variant="body2" paragraph>
@@ -88,27 +88,19 @@ export default function Privacy(props){
                 credentials safe and notify us of suspicious activity.
               </Typography>
 
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" color='orange' gutterBottom>
                 Your Rights
               </Typography>
               <Typography variant="body2" paragraph>
                 You can access, update, or delete your account information. Opt-out options for promotional emails are also
-                available. Contact us at [Insert Email] to exercise these rights.
+                available.
               </Typography>
 
-              <Typography variant="h6" gutterBottom>
-                Changes to This Policy
-              </Typography>
-              <Typography variant="body2" paragraph>
-                We may update this Privacy Policy. Continued use of the platform after updates constitutes your acceptance of
-                the revised policy.
-              </Typography>
-
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" color='orange' gutterBottom>
                 Contact Us
               </Typography>
               <Typography variant="body2" paragraph>
-                If you have any questions, contact us at [Insert Email or Contact Information].
+                If you have any questions, contact us at <Typography component="span" sx={{ color: orange[500], fontWeight: 'bold' }}>sporthub@gmail.com</Typography>.
               </Typography>
 
               </Stack>
