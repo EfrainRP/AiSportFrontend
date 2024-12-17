@@ -26,7 +26,7 @@ function Login() {
       if (response.ok) {
         setMessage('Login successful');
         // Guarda el usuario y token en el contexto y en el localStorage
-        login({ username: result.username }, result.token); // Pasa el token para guardarse
+        login({ userId: result.params.userId, userName: result.params.userName }, result.token);
         navigate('/dashboard'); // Redirigir al dashboard
       } else {
         setMessage(`Error: ${result.message}`);

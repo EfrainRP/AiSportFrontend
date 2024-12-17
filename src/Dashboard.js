@@ -1,8 +1,8 @@
 // src/Dashboard.js
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useAuth } from './AuthContext'; // Importa el AuthContext
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate
+import { useAuth } from './AuthContext'; //  AuthContext
+import { useNavigate, Link } from 'react-router-dom';
 
 function Dashboard() {
   const { user, logout } = useAuth(); // Accede al usuario autenticado y al método logout
@@ -22,11 +22,20 @@ function Dashboard() {
               <h4 className="text-center">Dashboard</h4>
             </div>
             <div className="card-body text-center">
-              <h1 className="text-center">¡Hola {user ? user.username : 'invitado'}!</h1>
+            <h1 className="text-center">¡Hola {user ? user.userName : 'invitado'} con ID {user.userId}!</h1>
               <p>Bienvenido al panel de control.</p>
               <p>Aquí podrás gestionar tus preferencias y consultar tu información.</p>
             </div>
             <div className="card-footer text-center">
+              <p>
+                  <Link to="/torneos">Ser Organizador</Link>
+              </p>
+              <p>
+                  <Link to="/equipos">Ser Cápitan</Link>
+              </p>
+              <p>
+                  <Link to="/miembros">Ser Participante</Link>
+              </p>
               <button className="btn btn-primary">Mis Preferencias</button>
               <button className="btn btn-secondary ms-2" onClick={handleLogout}>Cerrar Sesión</button>
             </div>
