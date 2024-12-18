@@ -94,8 +94,16 @@ const EditEquipo = () => {
         setSuccessMessage('¡Equipo eliminado con éxito!');
         setTimeout(() => navigate('/equipos'), 2000);
       } catch (err) {
-        setGeneralError('Error al eliminar el equipo.');
-        console.error(err);
+        if (err.response && err.response.status === 400) {
+          const { field, message } = err.response.data;
+          if (field) {
+            setFieldErrors((prev) => ({ ...prev, [field]: message }));
+          } else {
+            setGeneralError(message);
+          }
+        } else {
+          setGeneralError('Error inesperado al actualizar el equipo.');
+        }
       }
     }
   };

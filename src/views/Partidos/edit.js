@@ -7,6 +7,10 @@ const EditPartido = () => {
   const navigate = useNavigate();
 
   const [allEquipos, setAllEquipos] = useState([]);
+  const [formNames, setNames] = useState({
+    equipoLocal: '',
+    equipoVisitante: '',
+  });
   const [formData, setFormData] = useState({
     equipoLocalId: '',
     equipoVisitanteId: '',
@@ -35,8 +39,11 @@ const EditPartido = () => {
         try {
           const response = await axios.get(`http://localhost:5000/sporthub/api/partido/${torneoId}/${partidoId}`);
           const partido = response.data;
-          console.log("PARTIDO",partido.equipoLocal_id);
-      
+          console.log("EQUIPOS",partido.equipos_partidos_equipoLocal_idToequipos.name);
+          setNames({
+            equipoLocal: partido.equipos_partidos_equipoLocal_idToequipos.name,
+            equipoVisitante: partido.equipos_partidos_equipoVisitante_idToequipos.name,
+          });
           // Formatear hora
           const horaPartido = partido.horaPartido ? partido.horaPartido.slice(11, 16) : ''; // HH:mm
       
@@ -85,8 +92,9 @@ const EditPartido = () => {
       if (err.response && err.response.data && err.response.data.field) {
         const { field, message } = err.response.data;
         setErrors({ [field]: message });
+        console.log("Aqui fue el error",field,message);
       } else {
-        setGeneralError('Error al actualizar el partido.');
+        setGeneralError('Error al actualizar el partido.', err);
       }
     }
   };
@@ -96,31 +104,33 @@ const EditPartido = () => {
       <h1>Editar Partido para el Torneo {torneoName}</h1>
       {generalError && <p className="error">{generalError}</p>}
       {successMessage && <p className="success">{successMessage}</p>}
+      {errors.partido && <p className="error">{errors.partido}</p>}
+
 
       <form onSubmit={handleSubmit}>
         <div>
           <label>Equipo Local:</label>
           <select name="equipoLocalId" value={formData.equipoLocalId} onChange={handleInputChange}>
-            <option value="">Seleccione un equipo</option>
+            <option value="">Local {formNames.equipoLocal}</option>
             {allEquipos.map((equipo) => (
               <option key={equipo.id} value={equipo.id}>
                 {equipo.name}
               </option>
             ))}
           </select>
-          {errors.equipoLocalId && <p className="error">{errors.equipoLocalId}</p>}
+          {errors.equipo && <p className="error">{errors.equipo}</p>}
         </div>
         <div>
           <label>Equipo Visitante:</label>
           <select name="equipoVisitanteId" value={formData.equipoVisitanteId} onChange={handleInputChange}>
-            <option value="">Seleccione un equipo</option>
+            <option value="">Visitante {formNames.equipoVisitante}</option>
             {allEquipos.map((equipo) => (
               <option key={equipo.id} value={equipo.id}>
                 {equipo.name}
               </option>
             ))}
           </select>
-          {errors.equipoVisitanteId && <p className="error">{errors.equipoVisitanteId}</p>}
+          {errors.equipo && <p className="error">{errors.equipo}</p>}
         </div>
         <div>
           <label>Hora del Partido:</label>

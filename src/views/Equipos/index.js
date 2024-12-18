@@ -8,7 +8,7 @@ const Equipos = () => {
   const { user, logout } = useAuth(); // Accede al usuario autenticado y al método logout
 
   useEffect(() => { // Hace la solicitud al cargar la vista <-
-    const fetchEquipos = async () => {
+    const fetchEquipos = async () => { // Index Equipos <-
       try {
         const response = await axios.get(`http://localhost:5000/sporthub/api/equipos/${user.userId}`);
         setEquipos(response.data);

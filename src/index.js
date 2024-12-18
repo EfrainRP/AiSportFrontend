@@ -10,7 +10,11 @@ import AuthRoute from './Middleware/AuthRoute';
 import Sporthub from './Sporthub';
 import Login from './Login';
 import Register from './Register';
-import Dashboard from './Dashboard';
+//  -------------------------------------------------------------
+//  VIEWS DASHBOARD 
+import Dashboard from './views/Dashboard/Dashboard'; // Main Dashboard <-
+import TorneoDashboard from './views/Dashboard/TorneoDashboard'; // Torneos acceso cualquier rol <-
+import EquipoDashboard from './views/Dashboard/EquipoDashboard'; // Equipos acceso cualquier rol <-
 //  -------------------------------------------------------------
 //  CRUD TORNEOS 
 import Torneos from './views/Torneos/index'; // Torneos Index <-
@@ -24,17 +28,13 @@ import EquipoShow from './views/Equipos/show'; // Equipos show <-
 import EquipoEdit from './views/Equipos/edit'; // Equipos edit <-
 import EquipoCreate from './views/Equipos/create'; // Equipos create <-
 //  -------------------------------------------------------------
-//  CRUD MIEMBROS 
-import Miembros from './views/Miembros/index'; // Miembros Index <-
-import MiembroShow from './views/Miembros/show'; // Miembros show <-
-import MiembroEdit from './views/Miembros/edit'; // Miembros edit <-
-import MiembroCreate from './views/Miembros/create'; // Miembros create <-
-//  -------------------------------------------------------------
 //  CRUD PARTIDOS 
-import Partidos from './views/Partidos/index'; // Partidos Index <-
-import PartidoShow from './views/Partidos/show'; // Partidos show <-
 import PartidoEdit from './views/Partidos/edit'; // Partidos edit <-
 import PartidoCreate from './views/Partidos/create'; // Partidos create <-
+//  -------------------------------------------------------------
+//  CRUD PERFIL 
+import PerfilEdit from './views/Profile/edit'; // Perfil edit <-
+import PerfilShow from './views/Profile/show'; // Perfil show <-
 //  -------------------------------------------------------------
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -65,11 +65,27 @@ root.render(
           />
   
           {/* Rutas para usuarios autenticados ------------------------------------------------*/}
-          <Route
+          <Route // DASHBOARD 
             path="/dashboard"
             element={
               <AuthRoute>
                 <Dashboard />
+              </AuthRoute>
+            }
+          /> 
+          <Route // Ruta para visualizacion de torneos general en Dash <-
+            path="/dashboard/torneos/:torneoName/:torneoId"
+            element={
+              <AuthRoute>
+                <TorneoDashboard />
+              </AuthRoute>
+            }
+          /> 
+          <Route // Ruta para visualizacion de equipos general en Dash <-
+            path="/dashboard/equipos/:equipoName/:equipoId"
+            element={
+              <AuthRoute>
+                <EquipoDashboard />
               </AuthRoute>
             }
           /> 
@@ -137,35 +153,35 @@ root.render(
               </AuthRoute>
             }
           />
-          <Route  // < ------------- CRUD PARTIDOS ------------------------------------ >    
-            path="/partidos"        // Ruta index 
+          <Route // < ------------- CRUD PARTIDOS ------------------------------------ > 
+            path="/partido/:torneoName/:torneoId/:partidoId/edit" // Ruta edit protegida mediante Police <-
             element={
-              <AuthRoute>
-                <Partidos />
-              </AuthRoute>
-            }
-          />
-          <Route
-            path="/partido/:partidoId" // Ruta show
-            element={
-              <AuthRoute>
-                <PartidoShow />
-              </AuthRoute>
-            }
-          />
-          <Route
-            path="/partido/:torneoName/:torneoId/:partidoId/edit" // Ruta edit
-            element={
-              <AuthRoute>
+              <AuthRoute requireTorneoOwnership={true}> 
                 <PartidoEdit />
               </AuthRoute>
             }
           />
           <Route
-            path="/partido/create/:torneoName/:torneoId" // Ruta create
+            path="/partido/create/:torneoName/:torneoId" // Ruta create protegida mediante Police <-
             element={
-              <AuthRoute>
+              <AuthRoute requireTorneoOwnership={true}> 
                 <PartidoCreate />
+              </AuthRoute>
+            }
+          />
+          <Route //  < ------------- CRUD PERFIL ------------------------------------ >  
+            path="/dashboard/perfil/:userName" // Ruta SHOW protegida mediante Police <-
+            element={
+              <AuthRoute > 
+                <PerfilShow />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/dashboard/perfil/:userName/edit" // Ruta EDIT protegida mediante Police <-
+            element={
+              <AuthRoute > 
+                <PerfilEdit />
               </AuthRoute>
             }
           />

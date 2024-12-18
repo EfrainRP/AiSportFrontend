@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useAuth } from './AuthContext'; //  AuthContext
+import { useAuth } from '../../AuthContext'; //  AuthContext
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
@@ -49,14 +49,30 @@ function Dashboard() {
               <h1 className="text-center">¡Hola {user ? user.userName : 'invitado'} con ID {user.userId}!</h1>
               <p>Bienvenido al panel de control.</p>
               <p>Aquí podrás gestionar tus preferencias y consultar tu información.</p>
-
+              <div className="card-footer text-center">
+              <p>
+                <Link to="/torneos">Ser Organizador</Link>
+              </p>
+              <p>
+                <Link to="/equipos">Ser Cápitan</Link>
+              </p>
+              <p>
+              <Link to={`/dashboard/perfil/${user.userName}`}>Perfil</Link>
+              </p>
+              <button className="btn btn-primary">Perfil</button>
+              <button className="btn btn-secondary ms-2" onClick={handleLogout}>
+                Cerrar Sesión
+              </button>
+              </div>
               <div className="mt-4">
-                <h5>Torneos Disponibles</h5>
+                <h5>Torneos Sporthub</h5>
                 {data.torneos.length > 0 ? (
                   <ul className="list-group">
                     {data.torneos.map((torneo) => (
                       <li key={torneo.id} className="list-group-item">
-                        {torneo.name} - {torneo.ubicacion}
+                        <Link to={`/dashboard/torneos/${torneo.name}/${torneo.id}`}>
+                          {torneo.name} - {torneo.ubicacion}
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -66,12 +82,14 @@ function Dashboard() {
               </div>
 
               <div className="mt-4">
-                <h5>Equipos Disponibles</h5>
+                <h5>Equipos Sporthub</h5>
                 {data.equipos.length > 0 ? (
                   <ul className="list-group">
                     {data.equipos.map((equipo) => (
                       <li key={equipo.id} className="list-group-item">
-                        {equipo.name}
+                        <Link to={`/dashboard/equipos/${equipo.name}/${equipo.id}`}>
+                          {equipo.name}
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -79,21 +97,6 @@ function Dashboard() {
                   <p>No hay equipos disponibles.</p>
                 )}
               </div>
-            </div>
-            <div className="card-footer text-center">
-              <p>
-                <Link to="/torneos">Ser Organizador</Link>
-              </p>
-              <p>
-                <Link to="/equipos">Ser Cápitan</Link>
-              </p>
-              <p>
-                <Link to="/miembros">Ser Participante</Link>
-              </p>
-              <button className="btn btn-primary">Mis Preferencias</button>
-              <button className="btn btn-secondary ms-2" onClick={handleLogout}>
-                Cerrar Sesión
-              </button>
             </div>
           </div>
         </div>

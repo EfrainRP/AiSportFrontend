@@ -105,12 +105,12 @@ const CreatePartido = () => {
         <div>
           <label>Resultado Local:</label>
           <input type="number" name="resLocal" value={formData.resLocal} min="0" onChange={handleInputChange} />
-          {errors.resultado && <p className="error">{errors.resultado}</p>}
+          {errors.resLocal && <p className="error">{errors.resLocal}</p>}
         </div>
         <div>
           <label>Resultado Visitante:</label>
           <input type="number" name="resVisitante" value={formData.resVisitante} min="0" onChange={handleInputChange} />
-          {errors.resultado && <p className="error">{errors.resultado}</p>}
+          {errors.resVisitante && <p className="error">{errors.resVisitante}</p>}
         </div>
         <button type="submit">Crear Partido</button>
       </form>
