@@ -81,10 +81,13 @@ export default function SignIn(props) {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false); //State forgot password
   
   const [messageSignIn, setMessage] = React.useState('');
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [validateInputs, setValidateInputs] = React.useState(true);
+
+  // Component SnackBar State
   const handleClickSnackBar = () => {
     setOpenSnackBar(true);
   };
@@ -107,18 +110,18 @@ export default function SignIn(props) {
     setOpen(false);
   };
 
-  const handleSubmit = async (event) => { //TO DO add axios
+  const handleSubmit = async (event) => { // Function to access SportHub
     event.preventDefault();
-    if (emailError || passwordError) {
+
+    if (emailError || passwordError) { // Error Input
       setMessage('Empty data');
       handleClickSnackBar();
       return;
     }
-
     const data = new FormData(event.currentTarget);
     console.log(data.get("email"));
 
-    await axiosInstance.post('/login',{
+    await axiosInstance.post('/login',{ // Conection to backend
       email: data.get('email'), 
       password: data.get('password')
     })
@@ -131,36 +134,53 @@ export default function SignIn(props) {
     })
     .catch((error) => {
       setMessage(error.response.data.message);
+      setMessage('Data Invalid');
       handleClickSnackBar();
       console.log(error.response.data.message)
     });
   };
 
-  const validateInputs = () => {
+  const emailValidate = async () => {
     const email = document.getElementById('email');
-    const password = document.getElementById('password');
 
-    let isValid = true;
-
+    setEmailError(false);
+    setEmailErrorMessage('');
+    setValidateInputs(true);
+    
     if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
+      setValidateInputs(false);
     }
-
+    else{
+      await axiosInstance.post('/email',{email: email.value}) // Conection to backend
+      .then((response)=> {
+        console.log(response.data);
+        setValidateInputs(false);
+      })
+      .catch((error) => {
+        setEmailError(true);
+        setEmailErrorMessage('Email no valid');
+        // setMessage('Error ');
+        // handleClickSnackBar();
+        console.log(error.response.data.message)
+        setValidateInputs(true);
+      });
+    }
+  };
+  
+  const passwordValidate = () => {
+    const password = document.getElementById('password');
+    
+    setPasswordError(false);
+    setPasswordErrorMessage('');
+    setValidateInputs(true);
+  
     if (!password.value || password.value.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 6 characters long.');
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage('');
+      setValidateInputs(false);
     }
-
-    return isValid;
   };
 
   return (
@@ -197,6 +217,7 @@ export default function SignIn(props) {
               <TextField
                 error={emailError}
                 helperText={emailErrorMessage}
+                onChange={emailValidate}
                 id="email"
                 type="email"
                 name="email"
@@ -217,6 +238,7 @@ export default function SignIn(props) {
                   component="button"
                   type="button"
                   onClick={handleClickOpen}
+                  onChange={passwordValidate}
                   variant="body2"
                   sx={{ alignSelf: 'baseline' }}
                 >
@@ -246,7 +268,7 @@ export default function SignIn(props) {
               type="submit"
               fullWidth
               variant="contained"
-              onClick={validateInputs}
+              onClick={() => {emailValidate(); passwordValidate(); }}
             >
               Sign in
             </Button>

@@ -95,9 +95,6 @@ export default function Footer(prop) {
             <Link color="text.secondary" variant="body2" href="/privacy">
               Privacy
             </Link>
-            <Link color="text.secondary" variant="body2" href="#">
-              Contact
-            </Link>
           </Box>
           <div>
           <Link color="text.secondary" variant="body2" href="/privacy">
