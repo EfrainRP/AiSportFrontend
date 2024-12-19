@@ -11,6 +11,7 @@ const TorneoDashboard = () => {
   const [partidos, setPartidos] = useState([]);
   const [equipos, setEquipos] = useState([]);
   const [selectedEquipo, setSelectedEquipo] = useState(null);
+  const [notificacion, setNotificacion] = useState(null);
 
   useEffect(() => {
     const fetchTorneo = async () => {
@@ -52,14 +53,39 @@ const TorneoDashboard = () => {
     }
 
     try {
-      await axios.post(`http://localhost:5000/sporthub/api/notificacion/${user.userId}/${torneo.user_id}`, {
-        equipoId: selectedEquipo,
-        torneoId: torneoId,
-      });
+      await axios.post(
+        `http://localhost:5000/sporthub/api/notificacion/${user.userId}/${torneo.user_id}`,
+        {
+          equipoId: selectedEquipo,
+          torneoId: torneoId,
+        }
+      );
       alert('¡Notificación enviada con éxito!');
     } catch (err) {
       console.error('Error al enviar la notificación:', err);
-      alert('Ocurrió un error al enviar la notificación.');
+    
+      // Verifica si hay una respuesta del servidor con un mensaje de error
+      if (err.response && err.response.data && err.response.data.message) {
+        alert(err.response.data.message); // Muestra el mensaje del backend
+      } else {
+        alert('Ocurrió un error al enviar la notificación.'); // Error genérico
+      }
+    }
+  };
+
+  const handleCancelNotification = async () => {
+    try {
+      await axios.delete(`http://localhost:5000/sporthub/api/notificacion/${user.userId}/${torneoId}`);
+      alert('Notificación cancelada con éxito.');
+    } catch (err) {
+      console.error('Error al cancelar la notificación:', err);
+    
+      // Verifica si hay una respuesta del servidor con un mensaje de error
+      if (err.response && err.response.data && err.response.data.message) {
+        alert(err.response.data.message); // Muestra el mensaje del backend
+      } else {
+        alert('Ocurrió un error al cancelar la notificación.'); // Error genérico
+      }
     }
   };
 
@@ -137,6 +163,9 @@ const TorneoDashboard = () => {
 
       <button onClick={handleSendNotification} style={{ marginTop: '10px' }}>
         Enviar Notificación de Inscripción
+      </button>
+      <button onClick={handleCancelNotification} style={{ marginTop: '10px' }}>
+            Cancelar Notificación
       </button>
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useAuth } from '../../AuthContext'; //  AuthContext
+import { useAuth } from '../../AuthContext'; // AuthContext
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
@@ -10,13 +10,19 @@ function Dashboard() {
 
   const [data, setData] = useState({ torneos: [], equipos: [] }); // Estado para almacenar torneos y equipos
   const [loading, setLoading] = useState(true); // Estado de carga
+  const [notificaciones, setNotificaciones] = useState([]); // Estado para las notificaciones
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Obtener torneos y equipos
         const response = await axios.get(`http://localhost:5000/sporthub/api/dashboard/${user.userId}`);
         setData(response.data); // Establecer los datos en el estado
         setLoading(false); // Cambiar el estado de carga
+
+        // Obtener notificaciones
+        const notificationsResponse = await axios.get(`http://localhost:5000/sporthub/api/notificaciones/${user.userId}`);
+        setNotificaciones(notificationsResponse.data); // Establecer las notificaciones en el estado
       } catch (error) {
         console.error('Error al obtener los datos del dashboard:', error);
         setLoading(false); // Cambiar el estado de carga incluso en caso de error
@@ -31,6 +37,28 @@ function Dashboard() {
   const handleLogout = () => {
     logout(); // Llama a la función logout del contexto
     navigate('/login'); // Redirecciona a la página de login
+  };
+
+  // Función para manejar la aceptación de notificaciones
+  const acceptNotification = async (notificacionId, torneoId) => {
+    try {
+      // Enviar la solicitud DELETE para aceptar la notificación
+      await axios.delete(`http://localhost:5000/sporthub/api/notificacion/${user.userId}/${torneoId}`);
+      
+      // Eliminar la notificación aceptada del estado
+      setNotificaciones((prev) => prev.filter((n) => n.id !== notificacionId));
+      
+      alert('Notificación aceptada con éxito.');
+    } catch (err) {
+      console.error('Error al aceptar la notificación:', err);
+      
+      // Verifica si hay una respuesta del servidor con un mensaje de error
+      if (err.response && err.response.data && err.response.data.message) {
+        alert(err.response.data.message); // Muestra el mensaje del backend
+      } else {
+        alert('Ocurrió un error al aceptar la notificación.'); // Error genérico
+      }
+    }
   };
 
   if (loading) {
@@ -50,20 +78,22 @@ function Dashboard() {
               <p>Bienvenido al panel de control.</p>
               <p>Aquí podrás gestionar tus preferencias y consultar tu información.</p>
               <div className="card-footer text-center">
-              <p>
-                <Link to="/torneos">Ser Organizador</Link>
-              </p>
-              <p>
-                <Link to="/equipos">Ser Cápitan</Link>
-              </p>
-              <p>
-              <Link to={`/dashboard/perfil/${user.userName}`}>Perfil</Link>
-              </p>
-              <button className="btn btn-primary">Perfil</button>
-              <button className="btn btn-secondary ms-2" onClick={handleLogout}>
-                Cerrar Sesión
-              </button>
+                <p>
+                  <Link to="/torneos">Ser Organizador</Link>
+                </p>
+                <p>
+                  <Link to="/equipos">Ser Cápitan</Link>
+                </p>
+                <p>
+                  <Link to={`/dashboard/perfil/${user.userName}`}>Perfil</Link>
+                </p>
+                <button className="btn btn-primary">Perfil</button>
+                <button className="btn btn-secondary ms-2" onClick={handleLogout}>
+                  Cerrar Sesión
+                </button>
               </div>
+
+              {/* Sección de Torneos */}
               <div className="mt-4">
                 <h5>Torneos Sporthub</h5>
                 {data.torneos.length > 0 ? (
@@ -81,6 +111,7 @@ function Dashboard() {
                 )}
               </div>
 
+              {/* Sección de Equipos */}
               <div className="mt-4">
                 <h5>Equipos Sporthub</h5>
                 {data.equipos.length > 0 ? (
@@ -95,6 +126,33 @@ function Dashboard() {
                   </ul>
                 ) : (
                   <p>No hay equipos disponibles.</p>
+                )}
+              </div>
+
+              {/* Sección de Notificaciones */}
+              <div className="mt-4">
+                <h5>Notificaciones</h5>
+                {notificaciones.length > 0 ? (
+                  <ul className="list-group">
+                    {notificaciones.map((notificacion) => (
+                      <li key={notificacion.id} className="list-group-item">
+                        <p>
+                          Tú solicitud del equipo <strong>{notificacion.equipos?.name}</strong> fue <strong>{notificacion.status}</strong> para el torneo <strong>{notificacion.torneos?.name}.</strong>
+                        </p>
+                        <p>
+                          Para más información, ponte en contacto con el organizador <strong>{notificacion.torneos?.users?.name} ({notificacion.torneos?.users?.email})</strong>
+                        </p>
+                        <button
+                          className="btn btn-success mt-2"
+                          onClick={() => acceptNotification(notificacion.id, notificacion.torneo_id)}
+                        >
+                          Aceptar
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No tienes notificaciones.</p>
                 )}
               </div>
             </div>

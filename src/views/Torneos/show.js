@@ -9,21 +9,22 @@ const ShowTorneo = () => {
   const { user } = useAuth(); // Obtención del usuario autenticado
   const [torneo, setTorneo] = useState(); // Estado para los detalles del torneo
   const [partidos, setPartidos] = useState([]); // Estado para los partidos del torneo
+  const [notificaciones, setNotificaciones] = useState([]); // Estado para las notificaciones
   const navigate = useNavigate();
 
-
-  // useEffect para hacer petición automática de los datos del torneo y los partidos
+  // useEffect para hacer petición automática de los datos del torneo, partidos y notificaciones
   useEffect(() => {
-    const fetchTorneo = async () => { // Peticion SHOW Torneo <-
+    const fetchTorneo = async () => { // Peticion SHOW Torneo
       try {
         const response = await axios.get(`http://localhost:5000/sporthub/api/torneo/${torneoName}/${torneoId}`);
         setTorneo(response.data); // Datos del torneo
+        setNotificaciones(response.data.notifications); // Establecer notificaciones del torneo
       } catch (err) {
         console.error('Error al cargar el torneo:', err);
       }
     };
 
-    const fetchPartidos = async () => { // Peticion INDEX Partidos del torneo <-
+    const fetchPartidos = async () => { // Peticion INDEX Partidos del torneo
       try {
         const response = await axios.get(`http://localhost:5000/sporthub/api/partidos/${torneoId}`);
         setPartidos(response.data); // Datos de los partidos
@@ -35,6 +36,27 @@ const ShowTorneo = () => {
     fetchTorneo(); // Llamada para obtener los detalles del torneo
     fetchPartidos(); // Llamada para obtener los partidos del torneo
   }, [torneoId, torneoName]);
+
+  // Función para manejar la aceptación o rechazo de notificaciones <-
+  const handleNotificacionResponse = async (notificacionId, status) => {
+    try {
+      // Enviar solicitud PUT para actualizar el estado de la notificación
+      await axios.put(`http://localhost:5000/sporthub/api/notificaciones/${notificacionId}`, {
+        status, // Puede ser 'accepted' o 'rejected'
+      });
+
+      // Actualizar el estado local de las notificaciones después de la respuesta
+      setNotificaciones((prevState) =>
+        prevState.map((notificacion) =>
+          notificacion.id === notificacionId
+            ? { ...notificacion, status }
+            : notificacion
+        )
+      );
+    } catch (err) {
+      console.error('Error al responder la notificación:', err);
+    }
+  };
 
   // Validar si la cantidad de equipos es válida
   const isValidEquipoCount = [4, 8, 16, 32].includes(torneo?.cantEquipo);
@@ -72,7 +94,7 @@ const ShowTorneo = () => {
     return localPts > visitantePts ? partido.equipos_partidos_equipoLocal_idToequipos.name : partido.equipos_partidos_equipoVisitante_idToequipos.name;
   };
 
-  const handleEliminar = async (partidoId) => { // Peticion DELETE Partido <-
+  const handleEliminar = async (partidoId) => { // Peticion DELETE Partido
     const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este partido?");
     
     if (confirmacion) { 
@@ -87,7 +109,7 @@ const ShowTorneo = () => {
     }
   };
 
-  const handleEditar = (partidoId) => { // Cambio de vista a Edit form <-
+  const handleEditar = (partidoId) => { // Cambio de vista a Edit form
     navigate(`/partido/${torneoName}/${torneoId}/${partidoId}/edit`);
   };
 
@@ -103,6 +125,30 @@ const ShowTorneo = () => {
         <p><strong>Cantidad de Equipos:</strong> {torneo.cantEquipo}</p>
         <p><Link to={`/torneo/${torneoName}/${torneoId}/edit`}>Editar Torneo</Link></p>
         <p><Link to={`/partido/create/${torneoName}/${torneoId}`}>Crear Partido</Link></p>
+      </div>
+
+      <h2>Notificaciones del Torneo</h2>
+      <div>
+        {notificaciones.length > 0 ? (
+          notificaciones.map((notificacion) => (
+            <div key={notificacion.id} style={{ marginBottom: '20px', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}>
+              <p><strong>Equipo:</strong> {notificacion.equipos.name}</p>
+              <p><strong>Usuario:</strong> {notificacion.users_notifications_user_idTousers.name}</p>
+              <p><strong>Email:</strong> {notificacion.users_notifications_user_idTousers.email}</p>
+              <p><strong>Status:</strong> {notificacion.status}</p>
+
+              {/* Botones para aceptar o denegar la notificación */}
+              {notificacion.status === 'pending' && (
+                <div>
+                  <button onClick={() => handleNotificacionResponse(notificacion.id, 'accepted')}>Aceptar</button>
+                  <button onClick={() => handleNotificacionResponse(notificacion.id, 'rejected')}>Denegar</button>
+                </div>
+              )}
+            </div>
+          ))
+        ) : (
+          <p>No hay notificaciones pendientes para este torneo.</p>
+        )}
       </div>
 
       <h2>Partidos del Torneo</h2>
