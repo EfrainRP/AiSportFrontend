@@ -10,12 +10,12 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 
 import VideoBackground from '../../components/videoBackground.jsx';
-import Layout from '../Layout.jsx'
+import LayoutBasic from '../LayoutBasic.jsx'
 import {orange} from '../../components/shared-theme/themePrimitives.jsx';
 
 export default function Terms(props){
   return (
-      <Layout>
+      <LayoutBasic>
               <VideoBackground myHeight={{ xs: '19.8vh', sm: '108vh' }}/>
                 <Container
                   sx={{
@@ -129,6 +129,6 @@ export default function Terms(props){
                         </Stack>
                     </Stack>
               </Container>
-      </Layout>
+      </LayoutBasic>
   );
 }

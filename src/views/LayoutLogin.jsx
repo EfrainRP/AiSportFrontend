@@ -2,13 +2,11 @@ import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 
-import HeaderAppBar from '../components/HeaderAppBar';
-import Footer from '../components/Footer';
+import SideMenu from '../components/Login/SideMenu.jsx';
 
 import AppTheme from '../components/shared-theme/AppTheme.jsx';
-import zIndex from '@mui/material/styles/zIndex.js';
 
-export default function Layout(props) {
+export default function LayoutBasic(props) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
@@ -25,11 +23,10 @@ export default function Layout(props) {
             zIndex: 1
           })}
         >
-          <HeaderAppBar />
+          <SideMenu />
           
           {props.children}{/*  Contenido principal */}
 
-          <Footer myP={{ xs: '5%', sm: '2%' } }/>
         </Box>
     </AppTheme>
   );

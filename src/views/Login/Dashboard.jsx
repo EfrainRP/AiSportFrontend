@@ -3,6 +3,7 @@ import React from 'react';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuth } from '../../services/AuthContext'; // Importa el AuthContext
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate
+import SideMenu from '../../components/Login/SideMenu';
 
 function Dashboard() {
   const { user, logout } = useAuth(); // Accede al usuario autenticado y al método logout
@@ -14,7 +15,8 @@ function Dashboard() {
   };
   console.log(user);
     return (
-    <div className="container mt-5">
+      <div className="container mt-5">
+      <SideMenu/>
       <div className="row justify-content-center">
         <div className="col-md-8">
           <div className="card">

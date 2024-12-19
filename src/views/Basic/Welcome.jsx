@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Link from '@mui/material/Link';
@@ -7,17 +6,17 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
 import VideoBackground from '../../components/videoBackground.jsx';
-import LogoCollection from '../../components/LogoCollection';
+import LogoCollection from '../../components/Basic/LogoCollection.jsx';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import EmailTwoToneIcon from '@mui/icons-material/EmailTwoTone';
-import Layout from './../Layout.jsx'
+import LayoutBasic from '../LayoutBasic.jsx'
 
 import {orange} from '../../components/shared-theme/themePrimitives.jsx';
 
 
 export default function Welcome(props) {
   return (
-      <Layout>
+      <LayoutBasic>
           <VideoBackground/>
             <Container
               sx={{
@@ -64,6 +63,6 @@ export default function Welcome(props) {
               </Stack>
           </Container>
         <LogoCollection myMb={{ xs: '1%', sm: '1%' }} myP={{ xs: '7%', sm: '2%' } }/>
-      </Layout>
+      </LayoutBasic>
   );
 }

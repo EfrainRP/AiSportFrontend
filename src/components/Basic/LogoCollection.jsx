@@ -3,14 +3,14 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { useTheme } from '@mui/system';
-import addidas_claro from '../assets/img/companies/addidas_claro.png'
-import addidas_oscuro from '../assets/img/companies/addidas_oscuro.png'
-import jordan_claro from '../assets/img/companies/jordan_claro.png'
-import jordan_oscuro from '../assets/img/companies/jordan_oscuro.png'
-import nike_claro from '../assets/img/companies/nike_claro.png'
-import nike_oscuro from '../assets/img/companies/nike_oscuro.png'
-import under_claro from '../assets/img/companies/under_claro.png'
-import under_oscuro from '../assets/img/companies/under_oscuro.png'
+import addidas_claro from '../../assets/img/companies/addidas_claro.png'
+import addidas_oscuro from '../../assets/img/companies/addidas_oscuro.png'
+import jordan_claro from '../../assets/img/companies/jordan_claro.png'
+import jordan_oscuro from '../../assets/img/companies/jordan_oscuro.png'
+import nike_claro from '../../assets/img/companies/nike_claro.png'
+import nike_oscuro from '../../assets/img/companies/nike_oscuro.png'
+import under_claro from '../../assets/img/companies/under_claro.png'
+import under_oscuro from '../../assets/img/companies/under_oscuro.png'
 
 const whiteLogos = [
   addidas_claro,

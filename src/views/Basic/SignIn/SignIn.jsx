@@ -20,12 +20,11 @@ import {
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword.jsx';
-import { GoogleIcon, FacebookIcon, SporthubIcon } from '../../../components/CustomIcons.jsx';
-import AppTheme from '../../../components/shared-theme/AppTheme.jsx';
+import { GoogleIcon, FacebookIcon, SporthubIcon } from '../../../components/Basic/CustomIcons.jsx';
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext.jsx'; // Importa el contexto
-import Layout from '../../Layout.jsx';
+import LayoutBasic from '../../LayoutBasic.jsx';
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
   // height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
@@ -184,7 +183,7 @@ export default function SignIn(props) {
   };
 
   return (
-    <Layout>
+    <LayoutBasic>
       <SignInContainer>
         <Card variant="outlined">
           <div style={{
@@ -335,6 +334,6 @@ export default function SignIn(props) {
           </Box>
         </Card>
       </SignInContainer>
-      </Layout>
+      </LayoutBasic>
   );
 }

@@ -5,12 +5,12 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import VideoBackground from '../../components/videoBackground.jsx';
-import Layout from '../Layout.jsx'
+import LayoutBasic from '../LayoutBasic.jsx'
 import {orange} from '../../components/shared-theme/themePrimitives.jsx';
 
 export default function Privacy(props){
   return (
-      <Layout>
+      <LayoutBasic>
         <VideoBackground myHeight={{ xs: '9.5rem', sm: '115%' }}/>
           <Container
             sx={{
@@ -105,6 +105,6 @@ export default function Privacy(props){
 
               </Stack>
         </Container>
-      </Layout>
+      </LayoutBasic>
   );
 }

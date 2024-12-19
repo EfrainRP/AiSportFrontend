@@ -17,8 +17,9 @@ import { Box,
   } from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-import { GoogleIcon, FacebookIcon, SporthubIcon } from '../../../components/CustomIcons.jsx';
-import Layout from '../../Layout.jsx'
+
+import { GoogleIcon, FacebookIcon, SporthubIcon } from '../../../components/Basic/CustomIcons.jsx';
+import LayoutBasic from '../../LayoutBasic.jsx'
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -218,7 +219,7 @@ export default function SignUp(props) {
   };
 
   return (
-    <Layout>
+    <LayoutBasic>
       <SignUpContainer>
         <Card variant="outlined">
         <div style={{
@@ -414,6 +415,6 @@ export default function SignUp(props) {
           </Box>
         </Card>
       </SignUpContainer>
-    </Layout>
+    </LayoutBasic>
   );
 }

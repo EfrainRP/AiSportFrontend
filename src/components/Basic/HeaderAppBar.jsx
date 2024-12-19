@@ -11,8 +11,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+
 import { SporthubIcon } from './CustomIcons.jsx';
-import ColorModeSelect from './shared-theme/ColorModeSelect.jsx';
+import ColorModeSelect from '../shared-theme/ColorModeSelect.jsx';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',

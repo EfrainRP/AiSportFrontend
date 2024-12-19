@@ -4,7 +4,7 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import LogoCollection from '../../components/LogoCollection';
+import LogoCollection from '../../components/Basic/LogoCollection.jsx';
 import IconButton from '@mui/material/IconButton';
 
 import InstagramIcon from '@mui/icons-material/Instagram';
@@ -14,13 +14,12 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import EmailTwoToneIcon from '@mui/icons-material/EmailTwoTone';
 
 import VideoBackground from '../../components/videoBackground.jsx';
-import Layout from '../Layout.jsx'
+import LayoutBasic from '../LayoutBasic.jsx'
 import {orange} from '../../components/shared-theme/themePrimitives.jsx';
-import video from '../../assets/media/welcomeVideo.webm'
 
 export default function AboutUs(props){
   return (
-      <Layout>
+      <LayoutBasic>
           <VideoBackground sx={{ xs: '10vh', sm: '31.5rem' }}/>
             <Container
               sx={{
@@ -102,6 +101,6 @@ export default function AboutUs(props){
               </Stack>
           </Container>
         <LogoCollection myMb={{ xs: '1%', sm: '1%' }} myP={{ xs: '7%', sm: '2%' } }/>
-      </Layout>
+      </LayoutBasic>
   );
 }

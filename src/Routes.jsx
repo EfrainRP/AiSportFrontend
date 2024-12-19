@@ -4,15 +4,15 @@ import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import { AuthProvider } from './services/AuthContext.jsx'; 
 import AuthRoute from './middleware/AuthRoute.jsx'; // Middlewares
 
-import Welcome from './views/Inicio/Welcome.jsx';
+import Welcome from './views/Basic/Welcome.jsx';
 
-import AboutUs from './views/Inicio/AboutUs.jsx';
-import Terms from './views/Inicio/Terms.jsx';
-import Privacy from './views/Inicio/Privacy.jsx';
+import AboutUs from './views/Basic/AboutUs.jsx';
+import Terms from './views/Basic/Terms.jsx';
+import Privacy from './views/Basic/Privacy.jsx';
 
-import SignUp from './views/Inicio/SignUp/SignUp.jsx';
-import SignIn from "./views/Inicio/SignIn/SignIn.jsx";
-import Dashboard from "./views/Dashboard/Dashboard.jsx";
+import SignUp from './views/Basic/SignUp/SignUp.jsx';
+import SignIn from "./views/Basic/SignIn/SignIn.jsx";
+import Dashboard from "./views/Login/Dashboard.jsx";
 
 export default function MyRoute(){
     return (
@@ -24,6 +24,7 @@ export default function MyRoute(){
             <Route path="/aboutus" element={<AboutUs/>}/>
             <Route path="/terms" element={<Terms/>}/>
             <Route path="/privacy" element={<Privacy/>}/>
+            <Route path="/dashboard" element={<Dashboard/>}/>
 
             {/* Rutas que no deben ser accesibles para usuarios autenticados */}
             <Route 
