@@ -27,7 +27,7 @@ const ProfileShow = () => {
         <div className="profile">
             <h1>Profile</h1>
             <div>
-                <img src={`http://localhost:5000/images/${profile.image}`} alt="User Profile" />
+                <img src={`http://localhost:5000/sporthub/api/utils/uploads/${profile.image}`} alt="Perfil" />
                 <p><strong>Name:</strong> {profile.name} {profile.fsurname} {profile.msurname}</p>
                 <p><strong>Email:</strong> {profile.email}</p>
                 <p><strong>Gender:</strong> {profile.gender}</p>

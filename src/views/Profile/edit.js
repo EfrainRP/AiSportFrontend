@@ -53,10 +53,10 @@ const ProfileEdit = () => {
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
-        if (name === 'image') {
+        if (files && files[0]) {
             setProfile((prevState) => ({
                 ...prevState,
-                [name]: files[0] // Se guarda el archivo img <-
+                [name]: files[0] // Guarda el archivo en el estado
             }));
         } else {
             setProfile((prevState) => ({
@@ -68,38 +68,49 @@ const ProfileEdit = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
+    
         // Validar que la nueva contraseña y la confirmación coincidan
         if (profile.newPassword !== profile.confirmPassword) {
             alert('La nueva contraseña y la confirmación no coinciden.');
             return;
         }
-
-        const dataToSend = { ...profile };
-        // Si el usuario no proporciona una nueva contraseña, no se envia al backend
-        if (!profile.newPassword) {
-            delete dataToSend.newPassword;
-            delete dataToSend.confirmPassword;
-        }
-
-        // Envia los datos actualizados al backend
+    
+        // Crea un objeto FormData
+        const formData = new FormData();
+        formData.append('name', profile.name);
+        formData.append('fsurname', profile.fsurname);
+        formData.append('msurname', profile.msurname);
+        formData.append('email', profile.email);
+        formData.append('gender', profile.gender);
+        formData.append('birthdate', profile.birthdate);
+        formData.append('nickname', profile.nickname);
+        if (profile.currentPassword) formData.append('currentPassword', profile.currentPassword);
+        if (profile.newPassword) formData.append('newPassword', profile.newPassword);
+        if (profile.confirmPassword) formData.append('confirmPassword', profile.confirmPassword);
+        if (profile.image) formData.append('image', profile.image); // Adjunta el archivo de imagen
+    
+        // Enviar los datos al backend
         axios
-            .put(`http://localhost:5000/sporthub/api/perfil/${user.userId}`, dataToSend)
+            .put(`http://localhost:5000/sporthub/api/perfil/${user.userId}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            })
             .then((response) => {
                 setSuccessMessage('¡Perfil actualizado con éxito!');
-                // Vista de perfil después de actualizar
+                // Redirige al perfil después de actualizar
                 setTimeout(() => navigate(`/dashboard/perfil/${user.userName}`), 2000);
             })
             .catch((err) => {
+                console.log("ERROR",err);
                 if (err.response && err.response.data && err.response.data.field) {
                     const { field, message } = err.response.data;
                     setErrors({ [field]: message });
-                    console.log("Aqui fue el error",field,message);
-                  } else {
-                    setGeneralError('Error al actualizar el perfil.', err);
-                  }
+                    console.error("Error de campo:", field, message);
+                } else {
+                    setGeneralError('Error al actualizar el perfil.');
+                }
             });
     };
+    
 
     if (loading) {
         return <div>Loading...</div>; // Mostrar mensaje de carga
@@ -187,7 +198,7 @@ const ProfileEdit = () => {
                     <input
                         type="file"
                         name="image"
-                        onChange={(e) => handleChange({ target: { name: 'image', value: e.target.files[0].name } })}
+                        onChange={(e) => handleChange({ target: { name: 'image', value: e.target.files[0] } })}
                     />
                     {errors.image && <p className="error">{errors.image}</p>} {/* Mostrar error si existe */}
                 </div>
