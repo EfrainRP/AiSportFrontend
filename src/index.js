@@ -41,6 +41,9 @@ import Estadisticas from './views/Estadisticas/index'; // Estadisticas Index <-
 import EstadisticasEquipo from './views/Estadisticas/equipo'; // Estadisticas Display <-
 import EstadisticasTorneo from './views/Estadisticas/torneo'; // Estadisticas Show <-
 //  -------------------------------------------------------------
+//  VIEWS IA (SERVER) 
+import AI from './views/AI/index'; // AI Index <-
+import AIShow from './views/AI/show'; // AI Show <-
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -200,7 +203,7 @@ root.render(
           />
           <Route
             path="/torneo/:torneoName/:torneoId/estadisticas" // Ruta SHOW (Estadisticas de un Torneo)
-            element={
+            element={ // Protegida Mediante Police al pertenecer a "Torneos" de un Usuario <-
               <AuthRoute requireTorneoOwnership={true}> 
                 <EstadisticasTorneo />
               </AuthRoute>
@@ -208,9 +211,25 @@ root.render(
           />
           <Route
             path="/equipo/:equipoName/:equipoId/estadisticas" // Ruta DISPLAY (Estadisticas de un Equipo)
-            element={
+            element={ // No protegida, debido a que no requiere paso por un CRUD <-
               <AuthRoute > 
                 <EstadisticasEquipo />
+              </AuthRoute>
+            }
+          />
+          <Route //  < ------------- VIEWS SERVER IA ------------------------------------ >  
+            path="/dashboard/entrenamiento/IA" // Ruta INDEX <- (Antes de confirmación <-)
+            element={
+              <AuthRoute > 
+                <AI />
+              </AuthRoute>
+            }
+          />
+          <Route 
+            path="/dashboard/entrenamiento/IA/:equipoId/:equipoName" // Ruta SHOW <- (Confirmación del Server <-)
+            element={ //  Entrenamiento de IA Estadisticas personalizado por equipo <- 
+              <AuthRoute > 
+                <AIShow />
               </AuthRoute>
             }
           />

@@ -90,6 +90,10 @@ function Dashboard() {
                 <p>
                   <Link to={`/dashboard/estadisticas/`}>Estadisticas de Equipos SportHub</Link>
                 </p>
+                <p>
+                  Pon a prueba tú rendimiento individual en como basquetbolista en SportHub
+                  <Link to={`/dashboard/entrenamiento/IA`}> Entrenamiento Individual con IA</Link>
+                </p>
                 <button className="btn btn-primary">Perfil</button>
                 <button className="btn btn-secondary ms-2" onClick={handleLogout}>
                   Cerrar Sesión

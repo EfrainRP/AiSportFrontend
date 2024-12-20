@@ -34,7 +34,7 @@ const EstadisticasEquipo = () => {
       try {
         // Llama al endpoint del controlador
         const response = await axios.get( // Estadisticas individuales y suma total del equipo <-
-          `http://localhost:5000/sporthub/api/estadisticas/equipo/${equipoId}`
+          `http://localhost:5000/sporthub/api/estadisticas/equipo/${equipoId}/${equipoName}`
         );
         setEstadisticas(response.data.data); // Guarda las estadísticas en el estado
         setLoading(false); // Desactiva el indicador de carga

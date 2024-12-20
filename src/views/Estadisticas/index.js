@@ -49,6 +49,7 @@ const Estadisticas = () => {
             {estadisticas.map((equipo) => (
               <tr key={equipo.equipo_id}>
                 <td>{equipo.name}</td>
+                <td>{equipo.equipo_id}</td>
                 <p></p>
                 <Link to={`/equipo/${equipo.name}/${equipo.equipo_id}/estadisticas`}>Estadisticas</Link>
               </tr>
