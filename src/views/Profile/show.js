@@ -4,11 +4,11 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 const ProfileShow = () => {
-    const { user } = useAuth(); // Obtenemos el usuario autenticado
+    const { user } = useAuth(); // Obtiene el usuario autenticado
     const [profile, setProfile] = useState(null); // Estado para almacenar los datos del perfil
 
     useEffect(() => {
-        const fetchUser = async () => { // Peticion SHOW Torneo <-
+        const fetchUser = async () => { // Peticion SHOW Perfil <-
           try {
             const response = await axios.get(`http://localhost:5000/sporthub/api/perfil/${user.userId}`);
             setProfile(response.data); // Datos del user
@@ -16,11 +16,11 @@ const ProfileShow = () => {
             console.error('Error al cargar los datos de usuario:', err);
           }
         };
-        fetchUser(); // Llamada para obtener los detalles del user
+        fetchUser(); // Llamada para obtener los detalles del User
       }, [user.userId, user.userName]);
 
     if (!profile) {
-        return <div>Loading... </div>; // Mostrar un mensaje de carga mientras se obtienen los datos
+        return <div>Loading... </div>; // Mostrar un mensaje de carga en caso de que falle el servidor
     }
 
     return (
@@ -28,11 +28,11 @@ const ProfileShow = () => {
             <h1>Profile</h1>
             <div>
                 <img src={`http://localhost:5000/images/${profile.image}`} alt="User Profile" />
-                <p>Name: {profile.name} {profile.fsurname} {profile.msurname}</p>
-                <p>Email: {profile.email}</p>
-                <p>Gender: {profile.gender}</p>
-                <p>Birthdate: {new Date(profile.birthdate).toLocaleDateString()}</p>
-                <p>Nickname: {profile.nickname || 'No nickname set'}</p>
+                <p><strong>Name:</strong> {profile.name} {profile.fsurname} {profile.msurname}</p>
+                <p><strong>Email:</strong> {profile.email}</p>
+                <p><strong>Gender:</strong> {profile.gender}</p>
+                <p><strong>Birthdate:</strong> {new Date(profile.birthdate).toISOString().split('T')[0]}</p>
+                <p><strong>Nickname:</strong> {profile.nickname || 'No nickname set'}</p>
                 <p><Link to={`/dashboard/perfil/${user.userName}/edit`}>Editar Perfil</Link></p>
 
                 {/* Mostrar equipos, notificaciones y torneos si existen */}

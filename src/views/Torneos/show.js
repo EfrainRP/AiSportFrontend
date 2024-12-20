@@ -58,13 +58,13 @@ const ShowTorneo = () => {
     }
   };
 
-  // Validar si la cantidad de equipos es válida
+  // Validar si la cantidad de equipos del torneo es del rango válido (Front)
   const isValidEquipoCount = [4, 8, 16, 32].includes(torneo?.cantEquipo);
 
-  // Validar la cantidad de partidos (debe ser torneo.cantEquipo - 1)
+  // Validar la cantidad de partidos (Front) (debe ser torneo.cantEquipo - 1)
   const isValidPartidosCount = partidos.length === torneo?.cantEquipo - 1;
 
-  // Organizar los partidos en brackets
+  // Organizar los partidos en brackets (Front)
   const generateBracket = (partidos) => {
     let rounds = [];
     let roundSize = torneo.cantEquipo / 2;
@@ -75,11 +75,13 @@ const ShowTorneo = () => {
       roundPartidos = roundPartidos.slice(roundSize);
       roundSize /= 2;
     }
-
-    return rounds;
+    {/* Retorna la cantidad de rondas que tendra cada torneo */}
+    return rounds;  
+    {/* (Dividen en mitades al torneo, Ex: si cantEquipo = 8, Ronda 1 = 4, Ronda 2 = 2, Ronda 3 = 1) */}
+    {/* donde {4,2,1} indican la cantidad de partidos en esa ronda <- */}
   };
 
-  // Si el torneo no está cargado, mostrar un mensaje de carga
+  // Si el torneo no está cargado, mostrar un mensaje de carga (respuesta no dada en back)
   if (!torneo) {
     return <div>Cargando...</div>;
   }
@@ -87,7 +89,7 @@ const ShowTorneo = () => {
   // Generar los brackets solo si es un torneo válido
   const brackets = isValidEquipoCount ? generateBracket(partidos) : [];
 
-  // Calcular al ganador del torneo basado en los resultados de los partidos
+  // Calcular al ganador del torneo del ultimo partido basado en sus resultados "res" <-
   const getWinner = (partido) => {
     const localPts = partido.resLocal;
     const visitantePts = partido.resVisitante;
@@ -100,7 +102,7 @@ const ShowTorneo = () => {
     if (confirmacion) { 
       try {  
         await axios.delete(`http://localhost:5000/sporthub/api/partido/${torneoId}/${partidoId}`);
-        setPartidos(partidos.filter(partido => partido.id !== partidoId)); // Eliminar partido de la lista
+        setPartidos(partidos.filter(partido => partido.id !== partidoId)); // Eliminar partido de la lista y actualizar el front <-
       } catch (err) {
         console.error('Error al eliminar el partido:', err);
       }
@@ -125,6 +127,7 @@ const ShowTorneo = () => {
         <p><strong>Cantidad de Equipos:</strong> {torneo.cantEquipo}</p>
         <p><Link to={`/torneo/${torneoName}/${torneoId}/edit`}>Editar Torneo</Link></p>
         <p><Link to={`/partido/create/${torneoName}/${torneoId}`}>Crear Partido</Link></p>
+        <p><Link to={`/torneo/${torneoName}/${torneoId}/estadisticas`}>Ver estadisticas del Torneo</Link></p>
       </div>
 
       <h2>Notificaciones del Torneo</h2>
@@ -153,9 +156,13 @@ const ShowTorneo = () => {
 
       <h2>Partidos del Torneo</h2>
       <div>
-        {isValidEquipoCount ? (
-          brackets.map((round, index) => (
-            <div key={index}>
+        {isValidEquipoCount ? ( // Si es un torneo valido (4,8,16,32) genera los brackets <-
+         // Brakets contiene los partidos como: brackets = [
+         // [{ partido1, partido2 }, { partido3, partido4 }],  // Ronda 1
+          //[{ partido5, partido6 }],  // Ronda 2
+          //[{ partido7 }]  // Ronda 3
+          brackets.map((round, index) => ( // "Map" itera en el array, y "Round" es un array de "partidos" por ronda
+            <div key={index}>     {/* Index indica la Ronda actual <- donde "key" actualiza el DOM (Interfaz de programacion) dinamicamente */}
               <h3>Ronda {index + 1}</h3>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 {round.map((partido, partidoIndex) => (
@@ -188,7 +195,7 @@ const ShowTorneo = () => {
           <p>No hay partidos programados para este torneo o la cantidad de equipos no es válida.</p>
         )}
 
-        {/* Mostrar ganador final si todos los partidos están completos */}
+        {/* Mostrar ganador final solo si todos los partidos están completos, (se llego a cantEquipo-1)*/}
         {isValidPartidosCount && partidos.length > 0 && (
           <div>
             <h3>Ganador Final del Torneo</h3>

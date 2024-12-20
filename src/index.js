@@ -36,6 +36,11 @@ import PartidoCreate from './views/Partidos/create'; // Partidos create <-
 import PerfilEdit from './views/Profile/edit'; // Perfil edit <-
 import PerfilShow from './views/Profile/show'; // Perfil show <-
 //  -------------------------------------------------------------
+//  VIEWS ESTADISTICAS 
+import Estadisticas from './views/Estadisticas/index'; // Estadisticas Index <-
+import EstadisticasEquipo from './views/Estadisticas/equipo'; // Estadisticas Display <-
+import EstadisticasTorneo from './views/Estadisticas/torneo'; // Estadisticas Show <-
+//  -------------------------------------------------------------
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -154,7 +159,7 @@ root.render(
             }
           />
           <Route // < ------------- CRUD PARTIDOS ------------------------------------ > 
-            path="/partido/:torneoName/:torneoId/:partidoId/edit" // Ruta edit protegida mediante Police <-
+            path="/partido/:torneoName/:torneoId/:partidoId/edit" // Ruta EDIT protegida mediante Police <-
             element={
               <AuthRoute requireTorneoOwnership={true}> 
                 <PartidoEdit />
@@ -162,7 +167,7 @@ root.render(
             }
           />
           <Route
-            path="/partido/create/:torneoName/:torneoId" // Ruta create protegida mediante Police <-
+            path="/partido/create/:torneoName/:torneoId" // Ruta CREATE protegida mediante Police <-
             element={
               <AuthRoute requireTorneoOwnership={true}> 
                 <PartidoCreate />
@@ -182,6 +187,30 @@ root.render(
             element={
               <AuthRoute > 
                 <PerfilEdit />
+              </AuthRoute>
+            }
+          />
+          <Route //  < ------------- VIEWS ESTADISTICAS ------------------------------------ >  
+            path="/dashboard/estadisticas" // Ruta INDEX (Equipos con estadisticas <-)
+            element={
+              <AuthRoute > 
+                <Estadisticas />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/torneo/:torneoName/:torneoId/estadisticas" // Ruta SHOW (Estadisticas de un Torneo)
+            element={
+              <AuthRoute requireTorneoOwnership={true}> 
+                <EstadisticasTorneo />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/equipo/:equipoName/:equipoId/estadisticas" // Ruta DISPLAY (Estadisticas de un Equipo)
+            element={
+              <AuthRoute > 
+                <EstadisticasEquipo />
               </AuthRoute>
             }
           />

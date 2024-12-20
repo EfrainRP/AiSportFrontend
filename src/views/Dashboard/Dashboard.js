@@ -87,6 +87,9 @@ function Dashboard() {
                 <p>
                   <Link to={`/dashboard/perfil/${user.userName}`}>Perfil</Link>
                 </p>
+                <p>
+                  <Link to={`/dashboard/estadisticas/`}>Estadisticas de Equipos SportHub</Link>
+                </p>
                 <button className="btn btn-primary">Perfil</button>
                 <button className="btn btn-secondary ms-2" onClick={handleLogout}>
                   Cerrar Sesión
