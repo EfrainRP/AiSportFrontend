@@ -22,7 +22,7 @@ const Equipos = () => {
 
   return (
     <div>
-      <h1>Equipos Relacionados</h1>
+      <h1>¡Bienvenido a tus Equipos {user.userName}!</h1>
       <h2><Link to="/equipo/create">Crear Equipo</Link></h2>
       {equipos.length > 0 ? (
         <ul>

@@ -8,6 +8,7 @@ const EditEquipo = () => {
   const { equipoName } = useParams(); //Obtiene el Nombre del equipo por URL
   const { equipoId } = useParams();   //Obtiene el ID del equipo por URL
   const { user } = useAuth(); // Usuario autenticado
+  const [file, setFile] = useState(null);
   const [equipo, setEquipo] = useState({
     name: '',
     user_id: user?.userId || '',
@@ -47,6 +48,11 @@ const EditEquipo = () => {
     setEquipo((prev) => ({ ...prev, miembros: newMiembros }));
   };
 
+  const handleImageChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+  };
+
   const handleAddMember = () => {
     setEquipo((prev) => ({ ...prev, miembros: [...prev.miembros, { user_miembro: '', id: Date.now() }] }));
   };
@@ -63,13 +69,39 @@ const EditEquipo = () => {
     setFieldErrors({});
     setGeneralError('');
     setSuccessMessage('');
-
+  
+    const formData = new FormData();
+    
     try {
-      // Filtrar miembros vacíos antes de enviar el formulario
+      // Filtra los miembros vacíos antes de enviar el formulario
       const miembrosValidos = equipo.miembros.filter(member => member.user_miembro.trim() !== '');
       const equipoConMiembros = { ...equipo, miembros: miembrosValidos };
-      console.log("equipoName",equipoName); // Verifica qué devuelve la API
-      await axios.put(`http://localhost:5000/sporthub/api/equipo/${equipoId}`, equipoConMiembros);
+  
+      // Agrega los datos del equipo a FormData
+      formData.append('name', equipoConMiembros.name);
+      formData.append('user_id', equipoConMiembros.user_id);
+  
+      // Agrega los miembros a ser enviados
+      equipoConMiembros.miembros.forEach((miembro, index) => {
+        formData.append(`miembros[${index}][user_miembro]`, miembro.user_miembro);
+      });
+  
+      // Agrega la imagen si se cargo
+      if (file) {
+        formData.append('image', file);
+      }
+  
+      // Realizar la solicitud PUT con FormData <-
+      const response = await axios.put(
+        `http://localhost:5000/sporthub/api/equipo/${equipoId}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data', // Se envia FormData para la carga de la IMG <-
+          },
+        }
+      );
+  
       setSuccessMessage('Equipo actualizado con éxito!');
       setTimeout(() => navigate(`/equipo/${equipo.name}/${equipoId}`), 2000);
     } catch (err) {
@@ -85,6 +117,7 @@ const EditEquipo = () => {
       }
     }
   };
+  
 
   const handleDelete = async () => {
     const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este equipo?');
@@ -102,7 +135,7 @@ const EditEquipo = () => {
             setGeneralError(message);
           }
         } else {
-          setGeneralError('Error inesperado al actualizar el equipo.');
+          setGeneralError('Error inesperado al actualizar el equipo.',err);
         }
       }
     }
@@ -114,7 +147,10 @@ const EditEquipo = () => {
 
       {generalError && <p className="error">{generalError}</p>}
       {successMessage && <p className="success">{successMessage}</p>}
-
+      <img 
+          src={`http://localhost:5000/sporthub/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
+          alt="Perfil" 
+      />
       <form onSubmit={handleSubmit}>
         <div>
           <label>Nombre del equipo:</label>
@@ -143,10 +179,21 @@ const EditEquipo = () => {
               </button>
             </div>
           ))}
+          <div>
+                <label>Imagen del equipo:</label>
+                <input
+                  type="file"
+                  name="image"
+                  onChange={handleImageChange}
+                  accept="image/*"
+                />
+          </div>
+          {fieldErrors.image && <span className="error">{fieldErrors.image}</span>}
           <button type="button" onClick={handleAddMember}>
             Añadir miembro
           </button>
         </div>
+        
 
         <button type="submit">Guardar Cambios</button>
       </form>

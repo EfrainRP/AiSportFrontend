@@ -22,7 +22,7 @@ const Torneos = () => {
 
   return (
     <div>
-      <h1>Torneos Relacionados</h1>
+      <h1>¡Bienvenido a tus Torneos {user.userName}!</h1>
       <h2><Link to="/torneo/create">Crear Torneo</Link></h2>
       {torneos.length > 0 ? (
         <ul>

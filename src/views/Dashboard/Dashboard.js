@@ -146,6 +146,11 @@ function Dashboard() {
                         <p>
                           Tú solicitud del equipo <strong>{notificacion.equipos?.name}</strong> fue <strong>{notificacion.status}</strong> para el torneo <strong>{notificacion.torneos?.name}.</strong>
                         </p>
+                        <img 
+                          src={`http://localhost:5000/sporthub/api/utils/uploads/${notificacion.equipos.image !== 'logoEquipo.jpg' ? notificacion.equipos.image : 'logoEquipo.jpg'}`} 
+                          alt="Perfil" 
+                          style={{ width: '250px', height: '100px' }} // Tamaño IMG
+                        />
                         <p>
                           Para más información, ponte en contacto con el organizador <strong>{notificacion.torneos?.users?.name} ({notificacion.torneos?.users?.email})</strong>
                         </p>

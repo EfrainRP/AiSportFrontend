@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const EquipoDashboard = () => {
   const { equipoName, equipoId } = useParams();
@@ -34,6 +35,10 @@ const EquipoDashboard = () => {
       <h1>Detalles del Equipo</h1>
       <div>
         <h2>{equipoName}</h2>
+        <img 
+          src={`http://localhost:5000/sporthub/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
+          alt="Perfil" 
+        />
         <p><strong>Organizador del Equipo:</strong> {equipo.users?.name || 'Desconocido'}</p>
         <h3>Integrantes:</h3>
         {equipo?.miembro_equipos?.length > 0 ? (
@@ -45,6 +50,7 @@ const EquipoDashboard = () => {
         ) : (
           <p>No hay integrantes aún unidos a este equipo.</p>
         )}
+         <Link to={`/equipo/${equipo.name}/${equipoId}/estadisticas`}>Estadisticas</Link>
       </div>
     </div>
   );

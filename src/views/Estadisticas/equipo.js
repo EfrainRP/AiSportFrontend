@@ -39,7 +39,7 @@ const EstadisticasEquipo = () => {
         setEstadisticas(response.data.data); // Guarda las estadísticas en el estado
         setLoading(false); // Desactiva el indicador de carga
       } catch (err) {
-        setError('Error al cargar las estadísticas del equipo.');
+        setError('Error al cargar las estadísticas del equipo, es posible que aún no haya jugado un partido para tener estadísticas.');
         setLoading(false);
       }
     };

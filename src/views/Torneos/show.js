@@ -178,8 +178,19 @@ const ShowTorneo = () => {
                   >
                     <p><strong>Fecha del Partido:</strong> {new Date(partido.fechaPartido).toISOString().split('T')[0]}</p>
                     <p><strong>Hora:</strong> {new Date(partido.horaPartido).toLocaleTimeString()}</p>
+                    <img 
+                      src={`http://localhost:5000/sporthub/api/utils/uploads/${partido.equipos_partidos_equipoLocal_idToequipos.image !== 'logoEquipo.jpg' ? partido.equipos_partidos_equipoLocal_idToequipos.image : 'logoEquipo.jpg'}`} 
+                      alt="Perfil" 
+                      style={{ width: '120px', height: '50px' }} // Size IMG
+                    />
                     <p><strong>Equipo Local:</strong> {partido.equipos_partidos_equipoLocal_idToequipos.name}</p>
+                    <img 
+                      src={`http://localhost:5000/sporthub/api/utils/uploads/${partido.equipos_partidos_equipoVisitante_idToequipos.image !== 'logoEquipo.jpg' ? partido.equipos_partidos_equipoVisitante_idToequipos.image : 'logoEquipo.jpg'}`} 
+                      alt="Perfil" 
+                      style={{ width: '120px', height: '50px' }} // Size IMG
+                    />
                     <p><strong>Equipo Visitante:</strong> {partido.equipos_partidos_equipoVisitante_idToequipos.name}</p>
+          
                     <p><strong>Resultado:</strong> {partido.resLocal} - {partido.resVisitante}</p>
                     {/* Botones de Editar y Eliminar */}
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>

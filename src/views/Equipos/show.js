@@ -33,9 +33,13 @@ const ShowEquipo = () => {
 
   return (
     <div>
-      <h1>Detalles del Equipo con ID {equipoId}</h1>
+      <h1>Detalles del Equipo {equipoName}</h1>
       <div>
-        <h2>{equipoName}</h2>
+        <img 
+          src={`http://localhost:5000/sporthub/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
+          alt="Perfil" 
+        />
+
         <p><strong>Creador:</strong> {equipo.users?.name || 'Desconocido'}</p>
         <h3>Miembros:</h3>
         {equipo?.miembro_equipos?.length > 0 ? (
