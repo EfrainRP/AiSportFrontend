@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 
 // CSS del switch con sus iconos y estilos
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
-  width: 62,
+  width:56,
   height: 34,
   padding: 7,
   '& .MuiSwitch-switchBase': {
@@ -61,7 +61,10 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-export default function ColorModeSelect(props) {
+export default function ColorModeSelect(props = {...props, transform:{xs:'scale(0.95)', md:'scale(1.1)'}}) {
+  // const transform = props.transform? props.transform : {xs:'scale(0.95)', md:'scale(1.1)'};
+  // const marginleft = props.marginleft? props.marginleft : {xs:0, md:1};
+
   const { mode, setMode, systemMode } = useColorScheme('system'); // Parametros a usar: modos, modificar modo, modo del sistema
   const [checked, setChecked] = React.useState(systemMode == 'dark'); // Para el dinamismo del switch de los modos
 
@@ -87,15 +90,18 @@ export default function ColorModeSelect(props) {
     <Box
       sx={{
         display: 'flex',
-        justifyContent: 'flex-center',
+        justifyContent: 'center',
+        alignItems:'center',
       }}
       {...props}
     >
     <FormControlLabel
       checked={checked}
       onChange={handlePage}
-      control={<MaterialUISwitch sx={{ m: 0.5 }} />}
-    />
+      control={<MaterialUISwitch sx={{
+        transform: props.transform, // Escala el tamaño del switch
+      }}/>}
+      sx={{paddingLeft:2}}/>
     </Box>
   );
 }
