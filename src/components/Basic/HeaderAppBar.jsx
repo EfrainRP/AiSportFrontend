@@ -12,7 +12,7 @@ import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
-import { SporthubIcon } from './CustomIcons.jsx';
+import { SporthubIcon } from '../CustomIcons.jsx';
 import ColorModeSelect from '../shared-theme/ColorModeSelect.jsx';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -51,8 +51,8 @@ export default function HeaderAppBar() {
     >
       <Container maxWidth="lg">
         <StyledToolbar variant="dense" disableGutters>
-          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, gap: 2}}>
-            <SporthubIcon/>
+          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, gap: 2 }}>
+            <SporthubIcon />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <Button href='/' variant="text" color="info" size="medium">
                 SPORTHUB
@@ -75,12 +75,12 @@ export default function HeaderAppBar() {
             <Button href='/signup' color="primary" variant="contained" size="small">
               Sign up
             </Button>
-            <ColorModeSelect />
+            <ColorModeSelect width={'auto'}/>
           </Box>
 
           {/* Parte responsiva para pantalla pequeña */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
-            <ColorModeSelect size="small" />
+            <ColorModeSelect />
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
               <MenuIcon />
             </IconButton>
@@ -111,7 +111,7 @@ export default function HeaderAppBar() {
                   </Button>
                 </MenuItem>
                 <MenuItem>
-                  <Button href='/aboutus'  variant="text" color="info" size="small">
+                  <Button href='/aboutus' variant="text" color="info" size="small">
                     About us
                   </Button>
                 </MenuItem>
