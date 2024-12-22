@@ -191,7 +191,7 @@ export default function SideMenu() {
     //   </Toolbar>
     // </AppBar>
     //<Box position="fixed" sx={{ display: { xs: 'flex', md: 'flex' }, gap: 1 }}>
-      <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent" open={open} sx={{display: 'block '}}>
         <DrawerHeader>
           <Box sx={open? { display: 'flex', flexGrow: 0.1, alignItems: 'center',} : { display:'none'}}>
             <SporthubIcon fontSize={{md:35,xs:40}}/>
@@ -219,6 +219,8 @@ export default function SideMenu() {
               ]}
             >
               <ListItemButton
+                title={data.name}
+                alt={data.url}
                 href={data.url}
                 selected={selectedIndex === index}
                 onClick={(event) => handleListItemClick(event, index)}
