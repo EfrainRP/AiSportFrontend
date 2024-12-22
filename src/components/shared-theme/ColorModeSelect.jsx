@@ -61,7 +61,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-export default function ColorModeSelect(props = {...props, transform:{xs:'scale(0.95)', md:'scale(1.1)'}}) {
+export default function ColorModeSelect(props = {...props, transform:{xs:'scale(0.95)', md:'scale(1.1)'}, ml: 'auto'}) {
   // const transform = props.transform? props.transform : {xs:'scale(0.95)', md:'scale(1.1)'};
   // const marginleft = props.marginleft? props.marginleft : {xs:0, md:1};
 
@@ -101,7 +101,7 @@ export default function ColorModeSelect(props = {...props, transform:{xs:'scale(
       control={<MaterialUISwitch sx={{
         transform: props.transform, // Escala el tamaño del switch
       }}/>}
-      sx={{paddingLeft:2}}/>
+      sx={{paddingLeft:props.ml}}/>
     </Box>
   );
 }

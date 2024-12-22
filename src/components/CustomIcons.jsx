@@ -3,9 +3,9 @@ import SvgIcon from '@mui/material/SvgIcon';
 import { orange } from '@mui/material/colors';
 import SportsBasketballTwoToneIcon from '@mui/icons-material/SportsBasketballTwoTone';
 
-export function SporthubIcon() {
+export function SporthubIcon(prop) {
   return (
-    <SportsBasketballTwoToneIcon sx={{ color: orange[500], fontSize: 50 }}/>
+    <SportsBasketballTwoToneIcon sx={{ color: orange[500], fontSize: prop.fontSize }}/>
   );
 }
 
