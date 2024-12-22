@@ -20,6 +20,7 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import Avatar from '@mui/material/Avatar';
 import { SporthubIcon } from '../CustomIcons.jsx';
+import { useAuth } from '../../services/AuthContext.jsx'; // Importa el AuthContext
 
 import ColorModeSelect from '../shared-theme/ColorModeSelect.jsx';
 
@@ -117,16 +118,18 @@ function stringToColor(string) {
   return color;
 }
 
-function stringAvatar(name) { // Funcion segun el nombre del usuario para el color del avatar
+function stringAvatar(name, sx) { // Funcion segun el nombre del usuario para el color del avatar
   return {
     sx: {
       bgcolor: stringToColor(name),
+      ...sx,
     },
-    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+    children: `${name[0]}`,
   };
 }
 
 export default function SideMenu(props) {
+  const user = useAuth().user || 'User'; // Accede al usuario autenticado, de la funcion obtenemos su valor especifico, validado si esta vacio el valor
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
@@ -225,11 +228,11 @@ export default function SideMenu(props) {
                     minWidth: 0,
                   },
                 ]}>
-                <Avatar {...stringAvatar('Kent Dodds')} sx={{width: 40, height: 40, fontSize:18}}/>
+                <Avatar {...stringAvatar(user, {width: 30, height: 30, fontSize:15})} />
               </ListItemIcon>
               <ListItemText
                 primary={'Profile'}
-                sx={[open? { opacity: 1,} : { opacity: 0,}, ]}
+                sx={[open? { opacity: 1,} : { opacity: 0, }, ]}
               />
             </ListItemButton>
             </ListItem>
