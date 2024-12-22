@@ -41,10 +41,9 @@ const drawerWidth = 215;
 const dataSideMenu = [ //TO DO: checar las urls
   {name: 'Home', img: <HomeIcon/>, url: '/dashboard' },
   {name: 'Tournaments', img: <EmojiEventsIcon/>, url: '/torneos' },
-  {name: 'Equipos', img: <PeopleAltIcon/>, url: '#' },
+  {name: 'Teams', img: <PeopleAltIcon/>, url: '#' },
   {name: 'Search', img: <SearchIcon/>, url: '#' },
-  {name: 'Notifications', img: <ChatIcon/>, url: '#' },
-  {name: 'Profile', img: <Avatar {...stringAvatar('Kent Dodds')} sx={{width: 30, height: 30, fontSize:18}}/>, url: '#' } // TO DO: ingresar el name del usuario
+  {name: 'Notifications', img: <ChatIcon/>, url: '#' }
 ];
 
 const openedMixin = (theme) => ({
@@ -164,10 +163,7 @@ export default function SideMenu(props) {
         >
           {dataSideMenu.map((data, index) => (
             <ListItem key={data.name} disablePadding 
-              sx={[
-                { display: 'block' }, 
-                index==5? { mt: 'auto', alignItems: 'start'} : {} // Si es el ultimo elemento
-              ]}
+              sx={{ display: 'block' }}
             >
               <ListItemButton
                 title={data.name}
@@ -183,7 +179,7 @@ export default function SideMenu(props) {
                 ]}>
                 <ListItemIcon
                   sx={[{
-                    minWidth: 0,
+                      minWidth: 0,
                       justifyContent: 'center',
                       ml: 1,
                     },
@@ -198,16 +194,46 @@ export default function SideMenu(props) {
               <Divider />
             </ListItem>
           ))}
-        </List>
-        <ColorModeSelect 
-          transform={{xs:'scale(0.95)', md:'scale(0.75)'}} 
-          sx={{
-              display: 'flex',
-              alignItems: 'center',
+          <ColorModeSelect 
+            transform={{xs:'scale(0.75)', md:'scale(0.82)'}} 
+            sx={[
+              open? {mr:7} : {mr:18},
+              {
+              display:'flex',
               justifyContent: 'flex-end',
-            }}
-          ml={9}
-        />
+                mt:2.5,
+              },
+            ]}
+            ml={9}
+          />
+          <ListItem key={'Profile'} disablePadding 
+            sx={{ mt: 'auto', ml:-0.5}}
+          >
+            <ListItemButton
+              title={'Profile'}
+              alt='#' // TO DO: ingresar el name del usuario
+              href='#' // TO DO: ingresar el name del usuario
+              selected={selectedIndex === 5}
+              onClick={(event) => handleListItemClick(event, 5)}
+              sx={[{
+                  minHeight: 70,
+                },
+                //open? { justifyContent: 'initial',} : { justifyContent: 'center',},
+              ]}>
+              <ListItemIcon
+                sx={[{
+                    minWidth: 0,
+                  },
+                ]}>
+                <Avatar {...stringAvatar('Kent Dodds')} sx={{width: 40, height: 40, fontSize:18}}/>
+              </ListItemIcon>
+              <ListItemText
+                primary={'Profile'}
+                sx={[open? { opacity: 1,} : { opacity: 0,}, ]}
+              />
+            </ListItemButton>
+            </ListItem>
+        </List>
       </Drawer>
   );
 }

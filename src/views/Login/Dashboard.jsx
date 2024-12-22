@@ -1,9 +1,12 @@
-// src/Dashboard.js
 import React from 'react';
-// import 'bootstrap/dist/css/bootstrap.min.css';
+import Typography from '@mui/material/Typography';
+
+
 import { useAuth } from '../../services/AuthContext'; // Importa el AuthContext
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate
+
 import SideMenu from '../../components/Login/SideMenu';
+import LayoutLogin from '../LayoutLogin';
 
 function Dashboard() {
   const { user, logout } = useAuth(); // Accede al usuario autenticado y al método logout
@@ -15,14 +18,22 @@ function Dashboard() {
   };
   console.log(user);
     return (
-      <div className="container mt-5">
-      <SideMenu/>
-      <div className="row justify-content-center">
-        <div className="col-md-8">
-          <div className="card">
-            <div className="card-header">
+      <LayoutLogin>
+        <Typography sx={{ marginBottom: 2 }}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+          tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
+          enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
+          imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
+          Convallis convallis tellus id interdum velit laoreet id donec ultrices.
+          Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
+          adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
+          nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
+          leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
+          feugiat vivamus at augue. At augue eget arcu dictum varius duis at
+          consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
+          sapien faucibus et molestie ac.
+        </Typography>
               <h4 className="text-center">Dashboard</h4>
-            </div>
             <div className="card-body text-center">
               <h1 className="text-center">¡Hola {user ? user.userName : 'invitado'}!</h1>
               <p>Bienvenido al panel de control.</p>
@@ -32,10 +43,8 @@ function Dashboard() {
               <button className="btn btn-primary">Mis Preferencias</button>
               <button className="btn btn-secondary ms-2" onClick={handleLogout}>Cerrar Sesión</button>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
+          
+      </LayoutLogin>
   );
 }
 

@@ -20,7 +20,7 @@ import {
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword.jsx';
-import { GoogleIcon, FacebookIcon, SporthubIcon } from '../../../components/Basic/CustomIcons.jsx';
+import { GoogleIcon, FacebookIcon, SporthubIcon } from '../../../components/CustomIcons.jsx';
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext.jsx'; // Importa el contexto

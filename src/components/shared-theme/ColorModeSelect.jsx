@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 
 // CSS del switch con sus iconos y estilos
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
-  width:56,
+  width:62,
   height: 34,
   padding: 7,
   '& .MuiSwitch-switchBase': {
@@ -101,7 +101,9 @@ export default function ColorModeSelect(props = {...props, transform:{xs:'scale(
       control={<MaterialUISwitch sx={{
         transform: props.transform, // Escala el tamaño del switch
       }}/>}
-      sx={{paddingLeft:props.ml}}/>
+      sx={{paddingLeft:props.ml}}
+      label= {props.label}
+    />
     </Box>
   );
 }

@@ -18,7 +18,7 @@ import { Box,
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 
-import { GoogleIcon, FacebookIcon, SporthubIcon } from '../../../components/Basic/CustomIcons.jsx';
+import { GoogleIcon, FacebookIcon, SporthubIcon } from '../../../components/CustomIcons.jsx';
 import LayoutBasic from '../../LayoutBasic.jsx'
 
 
