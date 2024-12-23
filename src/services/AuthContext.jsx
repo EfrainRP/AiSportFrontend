@@ -1,18 +1,31 @@
-import React, { createContext, useContext, useState } from 'react';
+import React from 'react';
 
-const AuthContext = createContext();
+const AuthContext = React.createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem('user');
-    const storedToken = localStorage.getItem('token');  // Recuperar el token
-    return storedUser ? { ...JSON.parse(storedUser), token: storedToken } : null;
+  const [user, setUser] = React.useState(() => {
+    try {
+      const storedUser = localStorage.getItem('user');
+      const storedToken = localStorage.getItem('token');
+      if (storedUser) {
+        return { ...JSON.parse(storedUser), token: storedToken };
+      }
+    } catch (error) {
+      console.warn("Clearing invalid user data from localStorage:", error);
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+    }
+    return null;
   });
 
   const login = (userData, token) => {
+    if (!token) {
+      console.error("Token is required for login.");
+      return;
+    }
     setUser({ ...userData, token });
-    localStorage.setItem('user', JSON.stringify(userData)); // Guarda el nombre de usuario para mantener su referencia 
-    localStorage.setItem('token', token); // Guarda el token
+    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('token', token);
   };
 
   const logout = () => {
@@ -32,4 +45,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => React.useContext(AuthContext);
