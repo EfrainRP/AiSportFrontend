@@ -143,7 +143,7 @@ export default function SideMenu(props) {
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
   };
-  console.log(user);
+
   return (
       <Drawer variant="permanent" open={open} sx={{display: 'block '}} {...props}>
         <DrawerHeader>
