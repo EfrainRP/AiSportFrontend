@@ -1,41 +1,34 @@
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
 import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import Collapse from '@mui/material/Collapse';
+import StarBorder from '@mui/icons-material/StarBorder';
 import Avatar from '@mui/material/Avatar';
-import { SporthubIcon } from '../CustomIcons.jsx';
-import { useAuth } from '../../services/AuthContext.jsx'; // Importa el AuthContext
 
-import ColorModeSelect from '../shared-theme/ColorModeSelect.jsx';
-
+import LogoutIcon from '@mui/icons-material/Logout';
 import HomeIcon from '@mui/icons-material/Home';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import SearchIcon from '@mui/icons-material/Search';
 import ChatIcon from '@mui/icons-material/Chat';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import InfoIcon from '@mui/icons-material/Info';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
-import SelectContent from './SelectContent';
-import MenuContent from './MenuContent';
-import CardAlert from './CardAlert';
-import OptionsMenu from './OptionsMenu';
+import { SporthubIcon } from '../CustomIcons.jsx';
+import { useAuth } from '../../services/AuthContext.jsx'; // Importa el AuthContext
+
+import ColorModeSelect from '../shared-theme/ColorModeSelect.jsx';
 
 const drawerWidth = 215;
 
@@ -122,6 +115,7 @@ function stringAvatar(name, sx) { // Funcion segun el nombre del usuario para el
   return {
     sx: {
       bgcolor: stringToColor(name),
+      ml:0.6,
       ...sx,
     },
     children: `${name[0]}`,
@@ -129,7 +123,10 @@ function stringAvatar(name, sx) { // Funcion segun el nombre del usuario para el
 }
 
 export default function SideMenu(props) {
-  const user = useAuth().user || 'User'; // Accede al usuario autenticado, de la funcion obtenemos su valor especifico, validado si esta vacio el valor
+  const { user, logout } = useAuth(); // Accede al usuario autenticado y al método logout
+  const navigate = useNavigate(); // Hook para redireccionar
+
+  const userName = user.userName || 'User'; // Accede al usuario autenticado, de la funcion obtenemos su valor especifico, validado si esta vacio el valor
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
@@ -138,11 +135,15 @@ export default function SideMenu(props) {
     setOpen(!open);
   };
 
+  const handleLogout = () => {
+    logout(); // Llama a la función logout del contexto
+    navigate('/signin'); // Redirecciona a la página de login
+  };
 
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
   };
-
+  console.log(user);
   return (
       <Drawer variant="permanent" open={open} sx={{display: 'block '}} {...props}>
         <DrawerHeader>
@@ -209,8 +210,9 @@ export default function SideMenu(props) {
             ]}
             ml={9}
           />
+
           <ListItem key={'Profile'} disablePadding 
-            sx={{ mt: 'auto', ml:-0.5}}
+            sx={{ mt: 'auto', ml:-0.5, flexDirection: 'row'}}
           >
             <ListItemButton
               title={'Profile'}
@@ -228,14 +230,20 @@ export default function SideMenu(props) {
                     minWidth: 0,
                   },
                 ]}>
-                <Avatar {...stringAvatar(user, {width: 30, height: 30, fontSize:15})} />
+                <Avatar {...stringAvatar(userName, {width: 30, height: 30, fontSize:15})} />
               </ListItemIcon>
               <ListItemText
                 primary={'Profile'}
                 sx={[open? { opacity: 1,} : { opacity: 0, }, ]}
               />
             </ListItemButton>
-            </ListItem>
+            {open && (
+              <IconButton onClick={handleLogout}>
+                <LogoutIcon />
+              </IconButton>
+            )}
+
+          </ListItem>
         </List>
       </Drawer>
   );
