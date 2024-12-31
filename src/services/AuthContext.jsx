@@ -3,6 +3,7 @@ import React from 'react';
 const AuthContext = React.createContext();
 
 export const AuthProvider = ({ children }) => {
+  const [loading, setLoading] = React.useState(true);
   const [user, setUser] = React.useState(() => {
     try {
       const storedUser = localStorage.getItem('user');
@@ -39,7 +40,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated, loading, setLoading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,22 +1,20 @@
 import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
-import { styled, useTheme } from '@mui/material/styles';
-
 
 import AppTheme from '../components/shared-theme/AppTheme.jsx';
 import SideMenu from '../components/Login/SideMenu.jsx';
+import Skeleton from '@mui/material/Skeleton';
+import { useAuth } from '../services/AuthContext.jsx'; // Importa el AuthContext
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'flex-end',
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-}));
+import axiosInstance from "../services/axiosConfig.js";
 
-export default function LayoutBasic(props) {
+export default function LayoutLogin(props) {
+  const { user } = useAuth(); // Accede al usuario autenticado y al método logout
+  const navigate = useNavigate(); // Hook para redireccionar  
+  
+
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
@@ -26,19 +24,20 @@ export default function LayoutBasic(props) {
             minHeight: '100vh',
             backgroundRepeat: 'no-repeat',
             backgroundImage:
-            'radial-gradient(ellipse at 50% 50%, hsla(29, 89.50%, 66.30%, 0.70), hsl(0, 0.00%, 80.40%))',
+            'radial-gradient(ellipse at 50% 50%, hsla(29, 95.30%, 57.80%, 0.66), hsla(0, 0.00%, 100.00%, 0.69))',
             ...theme.applyStyles('dark', {
               backgroundImage:
-              'radial-gradient(at 50% 50%, hsla(29, 82.60%, 36.10%, 0.48), hsla(29, 52.60%, 22.40%, 0.38))', 
+              'radial-gradient(at 50% 50%, hsla(29, 92.50%, 26.10%, 0.76), hsla(29, 41.00%, 20.60%, 0.59))', 
               }),
             zIndex: 1
           })}
         >
-          <SideMenu />
+          <SideMenu/>
           
-          <Box component="main" sx={{ flexGrow: 1, p:3}}> 
+          <Box component="main" sx={{ flexGrow: 1, p:3, maxWidth:'95vw'}}> 
             {props.children}{/*  Contenido principal */}
           </Box>
+
         </Box>
     </AppTheme>
   );
