@@ -24,7 +24,29 @@ import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import axiosInstance from "../../services/axiosConfig.js";
 
 import LayoutLogin from '../LayoutLogin';
-import MyCarousel from '../../components/Login/MyCarousel.jsx';
+
+import Carousel from 'react-multi-carousel';
+import "react-multi-carousel/lib/styles.css";
+
+const myResponsive = {
+    superLargeDesktop: {
+        // the naming can be any, depends on you.
+        breakpoint: { max: 4000, min: 3000 },
+        items: 5
+    },
+    desktop: {
+        breakpoint: { max: 3000, min: 1024 },
+        items: 4
+    },
+    tablet: {
+        breakpoint: { max: 1024, min: 464 },
+        items: 3
+    },
+    mobile: {
+        breakpoint: { max: 464, min: 0 },
+        items: 2
+    }
+};
 
 export default function Dashboard() {
   const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado 
@@ -39,7 +61,7 @@ export default function Dashboard() {
         console.log(response.data);
         setTimeout(() => {
           setLoading(false); // Cambia el estado para simular que la carga ha terminado
-        }, 2500); // Simula 3 segundos de carga
+        }, 1500); // Simula 3 segundos de carga
         setData(response.data); // Establecer los datos en el estado
         // console.log(loading);
 
@@ -61,16 +83,67 @@ export default function Dashboard() {
       <Typography variant='subtitle2'>{loading ? <Skeleton /> : 'Here you can management your preferences and consult your information.'}</Typography>
 
       <Typography variant='h5' sx={{mt:6, mb:3}}>{loading ? <Skeleton /> : 'My Tournaments'}</Typography>        
-          <MyCarousel item={data.torneos}/>
-          
+      <Box className={'hola'} sx={{width:'100%', height:'auto', mx:2}}>
+            {loading? <Skeleton /> :
+            <Carousel
+                responsive={myResponsive}
+                slidesToSlide={2}
+                //autoPlay={true}
+                //autoPlaySpeed={8000} //ms
+                // infinite={true}
+                removeArrowOnDeviceType={["tablet", "mobile"]}
+            >
+            {data.torneos.map((torneo, i) =>
+            <Paper
+                key={i}
+                elevation={3}
+                sx={{
+                    width: '95%',
+                    padding: 2,
+                    textAlign: 'center',
+                }}
+            >
+                <Typography variant="h6">{torneo.name}</Typography>
+                <Typography variant='h4' component='strong'>{torneo.name}</Typography>
+                <Typography><strong>Descripción: </strong>{torneo.descripcion}</Typography>
+                <Typography><strong>Ubicación: </strong>{torneo.ubicacion}</Typography>
+            </Paper>
+          )}
+          </Carousel>
+          }
+        </Box>
 
       <Typography variant='h5' sx={{mt:6, mb:3}}>{loading ? <Skeleton /> : 'My Teams'}</Typography>
-      <MyCarousel item={data.equipos}/>
+      <Box className={'hola'} sx={{width:'100%', height:'auto', mx:2}}>
+            {loading? <Skeleton /> :
+            <Carousel
+                responsive={myResponsive}
+                slidesToSlide={2}
+                removeArrowOnDeviceType={["tablet", "mobile"]}
+            >
+            {data.equipos.map((equipo, i) =>
+            <Paper
+                key={i}
+                elevation={3}
+                sx={{
+                    width: '95%',
+                    padding: 2,
+                    textAlign: 'center',
+                }}
+            >
+                <Typography variant="h6">{equipo.name}</Typography>
+                <Typography variant='h4' component='strong'>{equipo.name}</Typography>
+                <Typography><strong>Descripción: </strong>{equipo.descripcion}</Typography>
+                <Typography><strong>Ubicación: </strong>{equipo.ubicacion}</Typography>
+            </Paper>
+          )}
+          </Carousel>
+          }
+        </Box>
 
       <Typography variant='h5' sx={{mt:6, mb:3}}>{loading ? <Skeleton /> : 'My Matches'}</Typography>
       <Box>
         {loading ? <Skeleton /> :
-        <Box sx={{ width: '100%' }}>
           {/* <Paper sx={{ width: '100%', mb: 2 }}>
             <EnhancedTableToolbar numSelected={selected.length} />
             <TableContainer>
@@ -153,7 +226,54 @@ export default function Dashboard() {
             control={<Switch checked={dense} onChange={handleChangeDense} />}
             label="Dense padding"
           /> */}
-        </Box>
+          <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <TableContainer sx={{ maxHeight: 440 }}>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              {columns.map((column) => (
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  style={{ minWidth: column.minWidth }}
+                >
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row) => {
+                return (
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                    {columns.map((column) => {
+                      const value = row[column.id];
+                      return (
+                        <TableCell key={column.id} align={column.align}>
+                          {column.format && typeof value === 'number'
+                            ? column.format(value)
+                            : value}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[10, 25, 100]}
+        component="div"
+        count={rows.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </Paper>
         }
       </Box>
 
