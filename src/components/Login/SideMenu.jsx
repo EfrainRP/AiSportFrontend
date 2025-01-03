@@ -27,7 +27,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { SporthubIcon } from '../CustomIcons.jsx';
 import { useAuth } from '../../services/AuthContext.jsx'; // Importa el AuthContext
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate
+import { useNavigate, useLocation } from 'react-router-dom'; // Importa useNavigate
 
 import ColorModeSelect from '../shared-theme/ColorModeSelect.jsx';
 
@@ -35,7 +35,7 @@ const drawerWidth = 195;
 
 const dataSideMenu = [ //TO DO: checar las urls
   {name: 'Home', img: <HomeIcon/>, url: '/dashboard' },
-  {name: 'Tournaments', img: <EmojiEventsIcon/>, url: '/torneos' },
+  {name: 'Tournaments', img: <EmojiEventsIcon/>, url: '/tournaments' },
   {name: 'Teams', img: <PeopleAltIcon/>, url: '#' },
   {name: 'Search', img: <SearchIcon/>, url: '#' },
   {name: 'Notifications', img: <ChatIcon/>, url: '#' }
@@ -128,10 +128,10 @@ export default function SideMenu(props) {
   const userName = user.userName;
   
   const navigate = useNavigate();
+  const location = useLocation(); // Hook para obtener la ubicación actual
 
   const theme = useTheme();
   const [openList, setOpen] = React.useState(false); // Evento para abrir sideBar
-  const [selectedIndex, setSelectedIndex] = React.useState(0); // Sombrear elemento seleccionado del sideBar
 
   const [anchorEl, setAnchorEl] = React.useState(null); // Evento para el miniMenu del Perfil
   const openMenu = Boolean(anchorEl);
@@ -145,15 +145,15 @@ export default function SideMenu(props) {
     setOpen(!openList);
   };
   
-  const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
+  const handleListItemClick = (event, i) => {
+    setIndex(i);
+    theIndex.current = i;
+    console.log(theIndex.current)
+
   };
 
   const handleClickMenu = (event) => {
     setAnchorEl(event.currentTarget);
-  };
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
   };
 
   return (
@@ -177,16 +177,15 @@ export default function SideMenu(props) {
             height: '100%', // Ocupar toda la altura del contenedor
           }}
         >
-          {dataSideMenu.map((data, index) => (
-            <ListItem key={data.name} disablePadding 
+          {dataSideMenu.map((data, index) => {
+            return <ListItem key={data.name} disablePadding 
               sx={{ display: 'block' }}
             >
               <ListItemButton
                 title={data.name}
                 alt={data.url}
                 href={data.url}
-                selected={selectedIndex === index}
-                onClick={(event) => handleListItemClick(event, index)}
+                selected={location.pathname === data.url}
                 sx={[{
                     minHeight: 80,
                     px: 2.5,
@@ -209,7 +208,7 @@ export default function SideMenu(props) {
               </ListItemButton>
               <Divider />
             </ListItem>
-          ))}
+          })}
           <ColorModeSelect 
             transform={{xs:'scale(0.75)', md:'scale(0.82)'}} 
             sx={[
@@ -228,7 +227,7 @@ export default function SideMenu(props) {
           >
             <ListItemButton
               title={'Profile'}
-              selected={selectedIndex === 5}
+              selected={location.pathname === 'profile'}
               onClick={handleClickMenu}
               sx={[{
                   minHeight: 70,
