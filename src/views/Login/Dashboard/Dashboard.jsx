@@ -2,15 +2,6 @@ import React from 'react';
 import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
-import PaginationItem from '@mui/material/PaginationItem';
-import Stack from '@mui/material/Stack';
-import List from '@mui/material/List';
-import Button from '@mui/material/Button';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -20,17 +11,12 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-
-import { useAuth } from '../../services/AuthContext.jsx'; // Importa el AuthContext
+import { useAuth } from '../../../services/AuthContext.jsx'; // Importa el AuthContext
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 
-import axiosInstance from "../../services/axiosConfig.js";
+import axiosInstance from "../../../services/axiosConfig.js";
 
-import LayoutLogin from '../LayoutLogin';
+import LayoutLogin from '../../LayoutLogin.jsx';
 
 import Carousel from 'react-multi-carousel';
 import "react-multi-carousel/lib/styles.css";
@@ -90,12 +76,7 @@ const columns = [
     minWidth: 170,
     align: 'center',
     format: (value) => {
-      const date = new Date(value);
-      return new Intl.DateTimeFormat("es-ES", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      }).format(date);
+      return new Date(value).toLocaleDateString();
     },
   },
   {
@@ -190,7 +171,7 @@ export default function Dashboard() {
       <Typography variant='subtitle2'>{loading ? <Skeleton /> : 'Here you can management your preferences and consult your information.'}</Typography>
 
       <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton /> : 'My Tournaments'}</Typography>
-      <Box className={'hola'} sx={{ width: '100%', height: 'auto', mx: 2 }}>
+      <Box sx={{ width: '100%', height: 'auto', mx: 2 }}>
         {loading ? <Skeleton /> :
           <Carousel
             responsive={myResponsive}
