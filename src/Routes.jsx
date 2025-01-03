@@ -12,7 +12,12 @@ import Privacy from './views/Basic/Privacy.jsx';
 
 import SignUp from './views/Basic/SignUp/SignUp.jsx';
 import SignIn from "./views/Basic/SignIn/SignIn.jsx";
-import Dashboard from "./views/Login/Dashboard.jsx";
+
+import Dashboard from "./views/Login/Dashboard/Dashboard.jsx";
+import TournamentDashboard from "./views/Login/Dashboard/TournamentDashboard.jsx";
+
+//  CRUD TORNEOS 
+import Tournament from './views/Login/Tournaments/IndexTournament.jsx'; // Tournaments Index <-
 
 export default function MyRoute(){
     return (
@@ -52,31 +57,31 @@ export default function MyRoute(){
               </AuthRoute>
             }
           /> 
-          {/* <Route // Ruta para visualizacion de torneos general en Dash <-
-            path="/dashboard/torneos/:torneoName/:torneoId"
+          <Route // Ruta para visualizacion de torneos general en Dash <-
+            path="/dashboard/tournament/:torneoName/:torneoId"
             element={
               <AuthRoute>
-                <TorneoDashboard />
+                <TournamentDashboard />
               </AuthRoute>
             }
           /> 
-          <Route // Ruta para visualizacion de equipos general en Dash <-
+          {/* <Route // Ruta para visualizacion de equipos general en Dash <-
             path="/dashboard/equipos/:equipoName/:equipoId"
             element={
               <AuthRoute>
                 <EquipoDashboard />
               </AuthRoute>
             }
-          /> 
+          /> */}
           <Route  // < ------------- CRUD TORNEOS ------------------------------------ >    
-            path="/torneos"        // Ruta index 
+            path="/tournaments"        // Ruta index 
             element={
               <AuthRoute>
-                <Torneos />
+                <Tournament />
               </AuthRoute>
             }
           />
-          <Route
+          {/* <Route
             path="/torneo/:torneoName/:torneoId" // Ruta show protegida mediante Policie <-
             element={
               <AuthRoute requireTorneoOwnership={true}> 
