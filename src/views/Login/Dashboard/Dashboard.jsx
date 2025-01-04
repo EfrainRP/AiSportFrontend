@@ -156,7 +156,6 @@ export default function Dashboard() {
 
         }).catch((error) => {
           console.error('Error al obtener los datos del dashboard:', error);
-          setLoading(false); // Cambiar el estado de carga incluso en caso de error
         });
     }
     if (user) {
@@ -167,12 +166,23 @@ export default function Dashboard() {
   return (
     <LayoutLogin>
       {/* Tiene el skeleton para dar una animacion de carga al cargar los datos */}
-      <Typography variant='h2' sx={{ mb: 2 }}> {loading ? <Skeleton /> : `Welcome ${user.userName || 'invitado'} to you dashboard!`} </Typography>
-      <Typography variant='subtitle2'>{loading ? <Skeleton /> : 'Here you can management your preferences and consult your information.'}</Typography>
+      <Typography variant='h2' sx={{ mb: 2 }}> 
+        {loading ? 
+        <Skeleton variant="rounded" width={'50%'} height={40}/> 
+        : 
+        `Welcome ${user.userName || 'invitado'} to you dashboard!`} 
+      </Typography>
+      <Typography variant='subtitle2'>
+        {loading ? 
+          <Skeleton variant="rounded" width={'42%'}/> 
+          : 
+          'Here you can management your preferences and consult your information.'
+        }
+      </Typography>
 
-      <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton /> : 'My Tournaments'}</Typography>
+      <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton variant="rounded" height={40}/> : 'My Tournaments'}</Typography>
       <Box sx={{ width: '100%', height: 'auto', mx: 2 }}>
-        {loading ? <Skeleton /> :
+        {loading ? <Skeleton variant="rounded" sx={{mx:-2, width:'100%', height:150}}/> :
           <Carousel
             responsive={myResponsive}
             slidesToSlide={2}
@@ -203,9 +213,9 @@ export default function Dashboard() {
         }
       </Box>
 
-      <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton /> : 'My Teams'}</Typography>
-      <Box className={'hola'} sx={{ width: '100%', height: 'auto', mx: 2 }}>
-        {loading ? <Skeleton /> :
+      <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton variant="rounded" height={40}/> : 'My Teams'}</Typography>
+      <Box sx={{ width: '100%', height: 'auto', mx: 2 }}>
+        {loading ? <Skeleton variant="rounded" sx={{mx:-2, width:'100%', height:150}}/> :
           <Carousel
             responsive={myResponsive}
             slidesToSlide={2}
@@ -232,9 +242,9 @@ export default function Dashboard() {
         }
       </Box>
 
-      <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton /> : 'My Matches'}</Typography>
+      <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton variant="rounded" height={40}/> : 'My Matches'}</Typography>
       <Box>
-        {loading ? <Skeleton /> :
+        {loading ? <Skeleton variant="rounded" height={440} /> :
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
             <TableContainer sx={{ maxHeight: 440 }}>
               <Table stickyHeader aria-label="sticky table">
