@@ -36,7 +36,7 @@ const drawerWidth = 195;
 const dataSideMenu = [ //TO DO: checar las urls
   {name: 'Home', img: <HomeIcon/>, url: '/dashboard' },
   {name: 'Tournaments', img: <EmojiEventsIcon/>, url: '/tournaments' },
-  {name: 'Teams', img: <PeopleAltIcon/>, url: '#' },
+  {name: 'Teams', img: <PeopleAltIcon/>, url: '/teams' },
   {name: 'Search', img: <SearchIcon/>, url: '#' },
   {name: 'Notifications', img: <ChatIcon/>, url: '#' }
 ];
