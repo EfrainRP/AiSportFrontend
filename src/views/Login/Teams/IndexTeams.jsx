@@ -4,6 +4,7 @@ import {
     Skeleton,
     Box,
     Card,
+    CardMedia,
     CardActions,
     CardContent,
     CardActionArea,
@@ -24,15 +25,17 @@ import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 
 import axiosInstance from "../../../services/axiosConfig.js";
-import { useAuth } from '../../../services/AuthContext'; //  AuthContext
+import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 import { Link } from 'react-router-dom';
 
 import LayoutLogin from '../../LayoutLogin.jsx';
 
-export default function IndexTournaments() {
-    const [torneos, setTorneos] = React.useState([]);
+const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
+
+export default function IndexTeams() {
+    const [equipos, setEquipos] = React.useState([]);
     const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado 
-    const [view, setView] = React.useState('list');
+
     const [openSearch, setSearch] = React.useState(false);
     const handleChange = (event, nextView) => {
         setView(nextView);
@@ -40,25 +43,25 @@ export default function IndexTournaments() {
     const [inputValue, setInputValue] = React.useState('');
     const toggleSearch = (flag) => { setSearch(!openSearch);};
     React.useEffect(() => { // Hace la solicitud al cargar la vista <-
-        const fetchTorneos = async () => {
-            await axiosInstance.get(`/torneos/${user.userId}`)
+        const fetchEquipos = async () => {
+            await axiosInstance.get(`/equipos/${user.userId}`)
                 .then((response) => {
                     setTimeout(() => {
                         setLoading(false); // Cambia el estado para simular que la carga ha terminado
                       }, 1500); // Simula 3 segundos de carga
-                    setTorneos(response.data);
+                    setEquipos(response.data);
                 })
                 .catch((error) => {
-                    console.error("Error al obtener los torneos:", error);
+                    console.error("Error al obtener los equipos:", error);
                 })
         };
-        fetchTorneos();
+        fetchEquipos();
     }, [user.userId]);
 
     return (
         <LayoutLogin>
             <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'30%'} /> : `Welcome ${user.userName || 'invitado'}`} </Typography>
-            <Typography variant='h3' sx={{ mb: 2, ml:10 }}> {loading ? <Skeleton variant="rounded" width={'20%'} sx={{my: 2}}/> : 'to your tournaments !'} </Typography>
+            <Typography variant='h3' sx={{ mb: 2, ml:10 }}> {loading ? <Skeleton variant="rounded" width={'20%'} sx={{my: 2}}/> : 'to your teams !'} </Typography>
             <Typography variant='subtitle2' sx={{ mt:3 }}>
                 {loading ? 
                     <Skeleton variant="rounded" width={'31%'}/> 
@@ -69,38 +72,8 @@ export default function IndexTournaments() {
             {loading?
                 <Skeleton variant="rounded" width={'5%'} height={40} sx={{my: 3}} /> 
             :
-                <Button href='/tournament/create' variant="contained" color='info' sx={{color:'white', my: 3}} startIcon={<AddIcon/>}> Add </Button>
+                <Button href='/team/create' variant="contained" color='info' sx={{color:'white', my: 3}} startIcon={<AddIcon/>}> Add </Button>
             }  
-                {/* <Stack direction={'row'} sx={{my:2}}> */}
-                    {/* <Button variant="contained" color='info' sx={{color:'white'}} startIcon={<SearchIcon/>} onClick={toggleSearch}> Search </Button>
-                    <Grow  in={openSearch}>
-                    <Autocomplete
-                        freeSolo
-                        id="search-tournaments"
-                        disableClearable
-                        options={torneos.map((option) => option.name)}
-                        sx={{width:'50%'}}
-                        inputValue={inputValue}
-                        onInputChange={(event, newInputValue) => {
-                            setInputValue(newInputValue);
-                        }}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label="Search"
-                                slotProps={{
-                                input: {
-                                    ...params.InputProps,
-                                    type: 'search',
-                                    },
-                                }}
-                            />
-                        )}
-                    />
-                    </Grow  > */}
-                {/* </Stack> */}
-            
-            
             <Box sx={{ width: '100%', height: 'auto'}}>
                 {loading ? 
                     <Skeleton variant="rounded" width={'100%'} height={350} /> 
@@ -111,21 +84,26 @@ export default function IndexTournaments() {
                         useFlexGap
                         sx={{ flexWrap: 'wrap'}}
                     >
-                        {torneos.length > 0 ? (
-                            torneos.map((torneo) => {
+                        {equipos.length > 0 ? (
+                            equipos.map((equipo) => {
                                 return (
-                                <Card variant="outlined" key={torneo.id} sx={{p:0}}>
-                                    <CardActionArea href={`/tournament/${torneo.name}/${torneo.id}`} sx={{p:2}}>
-                                        <Typography gutterBottom variant="h5" component="div">
-                                            <strong>{torneo.name}</strong>
-                                        </Typography>
-                                        <Typography><strong>Ubicación:</strong> {torneo.ubicacion}</Typography>
-                                        <Typography><strong>Descripción:</strong> {torneo.descripcion}</Typography>
-                                        <Typography><strong>Fecha Inicio:</strong> {new Date(torneo.fechaInicio).toLocaleDateString()}</Typography>
-                                        <Typography><strong>Fecha Fin:</strong> {new Date(torneo.fechaFin).toLocaleDateString()}</Typography>
+                                <Card variant="outlined" key={equipo.id} sx={{p:0}}>
+                                    <CardActionArea href={`/team/${equipo.name}/${equipo.id}`} sx={{p:2}}>
+                                        <CardMedia
+                                            component="img"
+                                            height={120}
+                                            // image={`http://localhost:3000/sporthub/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
+                                            image={URL_SERVER+`/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
+                                            alt={equipo.name}
+                                        />
+                                        <CardContent sx={{mt:1, display: 'flex', justifyContent: 'center'}}>
+                                            <Typography gutterBottom variant="h5" component="span">
+                                                <strong>{equipo.name}</strong>
+                                            </Typography>
+                                        </CardContent>
                                     </CardActionArea>
                                     {/* <CardActions>
-                                        <Button size="small" href={`/torneo/${torneo.name}/${torneo.id}`}>See</Button>
+                                        <Button size="small" href={`/team/${equipo.name}/${equipo.id}`}>See</Button>
                                     </CardActions> */}
                                 </Card>
                                 );

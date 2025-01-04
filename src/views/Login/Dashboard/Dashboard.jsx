@@ -168,7 +168,7 @@ export default function Dashboard() {
       {/* Tiene el skeleton para dar una animacion de carga al cargar los datos */}
       <Typography variant='h2' sx={{ mb: 2 }}> 
         {loading ? 
-        <Skeleton variant="rounded" width={'50%'} height={40}/> 
+        <Skeleton variant="rounded" width={'50%'} height={40} /> 
         : 
         `Welcome ${user.userName || 'invitado'} to you dashboard!`} 
       </Typography>
@@ -180,7 +180,7 @@ export default function Dashboard() {
         }
       </Typography>
 
-      <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton variant="rounded" height={40}/> : 'My Tournaments'}</Typography>
+      <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'My Tournaments'}</Typography>
       <Box sx={{ width: '100%', height: 'auto', mx: 2 }}>
         {loading ? <Skeleton variant="rounded" sx={{mx:-2, width:'100%', height:150}}/> :
           <Carousel
@@ -213,7 +213,7 @@ export default function Dashboard() {
         }
       </Box>
 
-      <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton variant="rounded" height={40}/> : 'My Teams'}</Typography>
+      <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'My Teams'}</Typography>
       <Box sx={{ width: '100%', height: 'auto', mx: 2 }}>
         {loading ? <Skeleton variant="rounded" sx={{mx:-2, width:'100%', height:150}}/> :
           <Carousel
@@ -242,7 +242,7 @@ export default function Dashboard() {
         }
       </Box>
 
-      <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton variant="rounded" height={40}/> : 'My Matches'}</Typography>
+      <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'My Matches'}</Typography>
       <Box>
         {loading ? <Skeleton variant="rounded" height={440} /> :
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>

@@ -17,7 +17,10 @@ import Dashboard from "./views/Login/Dashboard/Dashboard.jsx";
 import TournamentDashboard from "./views/Login/Dashboard/TournamentDashboard.jsx";
 
 //  CRUD TORNEOS 
-import Tournament from './views/Login/Tournaments/IndexTournament.jsx'; // Tournaments Index <-
+import IndexTournament from './views/Login/Tournaments/IndexTournament.jsx'; // Tournaments Index <-
+
+//  CRUD TORNEOS 
+import IndexTeams from './views/Login/Teams/IndexTeams.jsx'; // Tournaments Index <-
 
 export default function MyRoute(){
     return (
@@ -77,7 +80,7 @@ export default function MyRoute(){
             path="/tournaments"        // Ruta index 
             element={
               <AuthRoute>
-                <Tournament />
+                <IndexTournament />
               </AuthRoute>
             }
           />
@@ -104,16 +107,16 @@ export default function MyRoute(){
                 <TorneoCreate />
               </AuthRoute>
             }
-          />
+          />*/}
           <Route  // < ------------- CRUD EQUIPOS ------------------------------------ >    
-            path="/equipos"        // Ruta index 
+            path="/teams"        // Ruta index 
             element={
               <AuthRoute>
-                <Equipos />
+                <IndexTeams />
               </AuthRoute>
             }
           />
-          <Route
+          {/* <Route
             path="/equipo/:equipoName/:equipoId" // Ruta show protegida mediante Police <-
             element={
               <AuthRoute requireEquipoOwnership={true}> 
