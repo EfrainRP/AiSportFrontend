@@ -7,14 +7,15 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import CircularProgress from '@mui/material/CircularProgress';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Tooltip from '@mui/material/Tooltip';
+import Skeleton, { skeletonClasses } from '@mui/material/Skeleton';
 import Avatar from '@mui/material/Avatar';
-import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Badge from '@mui/material/Badge';
 
 import Logout from '@mui/icons-material/Logout';
 import HomeIcon from '@mui/icons-material/Home';
@@ -28,6 +29,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { SporthubIcon } from '../CustomIcons.jsx';
 import { useAuth } from '../../services/AuthContext.jsx'; // Importa el AuthContext
 import { useNavigate, useLocation } from 'react-router-dom'; // Importa useNavigate
+import axiosInstance from '../../services/axiosConfig.js';
 
 import ColorModeSelect from '../shared-theme/ColorModeSelect.jsx';
 
@@ -124,7 +126,7 @@ function stringAvatar(name, sx) { // Funcion segun el nombre del usuario para el
 }
 
 export default function SideMenu(props) {  
-  const { user = { userId: 0, userName: 'UserUnknow' }, logout } = useAuth(); // Accede al usuario autenticado, de la funcion obtenemos su valor especifico, validado si esta vacio el valory Accede al usuario autenticado y al método logout
+  const { user = { userId: 0, userName: 'UserUnknow' }, logout, loading, setLoading } = useAuth(); // Accede al usuario autenticado, de la funcion obtenemos su valor especifico, validado si esta vacio el valory Accede al usuario autenticado y al método logout
   const userName = user.userName;
   
   const navigate = useNavigate();
@@ -135,6 +137,30 @@ export default function SideMenu(props) {
 
   const [anchorEl, setAnchorEl] = React.useState(null); // Evento para el miniMenu del Perfil
   const openMenu = Boolean(anchorEl);
+  
+  const [countNotification, setCountNotificactions] = React.useState(0); // Estado para las notificaciones
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      // Obtener notificaciones
+      await axiosInstance.get(`/notificaciones/${user.userId}`)
+      .then((response) => {
+        setCountNotificactions(response.data.length); // Establecer las notificaciones en el estado
+        console.log(response.data.length);
+        setTimeout(() => {
+          setLoading(false); // Cambia el estado para simular que la carga ha terminado
+        }, 1500); // Simula tiempo de carga
+      })
+      .catch ((error) => {
+        console.error('Error al obtener las notificaciones:', error);
+        setLoading(false); // Cambiar el estado de carga incluso en caso de error
+      });
+    };
+
+    if (user) {
+      fetchData(); // Llamar a la función solo si el usuario está definido
+    }
+  }, [user]);
   
   const handleLogout = () => {
     logout(); // Llama a la función logout del contexto
@@ -159,12 +185,18 @@ export default function SideMenu(props) {
   return (
       <Drawer variant="permanent" open={openList} sx={{display: 'block '}} {...props}>
         <DrawerHeader>
-          <Box sx={openList? { display: 'flex', flexGrow: 0.1, alignItems: 'center',} : { display:'none'}}>
-            <SporthubIcon fontSize={{md:30,xs:35}}/>
-            <Typography sx={{m:{md:1,xs:0.7}}} variant='h6'>SportHub</Typography>
-          </Box>
+
+          
+            <Box sx={openList? { display: 'flex', flexGrow: 0.1, alignItems: 'center',} : { display:'none'}}>
+              <SporthubIcon fontSize={{md:30,xs:35}}/>
+              <Typography sx={{m:{md:1,xs:0.7}}} variant='h6'>SportHub</Typography>
+            </Box>
+          
           <IconButton onClick={toggleDrawer}>
-            {openList ? <ChevronLeftIcon /> : <MenuIcon />}
+            {openList? <ChevronLeftIcon /> 
+            : (loading? <CircularProgress size={20}/>
+              : <MenuIcon />)
+            }
           </IconButton>
         </DrawerHeader>
           
@@ -177,8 +209,30 @@ export default function SideMenu(props) {
             height: '100%', // Ocupar toda la altura del contenedor
           }}
         >
-          {dataSideMenu.map((data, index) => {
-            return <ListItem key={data.name} disablePadding 
+          {loading?
+            dataSideMenu.map((data, index) => {
+            return (
+              <ListItem key={data.name} disablePadding 
+              sx={{ display: 'block' }}
+            >
+              <ListItemButton>
+                <ListItemIcon
+                sx={{
+                  height:75, 
+                  justifyContent:'center',
+                  alignItems:'center',
+                  ml: 1
+                  }}>
+                <CircularProgress size={20}/>
+              </ListItemIcon>
+            </ListItemButton>
+            <Divider />
+            </ListItem>
+            );
+            })
+          :
+          dataSideMenu.map((data, index) => {
+            return (<ListItem key={data.name} disablePadding 
               sx={{ display: 'block' }}
             >
               <ListItemButton
@@ -199,7 +253,22 @@ export default function SideMenu(props) {
                       ml: 1,
                     },
                   ]}>
-                  {data.img}
+                  {data.name == 'Notifications'? 
+                    <Badge badgeContent={countNotification} color="primary" 
+                    sx={{
+                      "& .MuiBadge-badge": {
+                          fontSize: "0.75rem", // Tamaño del texto
+                          height: "18px", // Altura del badge
+                          minWidth: "18px", // Ancho mínimo del badge
+                          borderRadius: "17px", // Forma redonda
+                          right:-4,
+                          top: -3
+                        },
+                    }}>
+                    {data.img}</Badge> 
+                    : 
+                    data.img
+                  }
                 </ListItemIcon>
                 <ListItemText
                   primary={data.name}
@@ -208,20 +277,25 @@ export default function SideMenu(props) {
               </ListItemButton>
               <Divider />
             </ListItem>
-          })}
-          <ColorModeSelect 
-            transform={{xs:'scale(0.75)', md:'scale(0.82)'}} 
-            sx={[
-              openList? {mr:7} : {mr:18},
-              {
-              display:'flex',
-              justifyContent: 'flex-end',
-                mt:2.5,
-              },
-            ]}
-            ml={9}
-          />
-
+          );})}
+          {loading? 
+            <Box sx={{ display: 'flex', justifyContent:'center', mt: '50%'}}>
+              <CircularProgress size={20}/>
+            </Box>
+          :
+            <ColorModeSelect 
+              transform={{xs:'scale(0.75)', md:'scale(0.82)'}} 
+              sx={[
+                openList? {mr:7} : {mr:18},
+                {
+                display:'flex',
+                justifyContent: 'flex-end',
+                  mt:2.5,
+                },
+              ]}
+              ml={9}
+            />
+          }
           <ListItem key={'Profile'} disablePadding 
             sx={{ mt: 'auto', ml:-0.5, flexDirection: 'row'}}
           >
@@ -239,14 +313,18 @@ export default function SideMenu(props) {
                     minWidth: 0,
                   },
                 ]}>
-                <Avatar {...stringAvatar(userName, {width: 30, height: 30, fontSize:15,})} />
+                {loading?
+                  <CircularProgress size={20} sx={{ml:1}}/>
+                :
+                  <Avatar {...stringAvatar(userName, {width: 30, height: 30, fontSize:15,})} />
+                }
               </ListItemIcon>
               <ListItemText
                 primary={userName}
                 sx={[openList? { opacity: 1,} : { opacity: 0, }, ]}
               />
             </ListItemButton>
-            {/* Es un miniMenu para agregar el boton de settings con el logaut y el perfil
+            {/* Es un miniMenu para agregar el boton de settings con el logout y el perfil
             <Menu 
               anchorEl={anchorEl}
               id="account-menu"
