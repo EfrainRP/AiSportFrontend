@@ -146,7 +146,6 @@ export default function SideMenu(props) {
       await axiosInstance.get(`/notificaciones/${user.userId}`)
       .then((response) => {
         setCountNotificactions(response.data.length); // Establecer las notificaciones en el estado
-        console.log(response.data.length);
         setTimeout(() => {
           setLoading(false); // Cambia el estado para simular que la carga ha terminado
         }, 1500); // Simula tiempo de carga
