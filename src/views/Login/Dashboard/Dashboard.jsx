@@ -1,25 +1,31 @@
 import React from 'react';
-import Typography from '@mui/material/Typography';
-import Skeleton from '@mui/material/Skeleton';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
+import {
+  Typography,
+  Skeleton,
+  Box,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  Card,
+  CardMedia,
+  CardContent,
+  CardActionArea,
+} from '@mui/material';
 
 import { useAuth } from '../../../services/AuthContext.jsx'; // Importa el AuthContext
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate
-
 import axiosInstance from "../../../services/axiosConfig.js";
-
 import LayoutLogin from '../../LayoutLogin.jsx';
 
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import Carousel from 'react-multi-carousel';
 import "react-multi-carousel/lib/styles.css";
+
+const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 
 const myResponsive = {
   superLargeDesktop: {
@@ -150,12 +156,13 @@ export default function Dashboard() {
         .then((response) => {
           setTimeout(() => {
             setLoading(false); // Cambia el estado para simular que la carga ha terminado
-          }, 1500); // Simula 3 segundos de carga
+          }, 1500); // Simula tiempo de carga
           setData(response.data); // Establecer los datos en el estado
-          // console.log(loading);
+          console.log(response.data);
 
         }).catch((error) => {
           console.error('Error al obtener los datos del dashboard:', error);
+          setLoading(false); // Cambiar el estado de carga incluso en caso de error
         });
     }
     if (user) {
@@ -180,7 +187,8 @@ export default function Dashboard() {
         }
       </Typography>
 
-      <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'My Tournaments'}</Typography>
+        {/* CARUSEL DE TORNEOS*/}
+      <Typography variant='h4' sx={{ mt: 6, }}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'Tournaments Available'}</Typography>
       <Box sx={{ width: '100%', height: 'auto', mx: 2 }}>
         {loading ? <Skeleton variant="rounded" sx={{mx:-2, width:'100%', height:150}}/> :
           <Carousel
@@ -191,29 +199,38 @@ export default function Dashboard() {
             // infinite={true}
             removeArrowOnDeviceType={["tablet", "mobile"]}
           >
-            {data.torneos.map((torneo, i) =>
-              <Paper
-                key={i}
-                elevation={3}
-                sx={{
-                  direction: 'row',
-                  width: '95%',
-                  padding: 2,
-                  textAlign: 'center',
-                }}
-                onClick={() => handleRowClick(`tournament/${torneo.id}`)}
-              >
-                <Typography variant="h6">{torneo.name}</Typography>
-                <Typography variant='h4' component='strong'>{torneo.name}</Typography>
-                <Typography><strong>Descripción: </strong>{torneo.descripcion}</Typography>
-                <Typography><strong>Ubicación: </strong>{torneo.ubicacion}</Typography>
-              </Paper>
-            )}
+            {data.torneos.length > 0 ? 
+              data.torneos.map((torneo, i) => {
+                return (
+                <Card
+                  variant="outlined" 
+                  sx={{p:0, m:1,}}
+                  key={i}
+                >
+                  <CardActionArea href={`tournament/${torneo.id}`} sx={{p:2}}>
+                    <Typography variant='h4' component='strong' sx={{display: 'flex', justifyContent:'center'}}>{torneo.name}</Typography>
+                    <Typography><strong>Description: </strong>{torneo.descripcion}</Typography>
+                    <Typography><strong>Ubicación: </strong>{torneo.ubicacion}</Typography>
+                    <Typography><strong>Start date:</strong> {new Date(torneo.fechaInicio).toLocaleDateString()}</Typography>
+                    <Typography><strong>End date:</strong> {new Date(torneo.fechaFin).toLocaleDateString()}</Typography>
+                  </CardActionArea>
+                </Card>
+                );})
+            : 
+              <Card variant="outlined">
+                  <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                          You don't have any tournaments registered yet.
+                      </Typography>
+                  </CardContent>
+              </Card>
+            }
           </Carousel>
         }
       </Box>
 
-      <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'My Teams'}</Typography>
+        {/* CARUSEL DE EQUIPOS */}
+      <Typography variant='h4' sx={{ mt: 6, }}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'Teams Available'}</Typography>
       <Box sx={{ width: '100%', height: 'auto', mx: 2 }}>
         {loading ? <Skeleton variant="rounded" sx={{mx:-2, width:'100%', height:150}}/> :
           <Carousel
@@ -221,27 +238,46 @@ export default function Dashboard() {
             slidesToSlide={2}
             removeArrowOnDeviceType={["tablet", "mobile"]}
           >
-            {data.equipos.map((equipo, i) =>
-              <Paper
-                key={i}
-                elevation={3}
-                sx={{
-                  width: '95%',
-                  padding: 2,
-                  textAlign: 'center',
-                }}
-                onClick={() => handleRowClick(`teams/${equipo.id}`)}
-              >
-                <Typography variant="h6">{equipo.name}</Typography>
-                <Typography variant='h4' component='strong'>{equipo.name}</Typography>
-                <Typography><strong>Descripción: </strong>{equipo.descripcion}</Typography>
-                <Typography><strong>Ubicación: </strong>{equipo.ubicacion}</Typography>
-              </Paper>
-            )}
+            {data.equipos.length > 0? (
+              data.equipos.map((equipo, i) => {
+                return (
+                <Card 
+                  variant="outlined" 
+                  key={equipo.id} 
+                  sx={{p:0, m:1}}
+                >
+                  <CardActionArea href={`/team/${equipo.name}/${equipo.id}`} sx={{p:2}}>
+                      <CardMedia
+                          component="img"
+                          height={120}
+                          image={URL_SERVER+`/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
+                          alt={equipo.name}
+                      />
+                      <CardContent>
+                          <Typography variant="h5" component="span" sx={{display: 'flex', justifyContent: 'center'}}>
+                              <strong>{equipo.name}</strong>
+                          </Typography>
+                          <Typography variant="subtitle" component="span" sx={{display: 'flex', justifyContent: 'center'}}>
+                              {equipo['users'].name}
+                          </Typography>
+                      </CardContent>
+                  </CardActionArea>
+              </Card>
+            );})) 
+            : 
+              <Card variant="outlined">
+                <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                        You don't have any tournaments registered yet.
+                    </Typography>
+                </CardContent>
+              </Card>
+            }
           </Carousel>
         }
       </Box>
 
+        {/* TABLA DE PROXIMOS PARTIDOS */}
       <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'My Matches'}</Typography>
       <Box>
         {loading ? <Skeleton variant="rounded" height={440} /> :

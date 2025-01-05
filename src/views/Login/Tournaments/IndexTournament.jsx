@@ -45,11 +45,12 @@ export default function IndexTournaments() {
                 .then((response) => {
                     setTimeout(() => {
                         setLoading(false); // Cambia el estado para simular que la carga ha terminado
-                      }, 1500); // Simula 3 segundos de carga
+                    }, 1500); // Simula tiempo de carga
                     setTorneos(response.data);
                 })
                 .catch((error) => {
                     console.error("Error al obtener los torneos:", error);
+                    setLoading(false); // Cambiar el estado de carga incluso en caso de error
                 })
         };
         fetchTorneos();
@@ -116,13 +117,13 @@ export default function IndexTournaments() {
                                 return (
                                 <Card variant="outlined" key={torneo.id} sx={{p:0}}>
                                     <CardActionArea href={`/tournament/${torneo.name}/${torneo.id}`} sx={{p:2}}>
-                                        <Typography gutterBottom variant="h5" component="div">
+                                        <Typography gutterBottom variant="h5" component="div" sx={{display: 'flex', justifyContent:'center'}}>
                                             <strong>{torneo.name}</strong>
                                         </Typography>
-                                        <Typography><strong>Ubicación:</strong> {torneo.ubicacion}</Typography>
-                                        <Typography><strong>Descripción:</strong> {torneo.descripcion}</Typography>
-                                        <Typography><strong>Fecha Inicio:</strong> {new Date(torneo.fechaInicio).toLocaleDateString()}</Typography>
-                                        <Typography><strong>Fecha Fin:</strong> {new Date(torneo.fechaFin).toLocaleDateString()}</Typography>
+                                        <Typography><strong>Location:</strong> {torneo.ubicacion}</Typography>
+                                        <Typography><strong>Description:</strong> {torneo.descripcion}</Typography>
+                                        <Typography><strong>Start date:</strong> {new Date(torneo.fechaInicio).toLocaleDateString()}</Typography>
+                                        <Typography><strong>End date:</strong> {new Date(torneo.fechaFin).toLocaleDateString()}</Typography>
                                     </CardActionArea>
                                     {/* <CardActions>
                                         <Button size="small" href={`/torneo/${torneo.name}/${torneo.id}`}>See</Button>

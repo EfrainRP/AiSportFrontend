@@ -5,29 +5,15 @@ import {
     Box,
     Card,
     CardMedia,
-    CardActions,
     CardContent,
     CardActionArea,
-    ToggleButton,
-    ToggleButtonGroup, 
     Button,
-    IconButton , 
     Stack,
-    TextField ,
-    Autocomplete,
-    Fab,
-    ButtonGroup,
-    Grow  
 } from '@mui/material';
-import ViewListIcon from '@mui/icons-material/ViewList';
-import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import AddIcon from '@mui/icons-material/Add';
-import SearchIcon from '@mui/icons-material/Search';
 
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
-import { Link } from 'react-router-dom';
-
 import LayoutLogin from '../../LayoutLogin.jsx';
 
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
@@ -36,23 +22,18 @@ export default function IndexTeams() {
     const [equipos, setEquipos] = React.useState([]);
     const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado 
 
-    const [openSearch, setSearch] = React.useState(false);
-    const handleChange = (event, nextView) => {
-        setView(nextView);
-    };
-    const [inputValue, setInputValue] = React.useState('');
-    const toggleSearch = (flag) => { setSearch(!openSearch);};
     React.useEffect(() => { // Hace la solicitud al cargar la vista <-
         const fetchEquipos = async () => {
             await axiosInstance.get(`/equipos/${user.userId}`)
                 .then((response) => {
                     setTimeout(() => {
                         setLoading(false); // Cambia el estado para simular que la carga ha terminado
-                      }, 1500); // Simula 3 segundos de carga
+                      }, 1500); // Simula tiempo de carga
                     setEquipos(response.data);
                 })
                 .catch((error) => {
                     console.error("Error al obtener los equipos:", error);
+                    setLoading(false); // Cambiar el estado de carga incluso en caso de error
                 })
         };
         fetchEquipos();
@@ -96,15 +77,12 @@ export default function IndexTeams() {
                                             image={URL_SERVER+`/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
                                             alt={equipo.name}
                                         />
-                                        <CardContent sx={{mt:1, display: 'flex', justifyContent: 'center'}}>
-                                            <Typography gutterBottom variant="h5" component="span">
+                                        <CardContent>
+                                            <Typography gutterBottom variant="h5" component="span" sx={{mt:1, display: 'flex', justifyContent: 'center'}}>
                                                 <strong>{equipo.name}</strong>
                                             </Typography>
                                         </CardContent>
                                     </CardActionArea>
-                                    {/* <CardActions>
-                                        <Button size="small" href={`/team/${equipo.name}/${equipo.id}`}>See</Button>
-                                    </CardActions> */}
                                 </Card>
                                 );
                             }))
