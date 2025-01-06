@@ -177,7 +177,7 @@ export default function Dashboard() {
         {loading ? 
         <Skeleton variant="rounded" width={'50%'} height={40} /> 
         : 
-        `Welcome ${user.userName || 'invitado'} to you dashboard!`} 
+        `Welcome ${user.userName.toUpperCase() || 'invitado'} to you dashboard!`} 
       </Typography>
       <Typography variant='subtitle2'>
         {loading ? 
