@@ -58,7 +58,7 @@ export default function IndexTournaments() {
 
     return (
         <LayoutLogin>
-            <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'30%'} /> : `Welcome ${user.userName || 'invitado'}`} </Typography>
+            <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'30%'} /> : `Welcome admin: ${user.userName.toUpperCase() || 'invitado'}`} </Typography>
             <Typography variant='h3' sx={{ mb: 2, ml:10 }}> {loading ? <Skeleton variant="rounded" width={'20%'} sx={{my: 2}}/> : 'to your tournaments !'} </Typography>
             <Typography variant='subtitle2' sx={{ mt:3 }}>
                 {loading ? 
