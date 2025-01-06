@@ -89,7 +89,7 @@ export default function IndexTeams() {
                             : (
                                 <Card variant="outlined">
                                     <CardContent>
-                                        <Typography gutterBottom variant="h5" component="div">
+                                        <Typography gutterBottom variant="subtitle2" component="div">
                                             You don't have any tournaments registered yet.
                                         </Typography>
                                     </CardContent>
