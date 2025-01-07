@@ -102,9 +102,9 @@ export default function IndexTournaments() {
                 {/* </Stack> */}
             
             
-            <Box sx={{ width: '100%', height: 'auto'}}>
+            <Box sx={{ width: '100%', height: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 {loading ? 
-                    <Skeleton variant="rounded" width={'100%'} height={350} /> 
+                    <Skeleton variant="rounded" width={'95%'} height={350} /> 
                 :
                     <Stack 
                         spacing={{ xs: 1, sm: 1.5 }}

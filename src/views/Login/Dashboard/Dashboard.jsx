@@ -188,7 +188,7 @@ export default function Dashboard() {
       </Typography>
 
         {/* CARUSEL DE TORNEOS*/}
-      <Typography variant='h4' sx={{ mt: 6, }}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'Tournaments Available'}</Typography>
+      <Typography variant='h4' sx={{ mt: 6, mb: 2}}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'Tournaments Available'}</Typography>
       <Box sx={{ width: '100%', height: 'auto', mx: 2 }}>
         {loading ? <Skeleton variant="rounded" sx={{mx:-2, width:'100%', height:150}}/> :
           <Carousel
@@ -230,7 +230,7 @@ export default function Dashboard() {
       </Box>
 
         {/* CARUSEL DE EQUIPOS */}
-      <Typography variant='h4' sx={{ mt: 6, }}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'Teams Available'}</Typography>
+      <Typography variant='h4' sx={{ mt: 6, mb: 2}}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'Teams Available'}</Typography>
       <Box sx={{ width: '100%', height: 'auto', mx: 2 }}>
         {loading ? <Skeleton variant="rounded" sx={{mx:-2, width:'100%', height:150}}/> :
           <Carousel
@@ -278,7 +278,7 @@ export default function Dashboard() {
       </Box>
 
         {/* TABLA DE PROXIMOS PARTIDOS */}
-      <Typography variant='h5' sx={{ mt: 6, mb: 3 }}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'My Matches'}</Typography>
+      <Typography variant='h5' sx={{ mt: 6, mb: 2 }}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'My Matches'}</Typography>
       <Box>
         {loading ? <Skeleton variant="rounded" height={440} /> :
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
