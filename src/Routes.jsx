@@ -18,9 +18,12 @@ import TournamentDashboard from "./views/Login/Dashboard/TournamentDashboard.jsx
 
 //  CRUD TORNEOS 
 import IndexTournament from './views/Login/Tournaments/IndexTournament.jsx'; // Tournaments Index <-
-
+import ShowTournament from './views/Login/Tournaments/ShowTournament.jsx';
 //  CRUD TORNEOS 
 import IndexTeams from './views/Login/Teams/IndexTeams.jsx'; // Tournaments Index <-
+
+//  CRUD NOTIFICACIONES 
+import IndexNotifications from './views/Login/Notifications/IndexNotifications.jsx';
 
 export default function MyRoute(){
     return (
@@ -84,15 +87,15 @@ export default function MyRoute(){
               </AuthRoute>
             }
           />
-          {/* <Route
-            path="/torneo/:torneoName/:torneoId" // Ruta show protegida mediante Policie <-
+          <Route
+            path="/tournament/:tournamentName/:tournamentId" // Ruta show protegida mediante Policie <-
             element={
               <AuthRoute requireTorneoOwnership={true}> 
-                <TorneoShow />
+                <ShowTournament/>
               </AuthRoute>
             }
           />
-          <Route
+          {/* <Route
             path="/torneo/:torneoName/:torneoId/edit" // Ruta edit protegida mediante Police <-
             element={
               <AuthRoute requireTorneoOwnership={true}>
@@ -155,8 +158,16 @@ export default function MyRoute(){
                 <PartidoCreate />
               </AuthRoute>
             }
+          />*/}
+          <Route  // < ------------- NOTIFICACIONES ------------------------------------ >    
+            path="/notifications"  
+            element={
+              <AuthRoute>
+                <IndexNotifications />
+              </AuthRoute>
+            }
           />
-          <Route //  < ------------- CRUD PERFIL ------------------------------------ >  
+          {/* <Route //  < ------------- CRUD PERFIL ------------------------------------ >  
             path="/dashboard/perfil/:userName" // Ruta SHOW protegida mediante Police <-
             element={
               <AuthRoute > 

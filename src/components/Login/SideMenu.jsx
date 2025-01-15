@@ -40,7 +40,7 @@ const dataSideMenu = [ //TO DO: checar las urls
   {name: 'Tournaments', img: <EmojiEventsIcon/>, url: '/tournaments' },
   {name: 'Teams', img: <PeopleAltIcon/>, url: '/teams' },
   {name: 'Search', img: <SearchIcon/>, url: '#' },
-  {name: 'Notifications', img: <ChatIcon/>, url: '#' }
+  {name: 'Notifications', img: <ChatIcon/>, url: '/notifications' }
 ];
 
 const openedMixin = (theme) => ({
