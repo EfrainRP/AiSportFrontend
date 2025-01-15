@@ -4,16 +4,15 @@ import { useAuth } from '../services/AuthContext';
 import axiosInstance from "../services/axiosConfig";
 
 const AuthRoute = ({ children, restricted = false, requireTorneoOwnership = false, requireEquipoOwnership = false }) => {
-  const { user, isAuthenticated } = useAuth(); // Accede al usuario autenticado y al método isAuthenticated
+  const { user, isAuthenticated, setLoading, loading } = useAuth(); // Accede al usuario autenticado y al método isAuthenticated
   const { torneoName, torneoId, equipoName , equipoId } = useParams(); // Obtiene los parametros desde la URL
   const location = useLocation(); // Hook para obtener la ubicación actual
-  const [isLoading, setIsLoading] = React.useState(true);
   const [isValidTorneo, setIsValidTorneo] = React.useState(true); // Estado para verificar si el usuario es dueño del torneo
   const [isValidEquipo, setIsValidEquipo] = React.useState(true); // Estado para verificar si el usuario es dueño del equipo
 
   React.useEffect(() => {
     // Reinicia el estado cada vez que cambie la ruta
-    setIsLoading(true);
+    setLoading(true);
     setIsValidTorneo(true);
     setIsValidEquipo(true);
 
@@ -63,13 +62,13 @@ const AuthRoute = ({ children, restricted = false, requireTorneoOwnership = fals
     checkTorneoOwnership();
     checkEquipoOwnership();
 
-    setIsLoading(false);
+    setLoading(false);
   }, [user, torneoId, torneoName, equipoId, requireTorneoOwnership, requireEquipoOwnership, location]); // Añadir `location` como dependencia para que se refresque al cambiar de ruta
 
   // Cargando datos
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
 
   // Si el acceso está restringido y el usuario está autenticado, redirigir al dashboard
   if (restricted && isAuthenticated()) {

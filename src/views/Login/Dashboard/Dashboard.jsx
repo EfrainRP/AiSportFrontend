@@ -49,14 +49,14 @@ const myResponsive = {
 
 const columns = [
   { 
-    id: 'torneoDelPartido', 
+    id: 'torneos', 
     extraIndex: 'name', 
     label: 'Tournament', 
     align: 'center', 
     minWidth: 170 
   },
   { 
-    id: 'torneoDelPartido', 
+    id: 'torneos', 
     extraIndex: 'ubicacion', 
     label: 'Location', 
     align: 'center', 
