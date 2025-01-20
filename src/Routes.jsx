@@ -15,6 +15,7 @@ import SignIn from "./views/Basic/SignIn/SignIn.jsx";
 
 import Dashboard from "./views/Login/Dashboard/Dashboard.jsx";
 import TournamentDashboard from "./views/Login/Dashboard/TournamentDashboard.jsx";
+import TeamDashboard from "./views/Login/Dashboard/TeamDashboard.jsx";
 
 //  CRUD TORNEOS 
 import IndexTournament from './views/Login/Tournaments/IndexTournament.jsx'; // Tournaments Index <-
@@ -64,21 +65,21 @@ export default function MyRoute(){
             }
           /> 
           <Route // Ruta para visualizacion de torneos general en Dash <-
-            path="/dashboard/tournament/:torneoName/:torneoId"
+            path="/dashboard/tournament/:tournamentName/:tournamentId"
             element={
               <AuthRoute>
                 <TournamentDashboard />
               </AuthRoute>
             }
           /> 
-          {/* <Route // Ruta para visualizacion de equipos general en Dash <-
-            path="/dashboard/equipos/:equipoName/:equipoId"
+          <Route // Ruta para visualizacion de equipos general en Dash <-
+            path="/dashboard/team/:teamName/:teamId"
             element={
               <AuthRoute>
-                <EquipoDashboard />
+                <TeamDashboard />
               </AuthRoute>
             }
-          /> */}
+          />
           <Route  // < ------------- CRUD TORNEOS ------------------------------------ >    
             path="/tournaments"        // Ruta index 
             element={
@@ -96,7 +97,7 @@ export default function MyRoute(){
             }
           />
           {/* <Route
-            path="/torneo/:torneoName/:torneoId/edit" // Ruta edit protegida mediante Police <-
+            path="/tournament/:tournamentName/:tournamentId/edit" // Ruta edit protegida mediante Police <-
             element={
               <AuthRoute requireTorneoOwnership={true}>
                 <TorneoEdit />
@@ -104,7 +105,7 @@ export default function MyRoute(){
             }
           />
           <Route
-            path="/torneo/create" // Ruta create
+            path="/tournament/create" // Ruta create
             element={
               <AuthRoute>
                 <TorneoCreate />
@@ -120,7 +121,7 @@ export default function MyRoute(){
             }
           />
           {/* <Route
-            path="/equipo/:equipoName/:equipoId" // Ruta show protegida mediante Police <-
+            path="/team/:teamName/:teamId" // Ruta show protegida mediante Police <-
             element={
               <AuthRoute requireEquipoOwnership={true}> 
                 <EquipoShow />
@@ -128,7 +129,7 @@ export default function MyRoute(){
             }
           />
           <Route
-            path="/equipo/:equipoName/:equipoId/edit" // Ruta edit protegida mediante Police <-
+            path="/team/:teamName/:teamId/edit" // Ruta edit protegida mediante Police <-
             element={
               <AuthRoute requireEquipoOwnership={true}>
                 <EquipoEdit />
@@ -136,7 +137,7 @@ export default function MyRoute(){
             }
           />
           <Route
-            path="/equipo/create" // Ruta create
+            path="/team/create" // Ruta create
             element={
               <AuthRoute>
                 <EquipoCreate />
@@ -144,7 +145,7 @@ export default function MyRoute(){
             }
           />
           <Route // < ------------- CRUD PARTIDOS ------------------------------------ > 
-            path="/partido/:torneoName/:torneoId/:partidoId/edit" // Ruta EDIT protegida mediante Police <-
+            path="/match/:tournamentName/:tournamentId/:matchId/edit" // Ruta EDIT protegida mediante Police <-
             element={
               <AuthRoute requireTorneoOwnership={true}> 
                 <PartidoEdit />
@@ -152,7 +153,7 @@ export default function MyRoute(){
             }
           />
           <Route
-            path="/partido/create/:torneoName/:torneoId" // Ruta CREATE protegida mediante Police <-
+            path="/match/create/:tournamentName/:tournamentId" // Ruta CREATE protegida mediante Police <-
             element={
               <AuthRoute requireTorneoOwnership={true}> 
                 <PartidoCreate />
@@ -192,7 +193,7 @@ export default function MyRoute(){
             }
           />
           <Route
-            path="/torneo/:torneoName/:torneoId/estadisticas" // Ruta SHOW (Estadisticas de un Torneo)
+            path="/tournament/:tournamentName/:tournamentId/estadisticas" // Ruta SHOW (Estadisticas de un Torneo)
             element={ // Protegida Mediante Police al pertenecer a "Torneos" de un Usuario <-
               <AuthRoute requireTorneoOwnership={true}> 
                 <EstadisticasTorneo />
@@ -200,7 +201,7 @@ export default function MyRoute(){
             }
           />
           <Route
-            path="/equipo/:equipoName/:equipoId/estadisticas" // Ruta DISPLAY (Estadisticas de un Equipo)
+            path="/team/:teamName/:teamId/estadisticas" // Ruta DISPLAY (Estadisticas de un Equipo)
             element={ // No protegida, debido a que no requiere paso por un CRUD <-
               <AuthRoute > 
                 <EstadisticasEquipo />
@@ -216,7 +217,7 @@ export default function MyRoute(){
             }
           />
           <Route 
-            path="/dashboard/entrenamiento/IA/:equipoId/:equipoName" // Ruta SHOW <- (Confirmación del Server <-)
+            path="/dashboard/entrenamiento/IA/:teamId/:teamName" // Ruta SHOW <- (Confirmación del Server <-)
             element={ //  Entrenamiento de IA Estadisticas personalizado por equipo <- 
               <AuthRoute > 
                 <AIShow />

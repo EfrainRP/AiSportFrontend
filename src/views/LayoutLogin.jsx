@@ -34,7 +34,7 @@ export default function LayoutLogin(props) {
         >
           <SideMenu/>
           
-          <Box component="main" sx={{ flexGrow: 1, p:3, maxWidth:'95vw'}}> 
+          <Box component="main" sx={{ flexGrow: 1, p:3, width:'80vw'}}> 
             {props.children}{/*  Contenido principal */}
           </Box>
 

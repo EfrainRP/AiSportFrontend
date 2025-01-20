@@ -21,6 +21,8 @@ import { useAuth } from '../../../services/AuthContext.jsx'; // Importa el AuthC
 import axiosInstance from "../../../services/axiosConfig.js";
 import LayoutLogin from '../../LayoutLogin.jsx';
 
+import LoadingCard from '../../../components/Login/LodingCard.jsx';
+
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import Carousel from 'react-multi-carousel';
 import "react-multi-carousel/lib/styles.css";
@@ -53,33 +55,33 @@ const columns = [
     extraIndex: 'name', 
     label: 'Tournament', 
     align: 'center', 
-    minWidth: 170 
+    minWidth: 120 
   },
   { 
     id: 'torneos', 
     extraIndex: 'ubicacion', 
     label: 'Location', 
     align: 'center', 
-    minWidth: 100 
+    minWidth: 120 
   },
   { 
-    id: 'equipoLocal', 
+    id: 'equipos_partidos_equipoLocal_idToequipos', 
     extraIndex: 'name', 
     label: 'Home\u00a0Team', 
     align: 'center', 
-    minWidth: 100 
+    minWidth: 130 
   },
   { 
-    id: 'equipoVisitante', 
+    id: 'equipos_partidos_equipoVisitante_idToequipos', 
     extraIndex: 'name', 
     label: 'Guest\u00a0Team', 
     align: 'center', 
-    minWidth: 100 
+    minWidth: 130 
   },
   {
     id: 'fechaPartido',
     label: 'Date',
-    minWidth: 170,
+    minWidth: 110,
     align: 'center',
     format: (value) => {
       return new Date(value).toLocaleDateString();
@@ -88,7 +90,7 @@ const columns = [
   {
     id: 'horaPartido',
     label: 'Time',
-    minWidth: 170,
+    minWidth: 110,
     align: 'center',
     format: (value) => {
       const hour = new Date(value);
@@ -207,9 +209,9 @@ export default function Dashboard() {
                   sx={{p:0, m:1,}}
                   key={i}
                 >
-                  <CardActionArea href={`tournament/${torneo.id}`} sx={{p:2}}>
+                  <CardActionArea href={`/dashboard/tournament/${torneo.name}/${torneo.id}`} sx={{p:2}}>
                     <Typography variant='h4' component='strong' sx={{display: 'flex', justifyContent:'center'}}>{torneo.name}</Typography>
-                    <Typography><strong>Description: </strong>{torneo.descripcion}</Typography>
+                    <Typography sx={{textAlign:'justify'}}><strong>Description: </strong>{torneo.descripcion}</Typography>
                     <Typography><strong>Ubicación: </strong>{torneo.ubicacion}</Typography>
                     <Typography><strong>Start date:</strong> {new Date(torneo.fechaInicio).toLocaleDateString()}</Typography>
                     <Typography><strong>End date:</strong> {new Date(torneo.fechaFin).toLocaleDateString()}</Typography>
@@ -217,13 +219,7 @@ export default function Dashboard() {
                 </Card>
                 );})
             : 
-              <Card variant="outlined">
-                  <CardContent>
-                      <Typography gutterBottom variant="subtitle2" component="div">
-                          You don't have any tournaments registered yet.
-                      </Typography>
-                  </CardContent>
-              </Card>
+              <LoadingCard message={'Maybe tournaments are not found.'}/>
             }
           </Carousel>
         }
@@ -246,7 +242,7 @@ export default function Dashboard() {
                   key={equipo.id} 
                   sx={{p:0, m:1}}
                 >
-                  <CardActionArea href={`/team/${equipo.name}/${equipo.id}`} sx={{p:2}}>
+                  <CardActionArea href={`/dashboard/team/${equipo.name}/${equipo.id}`} sx={{p:2}}>
                       <CardMedia
                           component="img"
                           height={120}
@@ -265,13 +261,7 @@ export default function Dashboard() {
               </Card>
             );})) 
             : 
-              <Card variant="outlined">
-                <CardContent>
-                    <Typography gutterBottom variant="subtitle2" component="div">
-                        You don't have any tournaments registered yet.
-                    </Typography>
-                </CardContent>
-              </Card>
+            <LoadingCard message={'Maybe teams are not found.'}/>
             }
           </Carousel>
         }
@@ -280,12 +270,17 @@ export default function Dashboard() {
         {/* TABLA DE PROXIMOS PARTIDOS */}
       <Typography variant='h5' sx={{ mt: 6, mb: 2 }}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'My Matches'}</Typography>
       <Box>
-        {loading ? <Skeleton variant="rounded" height={440} /> :
+        {loading ? <Skeleton variant="rounded" height={440} />
+          :
+        data.proximosPartidos.length>0?
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
             <TableContainer sx={{ maxHeight: 440 }}>
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                   <TableRow>
+                    <TableCell sx={{backgroundColor: 'grey'}}> {/*Celda para el numero de elementos de la tabla, lo cual esta vacia*/}
+                      {""}
+                    </TableCell>
                     {columns.map((column) => (
                       <TableCell
                         sx={{backgroundColor: 'grey'}}
@@ -302,9 +297,14 @@ export default function Dashboard() {
                   {data.proximosPartidos
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, i) => {
+                      i+=1; //Recorremos 1 a los elementos
                       return (
                         <TableRow hover role="checkbox" tabIndex={-1} key={i} onClick={() => handleRowClick(`matches/${row.id}`)}>
+                          <TableCell key={i} width={50} align='center'>
+                              {i}
+                          </TableCell>
                           {columns.map((column,i) => {
+                            i+=1; //Recorremos 1 a los elementos
                             const value = column.extraIndex? row[column.id][column.extraIndex] : row[column.id];
                             return (
                               <TableCell key={i} align={column.align}>
@@ -330,6 +330,8 @@ export default function Dashboard() {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Paper>
+          :
+          <LoadingCard message={'Maybe matches are not found.'} CircularSize='2%'/>
         }
       </Box>
 

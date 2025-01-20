@@ -7,16 +7,19 @@ export const feedbackCustomizations = {
     styleOverrides: {
       root: ({ theme }) => ({
         borderRadius: 10,
-        backgroundColor: orange[100],
-        color: (theme.vars || theme).palette.text.primary,
-        border: `1px solid ${alpha(orange[300], 0.5)}`,
-        '& .MuiAlert-icon': {
-          color: orange[500],
-        },
-        ...theme.applyStyles('dark', {
-          backgroundColor: `${alpha(orange[900], 0.5)}`,
-          border: `1px solid ${alpha(orange[800], 0.5)}`,
-        }),
+        
+        // Estilo pre-establecido de la biblioteca
+        // color: 'black',
+        // backgroundColor: 'red',
+        // color: (theme.vars || theme).palette.text.primary,
+        // border: `1px solid ${alpha(orange[300], 0.5)}`,
+        // '& .MuiAlert-icon': {
+        //   color: orange[500],
+        // },
+        // ...theme.applyStyles('dark', {
+          // backgroundColor: `${alpha(orange[900], 1)}`,
+          // border: `1px solid ${alpha(orange[800], 0.5)}`,
+        // }),
       }),
     },
   },
