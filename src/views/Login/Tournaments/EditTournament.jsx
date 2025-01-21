@@ -20,102 +20,97 @@ import {
 } from '@mui/material';
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../services/AuthContext'; //  AuthContext
+import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
-import LoadingView from '../../../components/Login/LoadingView.jsx'
 
-export default function ShowTournament() {
+export default function EditTournament() {
     const { tournamentName, tournamentId } = useParams();
     const { user, loading, setLoading } = useAuth(); // Obtención del usuario autenticado
-    const [tournament, setTournament] = React.useState([]); // Estado para los detalles del torneo
-    const [matches, setMatches] = React.useState([]); // Estado para los partidos del torneo
+    const [tournaments, setTournament] = React.useState([]); // Estado para los detalles del torneo
+    const [matches, setMatch] = React.useState([]); // Estado para los partidos del torneo
     const [notificaciones, setNotificaciones] = React.useState([]); // Estado para las notificaciones
     const navigate = useNavigate();
 
     // useEffect para hacer petición automática de los datos del torneo, partidos y notificaciones
     React.useEffect(() => {
-        const fetchTournament = async () => { // Peticion SHOW Torneo
-            await axiosInstance.get(`/torneo/${tournamentName}/${tournamentId}`)
-            .then((response)=>{
+        const fetchTorneo = async () => { // Peticion SHOW Torneo
+            try {
+                const response = await axiosInstance.get(`/torneo/${tournamentName}/${tournamentId}`);
                 setTournament(response.data); // Datos del torneo
                 setNotificaciones(response.data.notifications); // Establecer notificaciones del torneo
-            })
-            .catch ((err) =>{
+            } catch (err) {
                 console.error('Error al cargar el torneo:', err);
                 setLoading(true);
-            })
+            }
         };
 
-        const fetchMatches = async () => { // Peticion INDEX Partidos del torneo
-            await axiosInstance.get(`/partidos/${tournamentId}`).
-            then((response)=> {
-                setMatches(response.data); // Datos de los partidos
-                setLoading(false);
-            })
-            .catch ((err)=>{
+        const fetchPartidos = async () => { // Peticion INDEX Partidos del torneo
+            try {
+                const response = await axiosInstance.get(`/partidos/${tournamentId}`);
+                setMatch(response.data); // Datos de los partidos
+            } catch (err) {
                 console.error('Error al cargar los partidos del torneo:', err);
                 setLoading(true);
-            })
+            }
         };
 
-        fetchTournament(); // Llamada para obtener los detalles del torneo
-        fetchMatches(); // Llamada para obtener los partidos del torneo
+        fetchTorneo(); // Llamada para obtener los detalles del torneo
+        fetchPartidos(); // Llamada para obtener los partidos del torneo
     }, [tournamentId, tournamentName]);
 
     // Función para manejar la aceptación o rechazo de notificaciones <-
-    const handleNotificationResponse = async (notificationId, status) => {
+    const handleNotificacionResponse = async (notificacionId, status) => {
+        try {
             // Enviar solicitud PUT para actualizar el estado de la notificación
-        await axios.put(`/notificaciones/${notificationId}`, {
-            status, // Puede ser 'accepted' o 'rejected'
-        })
-        .then(()=>{
+            await axios.put(`/notificaciones/${notificacionId}`, {
+                status, // Puede ser 'accepted' o 'rejected'
+            });
+
             // Actualizar el estado local de las notificaciones después de la respuesta
             setNotificaciones((prevState) =>
                 prevState.map((notificacion) =>
-                    notificacion.id === notificationId
+                    notificacion.id === notificacionId
                         ? { ...notificacion, status }
                         : notificacion
                 )
             );
-        })
-        .catch ((err) => {
+        } catch (err) {
             console.error('Error al responder la notificación:', err);
-        })
+        }
     };
 
     // Validar si la cantidad de equipos del torneo es del rango válido (Front)
-    const isValidTeamCount = [4, 8, 16, 32].includes(tournament?.countTeam);
+    const isValidEquipoCount = [4, 8, 16, 32].includes(tournaments?.cantEquipo);
 
-    // Validar la cantidad de partidos (Front) (debe ser torneo.countTeam - 1)
-    const isValidMatchesCount = matches.length === tournament?.countTeam - 1;
+    // Validar la cantidad de partidos (Front) (debe ser torneo.cantEquipo - 1)
+    const isValidPartidosCount = matches.length === tournaments?.cantEquipo - 1;
 
     // Organizar los partidos en brackets (Front)
     const generateBracket = (matches) => {
         let rounds = [];
-        let roundSize = tournament.countTeam / 2;
-        let roundMatches = [...matches];
+        let roundSize = tournaments.cantEquipo / 2;
+        let roundPartidos = [...matches];
 
         while (roundSize >= 1) {
-            rounds.push(roundMatches.slice(0, roundSize));
-            roundMatches = roundMatches.slice(roundSize);
+            rounds.push(roundPartidos.slice(0, roundSize));
+            roundPartidos = roundPartidos.slice(roundSize);
             roundSize /= 2;
         }
         {/* Retorna la cantidad de rondas que tendra cada torneo */ }
         return rounds;
-        {/* (Dividen en mitades al torneo, Ex: si countTeam = 8, Ronda 1 = 4, Ronda 2 = 2, Ronda 3 = 1) */ }
+        {/* (Dividen en mitades al torneo, Ex: si cantEquipo = 8, Ronda 1 = 4, Ronda 2 = 2, Ronda 3 = 1) */ }
         {/* donde {4,2,1} indican la cantidad de partidos en esa ronda <- */ }
     };
 
-    if(!tournament){ // En caso de que este vacio el torneo
-        return (
-        <LoadingView 
-        message={`The tournament you are trying to access may not exist.`}
-        />);
-    }
+    // Si el torneo no está cargado, mostrar un mensaje de carga (respuesta no dada en back)
+    // if (!tournaments) {
+    //     setLoading(true);
+    //     return <div>Cargando...</div>;
+    // }
 
     // Generar los brackets solo si es un torneo válido
-    const brackets = isValidTeamCount ? generateBracket(matches) : [];
+    const brackets = isValidEquipoCount ? generateBracket(matches) : [];
 
     // Calcular al ganador del torneo del ultimo partido basado en sus resultados "res" <-
     const getWinner = (match) => {
@@ -124,24 +119,23 @@ export default function ShowTournament() {
         return localPts > visitantePts ? match.equipoLocal.name : partido.equipoVisitante.name;
     };
 
-    const handleEliminar = async (matchId) => { // Peticion DELETE Partido
+    const handleEliminar = async (partidoId) => { // Peticion DELETE Partido
         const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este partido?");
 
         if (confirmacion) {
-            await axiosInstance.delete(`/partido/${tournamentId}/${matchId}`)
-            .then(()=>{
-                setMatches(partidos.filter(partido => partido.id !== matchId)); // Eliminar partido de la lista y actualizar el front <-
-            })
-            .catch ((err) => {
+            try {
+                await axiosInstance.delete(`/partido/${tournamentId}/${partidoId}`);
+                setMatches(partidos.filter(partido => partido.id !== partidoId)); // Eliminar partido de la lista y actualizar el front <-
+            } catch (err) {
                 console.error('Error al eliminar el partido:', err);
-            });
+            }
         } else {
             console.log("Eliminación cancelada");
         }
     };
 
-    const handleEdit = (matchId) => { // Cambio de vista a Edit form
-        navigate(`/partido/${tournamentName}/${tournamentId}/${matchId}/edit`);
+    const handleEditar = (partidoId) => { // Cambio de vista a Edit form
+        navigate(`/partido/${tournamentName}/${tournamentId}/${partidoId}/edit`);
     };
 
     return (
@@ -154,13 +148,13 @@ export default function ShowTournament() {
                 <Card variant="outlined">
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
-                            {tournament.name}
+                            {tournaments.name}
                         </Typography>
-                        <Typography><strong>Location:</strong> {tournament.ubicacion}</Typography>
-                        <Typography><strong>Description:</strong> {tournament.descripcion}</Typography>
-                        <Typography><strong>Start Date:</strong> {new Date(tournament.fechaInicio).toLocaleDateString()}</Typography>
-                        <Typography><strong>End Date:</strong> {new Date(tournament.fechaFin).toLocaleDateString()}</Typography>
-                        <Typography><strong>Total Teams:</strong> {tournament.countTeam}</Typography>
+                        <Typography><strong>Location:</strong> {tournaments.ubicacion}</Typography>
+                        <Typography><strong>Description:</strong> {tournaments.descripcion}</Typography>
+                        <Typography><strong>Start Date:</strong> {new Date(tournaments.fechaInicio).toLocaleDateString()}</Typography>
+                        <Typography><strong>End Date:</strong> {new Date(tournaments.fechaFin).toLocaleDateString()}</Typography>
+                        <Typography><strong>Total Teams:</strong> {tournaments.cantEquipo}</Typography>
                     </CardContent>
                     <CardActions>
                         <Button size="small" href={`/tournament/${tournamentName}/${tournamentId}/edit`}>Edit</Button>
@@ -183,8 +177,8 @@ export default function ShowTournament() {
                             {/* Botones para aceptar o denegar la notificación */}
                             {notificacion.status === 'pending' && (
                                 <div>
-                                    <button onClick={() => handleNotificationResponse(notificacion.id, 'accepted')}>Aceptar</button>
-                                    <button onClick={() => handleNotificationResponse(notificacion.id, 'rejected')}>Denegar</button>
+                                    <button onClick={() => handleNotificacionResponse(notificacion.id, 'accepted')}>Aceptar</button>
+                                    <button onClick={() => handleNotificacionResponse(notificacion.id, 'rejected')}>Denegar</button>
                                 </div>
                             )}
                         </div>
@@ -196,7 +190,7 @@ export default function ShowTournament() {
 
             <h2>Partidos del Torneo</h2>
             <div>
-                {isValidTeamCount ? ( // Si es un torneo valido (4,8,16,32) genera los brackets <-
+                {isValidEquipoCount ? ( // Si es un torneo valido (4,8,16,32) genera los brackets <-
                     // Brakets contiene los partidos como: brackets = [
                     // [{ partido1, partido2 }, { partido3, partido4 }],  // Ronda 1
                     //[{ partido5, partido6 }],  // Ronda 2
@@ -234,7 +228,7 @@ export default function ShowTournament() {
                                         <p><strong>Resultado:</strong> {partido.resLocal} - {partido.resVisitante}</p>
                                         {/* Botones de Editar y Eliminar */}
                                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <button onClick={() => handleEdit(partido.id)}>Editar</button>
+                                            <button onClick={() => handleEditar(partido.id)}>Editar</button>
                                             <button onClick={() => handleEliminar(partido.id)}>Eliminar</button>
                                         </div>
                                     </div>
@@ -246,8 +240,8 @@ export default function ShowTournament() {
                     <p>No hay partidos programados para este torneo o la cantidad de equipos no es válida.</p>
                 )}
 
-                {/* Mostrar ganador final solo si todos los partidos están completos, (se llego a countTeam-1)*/}
-                {isValidMatchesCount && partidos.length > 0 && (
+                {/* Mostrar ganador final solo si todos los partidos están completos, (se llego a cantEquipo-1)*/}
+                {isValidPartidosCount && partidos.length > 0 && (
                     <div>
                         <h3>Ganador Final del Torneo</h3>
                         <p><strong>Campeón:</strong> {getWinner(partidos[partidos.length - 1])}</p>

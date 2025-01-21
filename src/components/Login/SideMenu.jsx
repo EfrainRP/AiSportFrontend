@@ -217,7 +217,7 @@ export default function SideMenu(props) {
               <ListItemButton>
                 <ListItemIcon
                 sx={{
-                  height:75, 
+                  // height:75, 
                   justifyContent:'center',
                   alignItems:'center',
                   ml: 1
@@ -232,7 +232,7 @@ export default function SideMenu(props) {
           :
           dataSideMenu.map((data, index) => {
             return (<ListItem key={data.name} disablePadding 
-              sx={{ display: 'block' }}
+              sx={{ display: 'block'}}
             >
               <ListItemButton
                 title={data.name}
@@ -240,7 +240,8 @@ export default function SideMenu(props) {
                 href={data.url}
                 selected={location.pathname === data.url}
                 sx={[{
-                    minHeight: 80,
+                    my:2,
+                    // minHeight: "4rem",
                     px: 2.5,
                   },
                   openList? { justifyContent: 'initial',} : { justifyContent: 'center',},

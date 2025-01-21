@@ -21,6 +21,7 @@ import Search from "./views/Login/Search/Search.jsx";
 //  CRUD TORNEOS 
 import IndexTournament from './views/Login/Tournaments/IndexTournament.jsx'; // Tournaments Index <-
 import ShowTournament from './views/Login/Tournaments/ShowTournament.jsx';
+import EditTournament from './views/Login/Tournaments/EditTournament.jsx';
 //  CRUD TORNEOS 
 import IndexTeams from './views/Login/Teams/IndexTeams.jsx'; // Tournaments Index <-
 
@@ -105,15 +106,15 @@ export default function MyRoute(){
               </AuthRoute>
             }
           />
-          {/* <Route
+          <Route
             path="/tournament/:tournamentName/:tournamentId/edit" // Ruta edit protegida mediante Police <-
             element={
               <AuthRoute requireTorneoOwnership={true}>
-                <TorneoEdit />
+                <EditTournament />
               </AuthRoute>
             }
           />
-          <Route
+          {/* <Route
             path="/tournament/create" // Ruta create
             element={
               <AuthRoute>
