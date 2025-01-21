@@ -16,6 +16,7 @@ import SignIn from "./views/Basic/SignIn/SignIn.jsx";
 import Dashboard from "./views/Login/Dashboard/Dashboard.jsx";
 import TournamentDashboard from "./views/Login/Dashboard/TournamentDashboard.jsx";
 import TeamDashboard from "./views/Login/Dashboard/TeamDashboard.jsx";
+import Search from "./views/Login/Search/Search.jsx";
 
 //  CRUD TORNEOS 
 import IndexTournament from './views/Login/Tournaments/IndexTournament.jsx'; // Tournaments Index <-
@@ -77,6 +78,14 @@ export default function MyRoute(){
             element={
               <AuthRoute>
                 <TeamDashboard />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/dashboard/search" // Ruta para busqueda <-
+            element={
+              <AuthRoute> 
+                <Search/>
               </AuthRoute>
             }
           />

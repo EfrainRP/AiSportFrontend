@@ -11,7 +11,8 @@ import {
   Autocomplete,
   Button,
   Alert,
-  Snackbar
+  Snackbar, 
+  Divider
 } from '@mui/material';
 import PropTypes from 'prop-types';
 
@@ -213,7 +214,7 @@ export default function TournamentDashboard () {
         <Container sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%'}}>
           <Card sx={{minWidth:290, width:'80%'}}>
             <CardContent>
-              <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2, mb:2}}>
+              <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
                 <Typography variant='h5'> 
                   <strong>Location: </strong>
                 </Typography>
@@ -221,34 +222,39 @@ export default function TournamentDashboard () {
                   {tournament.ubicacion}
                 </Typography>
               </Container>
+              <Divider variant="middle" sx={{my:2}}/>
             
-              <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2, mb:2}}>
-                <Typography variant='h5' sx={{ mb: 2, }}> 
+              <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
+                <Typography variant='h5'> 
                   <strong>Start Date:</strong>
                 </Typography>
                 <Typography variant='h6' sx={{color: 'text.secondary'}}> 
                   {new Date(tournament.fechaInicio).toISOString().split('T')[0]}
                 </Typography>
               </Container>
-              <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2, mb:2}}>
-                <Typography variant='h5' sx={{ mb: 2, }}> 
+              <Divider variant="middle" sx={{my:2}}/>
+
+              <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
+                <Typography variant='h5'> 
                   <strong>Final Date:</strong>
                 </Typography>
                 <Typography variant='h6' gutterBottom sx={{color: 'text.secondary'}}> 
                   {new Date(tournament.fechaFin).toISOString().split('T')[0]}
                 </Typography>
               </Container>
+              <Divider variant="middle" sx={{my:2}}/>
 
-              <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2, mb:2}}>
-                <Typography variant='h5' sx={{ mb: 2, }}> 
+              <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
+                <Typography variant='h5'> 
                   <strong>Total Teams:</strong>
                 </Typography>
                 <Typography variant='h6' gutterBottom sx={{color: 'text.secondary'}}> 
                   {tournament.cantEquipo}
                 </Typography>
               </Container>
+              <Divider variant="middle" sx={{my:2}}/>
 
-              <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2, mb:2}}>
+              <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
                 <Typography variant='h5'> 
                   <strong>Tournament Description:</strong>
                 </Typography>
@@ -262,7 +268,7 @@ export default function TournamentDashboard () {
       </CustomTabPanel>
 
       <CustomTabPanel value={valueTab} index={1}> {/*Tab Matches */}
-        <Container sx={{width:'75%'}}>
+        <Container sx={{width:'80%'}}>
           <Typography variant='h4'> 
             <strong>Tournament's Matches:</strong>
           </Typography>
@@ -292,54 +298,59 @@ export default function TournamentDashboard () {
         </Container>
       </CustomTabPanel>
       <CustomTabPanel value={valueTab} index={2}> {/*Tab Notifications */}
-        <Container sx={{width:'75%'}}>
-          <Typography variant='h4' > 
-            Enviar Notificación de Participación
-          </Typography>
-          <Typography variant='subtitle2' gutterBottom > 
-            You can send a notification to the tournament organizer to participate in the tournament with one of your teams.
-          </Typography>
-          <Typography variant='subtitle2' sx={{my:2}} > 
-          <strong>NOTE:</strong> Sending a registration notification to the organizer does not always guarantee a place in the tournament, you can contact: <strong>{tournament.users.email}</strong>.
-          </Typography>
-          <Container sx={{display:'flex', justifyItems:'center', alignContent:'center', my:4}}>
-          <Autocomplete
-            autoComplete
-            autoSelect
-            includeInputInList
-            selectOnFocus
-            options={teams}
-            getOptionLabel={(option)=>option.name} // Muestra el nombre como etiqueta
-            isOptionEqualToValue={(option, value) => option.id === value.id} // Compara por `id`
-            value={valueAutoComplete}
-            onChange={(event, newValue) => setValueAutoComplete(newValue)}
-            size="medium"
-            sx={{ width: '50%'}}
-            renderInput={(params) => <TextField {...params} label="Choose a team" color='dark' />}
-          />
-          {/* <select label="Select teams" onChange={(e) => setvalueAutoComplete(e.target.value)} value={valueAutoComplete}>
-            <option value="">Select one of your teams:</option>
-            {teams.map((team) => (
-              <option key={team.id} value={team.id}>{team.name}</option>
-            ))}
-          </select> */}
-          <Button variant="contained" endIcon={<SendIcon />} color="success" onClick={handleSendNotification}>
-            Send Notification
-          </Button>
-          <Button variant="contained" startIcon={<DeleteIcon />} color="error" onClick={handleCancelNotification}>
-            Cancel Notification
-          </Button>
-          </Container>
-          <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar} anchorOrigin={{ vertical: 'top', horizontal: 'center'}}>
-            <Alert
-              severity={dataAlert.severity}
-              variant='filled'
-              sx={{ width: '100%'}}
-              onClose={handleCloseSnackBar}
-            >
-              {dataAlert.message}
-            </Alert>
-          </Snackbar>
+        <Container sx={{width:'90%'}}>
+          <Card sx={{minWidth:200, width:'100%'}}>
+            <CardContent>
+            <Typography variant='h4' sx={{textAlign:'center'}}> 
+              Enviar Notificación de Participación
+            </Typography>
+            <Divider variant="middle" sx={{my:2}}/>
+            <Typography variant='subtitle2' gutterBottom > 
+              You can send a notification to the tournament organizer to participate in the tournament with one of your teams.
+            </Typography>
+            <Typography variant='subtitle2' sx={{my:2}} > 
+            <strong>NOTE:</strong> Sending a registration notification to the organizer does not always guarantee a place in the tournament, you can contact: <strong>{tournament.users.email}</strong>.
+            </Typography>
+            <Container sx={{display:'flex', justifyItems:'center', alignContent:'center', my:4, gap:2}}>
+              <Autocomplete
+                autoComplete
+                autoSelect
+                includeInputInList
+                selectOnFocus
+                options={teams}
+                getOptionLabel={(option)=>option.name} // Muestra el nombre como etiqueta
+                isOptionEqualToValue={(option, value) => option.id === value.id} // Compara por `id`
+                value={valueAutoComplete}
+                onChange={(event, newValue) => setValueAutoComplete(newValue)}
+                size="medium"
+                sx={{ width: '50%'}}
+                renderInput={(params) => <TextField {...params} label="Choose a team" color='dark' />}
+              />
+              {/* <select label="Select teams" onChange={(e) => setvalueAutoComplete(e.target.value)} value={valueAutoComplete}>
+                <option value="">Select one of your teams:</option>
+                {teams.map((team) => (
+                  <option key={team.id} value={team.id}>{team.name}</option>
+                ))}
+              </select> */}
+              <Button variant="contained" endIcon={<SendIcon />} color="success" onClick={handleSendNotification}>
+                Send Notification
+              </Button>
+              <Button variant="contained" startIcon={<DeleteIcon />} color="error" onClick={handleCancelNotification}>
+                Cancel Notification
+              </Button>
+              </Container>
+              <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar} anchorOrigin={{ vertical: 'top', horizontal: 'center'}}>
+                <Alert
+                  severity={dataAlert.severity}
+                  variant='filled'
+                  sx={{ width: '100%'}}
+                  onClose={handleCloseSnackBar}
+                >
+                  {dataAlert.message}
+                </Alert>
+              </Snackbar>
+            </CardContent>
+          </Card>
         </Container>
       </CustomTabPanel>
     </LayoutLogin>

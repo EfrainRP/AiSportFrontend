@@ -39,7 +39,7 @@ const dataSideMenu = [ //TO DO: checar las urls
   {name: 'Home', img: <HomeIcon/>, url: '/dashboard' },
   {name: 'Tournaments', img: <EmojiEventsIcon/>, url: '/tournaments' },
   {name: 'Teams', img: <PeopleAltIcon/>, url: '/teams' },
-  {name: 'Search', img: <SearchIcon/>, url: '#' },
+  {name: 'Search', img: <SearchIcon/>, url: '/dashboard/search' },
   {name: 'Notifications', img: <ChatIcon/>, url: '/notifications' }
 ];
 

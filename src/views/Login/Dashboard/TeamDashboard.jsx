@@ -87,10 +87,23 @@ export default function TeamDashboard () {
       <Container sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%'}}>
         <Card sx={{minWidth:280, width:'80%'}}>
           <CardContent>
-            <Typography gutterBottom variant="h5" component="div" sx={{display:'flex', justifyContent:'center'}}>
-              {`Team's Detail: ${team.name}`}
-            </Typography>
-            <Divider sx={{my:2}}/>
+          <Container sx={{display:'flex', justifyContent:'center'}}>
+              <Typography variant="h5" sx={{display:'flex', justifyContent:'center', color: 'text.secondary'}}>
+                <strong>Team's Detail: </strong>
+              </Typography>
+              <Typography variant="h6" sx={{mx:1}}>
+                {team.name}
+              </Typography>
+            </Container>
+            <Container sx={{display:'flex', justifyContent:'center'}}>
+              <Typography variant="subtitle1" sx={{display:'flex', justifyContent:'center', color: 'text.secondary'}}>
+                <strong>Organizer: </strong>
+              </Typography>
+              <Typography variant="subtitle1" sx={{mx:1}}>
+                { team.users?.name || 'Desconocido'}
+              </Typography>
+            </Container>
+            <Divider sx={{my:1}}/>
             <CardMedia
             component="img"
             alt={`Team ${team.name}`} 
@@ -98,17 +111,12 @@ export default function TeamDashboard () {
             image={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
           />
             <Divider sx={{my:2}}/>
-            <Typography variant="h5" sx={{ color: 'text.secondary', display:'flex', justifyContent:'center'}}>
-              <strong>Organizador del Equipo: </strong>
-              <Typography variant="h6" sx={{mx:1}}>
-                { team.users?.name || 'Desconocido'}
-              </Typography>
-            </Typography>
+            
             
             <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
               <strong>Integrantes:</strong>
             </Typography>
-            <List sx={{ color: 'text.secondary' }}>
+            <List>
               {team?.miembro_equipos?.length > 0 ? (
                 team.miembro_equipos.map((miembro) => {
                   return (<ListItem key={miembro.user_miembro}>
@@ -122,11 +130,13 @@ export default function TeamDashboard () {
 
           </CardContent>
           <Divider sx={{my:2}}/>
-          <CardActions>
+          <CardActions >
             <Button 
               size="small"
               endIcon={<EqualizerIcon/>}
-              href={`/equipo/${team.name}/${teamId}/estadisticas`}>
+              color='secondary'
+              variant="contained"
+              href={`/team/${team.name}/${teamId}/statistics`}>
                 Statistics
             </Button>
           </CardActions>
