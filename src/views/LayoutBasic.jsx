@@ -16,10 +16,10 @@ export default function LayoutBasic(props) {
             minHeight: '89.5vh',
             backgroundRepeat: 'no-repeat',
             backgroundImage:
-            'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
+            'radial-gradient(ellipse at 50% 50%, hsla(0, 0.00%, 100.00%, 0.84), hsla(28, 65.40%, 79.60%, 0.91))',
             ...theme.applyStyles('dark', {
               backgroundImage:
-              'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))', 
+              'radial-gradient(at 50% 50%, hsla(29, 97.00%, 26.50%, 0.75), hsla(27, 64.80%, 17.80%, 0.64))', 
               }),
             zIndex: 1
           })}
