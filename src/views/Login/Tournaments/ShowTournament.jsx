@@ -16,14 +16,63 @@ import {
     Autocomplete,
     Fab,
     ButtonGroup,
-    Grow  
+    Grow ,
+    Tab, 
+    Tabs,
+    Container,
+    Alert,
+    Snackbar, 
+    Divider,
+    CardMedia,
+    List,
+    ListItem,
+    ListItemText,
+    ListItemButton
 } from '@mui/material';
+import PropTypes from 'prop-types';
+
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx'
+
+import FolderIcon from '@mui/icons-material/Folder';
+import GroupsIcon from '@mui/icons-material/Groups';
+import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SendIcon from '@mui/icons-material/Send';
+
+function CustomTabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
+
+CustomTabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 
 export default function ShowTournament() {
     const { tournamentName, tournamentId } = useParams();
@@ -33,6 +82,20 @@ export default function ShowTournament() {
     const [notificaciones, setNotificaciones] = React.useState([]); // Estado para las notificaciones
     const navigate = useNavigate();
 
+    const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
+    const [openSnackBar, setOpenSnackBar] = React.useState(false); // Mecanismo snackbar
+
+    const handleCloseSnackBar = (event, reason) => {
+    if (reason === 'clickaway') {
+        return;
+    }
+    setOpenSnackBar(false);
+    };
+    
+    const [valueTab, setValueTab] = React.useState(0); // Mecanismo del Tab
+    const handleChange = (event, newValue) => {
+    setValueTab(newValue);
+    };
     // useEffect para hacer petición automática de los datos del torneo, partidos y notificaciones
     React.useEffect(() => {
         const fetchTournament = async () => { // Peticion SHOW Torneo
@@ -90,6 +153,8 @@ export default function ShowTournament() {
     // Validar la cantidad de partidos (Front) (debe ser torneo.countTeam - 1)
     const isValidMatchesCount = matches.length === tournament?.countTeam - 1;
 
+    console.log(matches);
+
     // Organizar los partidos en brackets (Front)
     const generateBracket = (matches) => {
         let rounds = [];
@@ -110,7 +175,7 @@ export default function ShowTournament() {
     if(!tournament){ // En caso de que este vacio el torneo
         return (
         <LoadingView 
-        message={`The tournament you are trying to access may not exist.`}
+            message={`The tournament you are trying to access may not exist.`}
         />);
     }
 
@@ -146,114 +211,178 @@ export default function ShowTournament() {
 
     return (
         <LayoutLogin>
-            <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'40%'} /> : 'Tournament Details'} </Typography>
+            
+            <Typography gutterBottom variant="h2" component="div" sx={{ml:2}}>
+                {loading?
+                    <Skeleton variant="rounded" width={'30%'} /> 
+                    : tournament.name}
+            </Typography>
 
-            {loading ?
-                <Skeleton variant="rounded" width={'40%'} />
-                :
-                <Card variant="outlined">
-                    <CardContent>
-                        <Typography gutterBottom variant="h5" component="div">
-                            {tournament.name}
-                        </Typography>
-                        <Typography><strong>Location:</strong> {tournament.ubicacion}</Typography>
-                        <Typography><strong>Description:</strong> {tournament.descripcion}</Typography>
-                        <Typography><strong>Start Date:</strong> {new Date(tournament.fechaInicio).toLocaleDateString()}</Typography>
-                        <Typography><strong>End Date:</strong> {new Date(tournament.fechaFin).toLocaleDateString()}</Typography>
-                        <Typography><strong>Total Teams:</strong> {tournament.countTeam}</Typography>
-                    </CardContent>
-                    <CardActions>
-                        <Button size="small" href={`/tournament/${tournamentName}/${tournamentId}/edit`}>Edit</Button>
-                        <Button size="small" href={`/partido/create/${tournamentName}/${tournamentId}`}>Create match</Button>
-                        <Button size="small" href={`/tournament/${tournamentName}/${tournamentId}/estadisticas`}>See statistics</Button>
-                    </CardActions>
-                </Card>
-            }
+            <Box sx={{ borderBottom: 3, borderColor: 'divider' }}>
+                <Tabs centered value={valueTab} onChange={handleChange} >
+                <Tab icon={<FolderIcon />} label="Details" {...a11yProps(0)} />
+                <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)}/>
+                <Tab  icon={<NotificationAddIcon />} label="Send Notifications" {...a11yProps(2)} />
+                </Tabs>
+            </Box>
+            <CustomTabPanel value={valueTab} index={0}> {/*Tab Details */}
+                <Container sx={{width: '70%'}}>
+                    <Card variant="outlined">
+                        <CardContent>
+                            <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
+                                <Typography variant='h5'> 
+                                    <strong>Location:</strong>
+                                </Typography>
+                                <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                                    {tournament.ubicacion}
+                                </Typography>
+                            </Container>
+                            <Divider variant="middle" sx={{my:2}}/>
+                            <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
+                                <Typography variant='h5'> 
+                                    <strong>Description:</strong>
+                                </Typography>
+                                <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                                    {tournament.descripcion}
+                                </Typography>
+                            </Container>
+                            <Divider variant="middle" sx={{my:2}}/>
+                            <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
+                                <Typography variant='h5'> 
+                                    <strong>Start Date:</strong>
+                                </Typography>
+                                <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                                    {new Date(tournament.fechaInicio).toLocaleDateString()}
+                                </Typography>
+                            </Container>
+                            <Divider variant="middle" sx={{my:2}}/>
+                            <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
+                                <Typography variant='h5'> 
+                                    <strong>End Date:</strong>
+                                </Typography>
+                                <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                                    {new Date(tournament.fechaFin).toLocaleDateString()}
+                                </Typography>
+                            </Container>
+                            <Divider variant="middle" sx={{my:2}}/>
+                            <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
+                                <Typography variant='h5'> 
+                                    <strong>Total Teams:</strong>
+                                </Typography>
+                                <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                                    {tournament.cantEquipo}
+                                </Typography>
+                            </Container>
+                            <Divider variant="middle" sx={{my:2}}/>
+                        </CardContent>
+                        <CardActions>
+                            <Button variant="contained" size="small" href={`/tournament/${tournamentName}/${tournamentId}/edit`}>Edit</Button>
+                            <Button variant="contained" size="small" href={`/partido/create/${tournamentName}/${tournamentId}`}>Create match</Button>
+                            <Button variant="contained" size="small" href={`/tournament/${tournamentName}/${tournamentId}/estadisticas`}>See statistics</Button>
+                        </CardActions>
+                    </Card>
+                </Container>
+            </CustomTabPanel>
+            <CustomTabPanel value={valueTab} index={1}> {/*Tab Matches */}
+                <Typography variant='h4' sx={{textAlign:'center', mb:3}}>Tournament matches</Typography>
+                <Container>
+                    {isValidTeamCount ? ( // Si es un torneo valido (4,8,16,32) genera los brackets <-
+                        // Brakets contiene los partidos como: brackets = [
+                        // [{ partido1, partido2 }, { partido3, partido4 }],  // Ronda 1
+                        //[{ partido5, partido6 }],  // Ronda 2
+                        //[{ partido7 }]  // Ronda 3
+                        // TODO: checar la vista de round con datos 
+                        brackets.map((round, index) => ( // "Map" itera en el array, y "Round" es un array de "partidos" por ronda
+                            <Card key={index}>     {/* Index indica la Ronda actual <- donde "key" actualiza el DOM (Interfaz de programacion) dinamicamente */}
+                                <CardContent>
+                                    <Typography variant='h5'>Round {index + 1}</Typography>
+                                    <Container>
+                                        {round.map((match, matchIndex) => (
+                                            <Card
+                                                key={matchIndex}
+                                                // style={{
+                                                //     marginBottom: '20px',
+                                                //     border: '1px solid #ccc',
+                                                //     padding: '10px',
+                                                //     borderRadius: '5px',
+                                                //     width: '48%',
+                                                // }}
+                                            >
+                                                <Typography variant='body1'><strong>Match Date:</strong> {new Date(match.fechaPartido).toISOString().split('T')[0]}</Typography>
+                                                <Typography variant='body1'><strong>Time:</strong> {new Date(match.horaPartido).toLocaleTimeString()}</Typography>
+                                                <CardMedia
+                                                    src={URL_SERVER+`/utils/uploads/${match.equipoLocal.image !== 'logoEquipo.jpg' ? match.equipoLocal.image : 'logoEquipo.jpg'}`}
+                                                    alt="Perfil"
+                                                    style={{ width: '120px', height: '50px' }} // Size IMG
+                                                />
+                                                <Typography variant='body1'><strong>Home Team:</strong> {match.equipoLocal.name}</Typography>
+                                                <CardMedia
+                                                    src={URL_SERVER+`/utils/uploads/${match.equipoVisitante.image !== 'logoEquipo.jpg' ? match.equipoVisitante.image : 'logoEquipo.jpg'}`}
+                                                    alt="Perfil"
+                                                    style={{ width: '120px', height: '50px' }} // Size IMG
+                                                />
+                                                <Typography variant='body1'><strong>Vist Team:</strong> {match.equipoVisitante.name}</Typography>
 
-            <h2>Notificaciones del Torneo</h2>
-            <div>
-                {notificaciones.length > 0 ? (
-                    notificaciones.map((notificacion) => (
-                        <div key={notificacion.id} style={{ marginBottom: '20px', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}>
-                            <p><strong>Equipo:</strong> {notificacion.equipos.name}</p>
-                            <p><strong>Usuario:</strong> {notificacion.users_notifications_user_idTousers.name}</p>
-                            <p><strong>Email:</strong> {notificacion.users_notifications_user_idTousers.email}</p>
-                            <p><strong>Status:</strong> {notificacion.status}</p>
+                                                <Typography variant='body1'><strong>Result:</strong> {match.resLocal} - {match.resVisitante}</Typography>
+                                                {/* Botones de Editar y Eliminar */}
+                                                <CardActions style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                    <Button variant="contained" onClick={() => handleEdit(match.id)}>Edit</Button>
+                                                    <Button variant="contained" onClick={() => handleEliminar(match.id)}>Delete</Button>
+                                                </CardActions>
+                                            </Card>
+                                        ))}
+                                    </Container>
+                                </CardContent>
+                            </Card>
+                        ))
+                    ) : (
+                        <Typography variant='subtitle2' sx={{textAlign: 'center'}}>There are no matches scheduled for this tournament or the number of teams is invalid.</Typography>
+                    )}
 
-                            {/* Botones para aceptar o denegar la notificación */}
-                            {notificacion.status === 'pending' && (
-                                <div>
-                                    <button onClick={() => handleNotificationResponse(notificacion.id, 'accepted')}>Aceptar</button>
-                                    <button onClick={() => handleNotificationResponse(notificacion.id, 'rejected')}>Denegar</button>
-                                </div>
-                            )}
-                        </div>
-                    ))
-                ) : (
-                    <p>No hay notificaciones pendientes para este torneo.</p>
-                )}
-            </div>
+                    {/* Mostrar ganador final solo si todos los partidos están completos, (se llego a countTeam-1)*/}
+                    {isValidMatchesCount && matches.length > 0 && (
+                        <Card>
+                            <CardContent sx={{textAlign:'center'}}>
+                                <Typography variant='h4'>Final Tournament Winner</Typography>
+                                <Typography variant='h3'><strong>Champion:</strong> {getWinner(matches[matches.length - 1])}</Typography>
+                            </CardContent>
+                        </Card>
+                    )}
+                </Container>
+            </CustomTabPanel>
+            <CustomTabPanel value={valueTab} index={2}> {/*Tab Matches */}
+                <Container>
+                    <Typography variant='h4' sx={{textAlign: 'center', mb:2}}>Tournament Notifications</Typography>
+                    <List>
+                        {notificaciones.length > 0 ? ( //TODO: checar la vista notificaciones con datos
+                            notificaciones.map((notificacion,i) => (
+                                <ListItem key={i}>
+                                    <ListItemText primary={`Team: ${notificacion.equipos.name}`}/>
+                                    <ListItemText primary={`Player: ${notificacion.users_notifications_user_idTousers.name}`}/>
+                                    <ListItemText primary={`Email: ${notificacion.users_notifications_user_idTousers.email}`}/>
+                                    <ListItemText primary={`Status: ${notificacion.status}`}/>
 
-            <h2>Partidos del Torneo</h2>
-            <div>
-                {isValidTeamCount ? ( // Si es un torneo valido (4,8,16,32) genera los brackets <-
-                    // Brakets contiene los partidos como: brackets = [
-                    // [{ partido1, partido2 }, { partido3, partido4 }],  // Ronda 1
-                    //[{ partido5, partido6 }],  // Ronda 2
-                    //[{ partido7 }]  // Ronda 3
-                    brackets.map((round, index) => ( // "Map" itera en el array, y "Round" es un array de "partidos" por ronda
-                        <div key={index}>     {/* Index indica la Ronda actual <- donde "key" actualiza el DOM (Interfaz de programacion) dinamicamente */}
-                            <h3>Ronda {index + 1}</h3>
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                {round.map((partido, partidoIndex) => (
-                                    <div
-                                        key={partidoIndex}
-                                        style={{
-                                            marginBottom: '20px',
-                                            border: '1px solid #ccc',
-                                            padding: '10px',
-                                            borderRadius: '5px',
-                                            width: '48%',
-                                        }}
-                                    >
-                                        <p><strong>Fecha del Partido:</strong> {new Date(partido.fechaPartido).toISOString().split('T')[0]}</p>
-                                        <p><strong>Hora:</strong> {new Date(partido.horaPartido).toLocaleTimeString()}</p>
-                                        <img
-                                            src={`http://localhost:5000/sporthub/api/utils/uploads/${partido.equipoLocal.image !== 'logoEquipo.jpg' ? partido.equipoLocal.image : 'logoEquipo.jpg'}`}
-                                            alt="Perfil"
-                                            style={{ width: '120px', height: '50px' }} // Size IMG
-                                        />
-                                        <p><strong>Equipo Local:</strong> {partido.equipoLocal.name}</p>
-                                        <img
-                                            src={`http://localhost:5000/sporthub/api/utils/uploads/${partido.equipoVisitante.image !== 'logoEquipo.jpg' ? partido.equipoVisitante.image : 'logoEquipo.jpg'}`}
-                                            alt="Perfil"
-                                            style={{ width: '120px', height: '50px' }} // Size IMG
-                                        />
-                                        <p><strong>Equipo Visitante:</strong> {partido.equipoVisitante.name}</p>
+                                    {/* Botones para aceptar o denegar la notificación */}
+                                    {notificacion.status === 'pending' && (
+                                        <Container>
+                                            <ListItemButton alt='accepted' onClick={() => handleNotificationResponse(notificacion.id, 'accepted')}>Accept</ListItemButton>
+                                            <ListItemButton alt='rejected' onClick={() => handleNotificationResponse(notificacion.id, 'rejected')}>Deny</ListItemButton>
 
-                                        <p><strong>Resultado:</strong> {partido.resLocal} - {partido.resVisitante}</p>
-                                        {/* Botones de Editar y Eliminar */}
-                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <button onClick={() => handleEdit(partido.id)}>Editar</button>
-                                            <button onClick={() => handleEliminar(partido.id)}>Eliminar</button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <p>No hay partidos programados para este torneo o la cantidad de equipos no es válida.</p>
-                )}
+                                        </Container>
+                                    )}
+                                </ListItem>
+                            ))
+                        ) : (
+                            <ListItemText variant='body1' sx={{textAlign: 'center'}}>There are no pending notifications for this tournament.</ListItemText>
+                        )}
+                    </List>
+                </Container>
+            </CustomTabPanel>
+            
 
-                {/* Mostrar ganador final solo si todos los partidos están completos, (se llego a countTeam-1)*/}
-                {isValidMatchesCount && partidos.length > 0 && (
-                    <div>
-                        <h3>Ganador Final del Torneo</h3>
-                        <p><strong>Campeón:</strong> {getWinner(partidos[partidos.length - 1])}</p>
-                    </div>
-                )}
-            </div>
+            
+
+            
         </LayoutLogin>
     );
 };
