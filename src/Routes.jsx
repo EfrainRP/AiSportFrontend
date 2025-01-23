@@ -25,9 +25,10 @@ import EditTournament from './views/Login/Tournaments/EditTournament.jsx';
 //  CRUD EQUIPOS 
 import IndexTeams from './views/Login/Teams/IndexTeam.jsx'; // Tournaments Index <-
 import ShowTeam from './views/Login/Teams/ShowTeam.jsx'; // Tournaments Index <-
-
 //  CRUD NOTIFICACIONES 
 import IndexNotifications from './views/Login/Notifications/IndexNotifications.jsx';
+//  CRUD PERFIL 
+import ShowProfile from './views/Login/Profile/ShowProfile.jsx'; // Tournaments Index <-
 
 export default function MyRoute(){
     return (
@@ -179,15 +180,15 @@ export default function MyRoute(){
               </AuthRoute>
             }
           />
-          {/* <Route //  < ------------- CRUD PERFIL ------------------------------------ >  
-            path="/dashboard/perfil/:userName" // Ruta SHOW protegida mediante Police <-
+          <Route //  < ------------- CRUD PERFIL ------------------------------------ >  
+            path="/dashboard/profile/:userName" // Ruta SHOW protegida mediante Police <-
             element={
               <AuthRoute > 
-                <PerfilShow />
+                <ShowProfile />
               </AuthRoute>
             }
           />
-          <Route
+          {/* <Route
             path="/dashboard/perfil/:userName/edit" // Ruta EDIT protegida mediante Police <-
             element={
               <AuthRoute > 

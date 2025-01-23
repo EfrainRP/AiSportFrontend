@@ -302,6 +302,7 @@ export default function SideMenu(props) {
             <ListItemButton
               title={'Profile'}
               selected={location.pathname === 'profile'}
+              href={`/dashboard/profile/${user.userName}`}
               onClick={handleClickMenu}
               sx={[{
                   minHeight: 70,

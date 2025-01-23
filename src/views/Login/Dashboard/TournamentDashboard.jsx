@@ -204,7 +204,7 @@ export default function TournamentDashboard () {
           {matches.legnth>0?
             <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)}/>
             :
-            <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)} disabled/>
+            <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)} disabled color="red"/>
           }
           <Tab  icon={<NotificationAddIcon />} label="Send Notifications" {...a11yProps(2)} />
         </Tabs>

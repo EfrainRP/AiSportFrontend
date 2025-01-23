@@ -79,7 +79,7 @@ export const surfacesCustomizations = {
                 boxShadow: 'none',
                 background: 'hsl(0, 0%, 100%)',
                 ...theme.applyStyles('dark', {
-                  background: alpha(gray[900], 0.4),
+                  background: alpha(gray[900], 0.8),
                 }),
               },
             },
