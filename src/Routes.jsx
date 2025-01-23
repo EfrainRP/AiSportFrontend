@@ -22,8 +22,9 @@ import Search from "./views/Login/Search/Search.jsx";
 import IndexTournament from './views/Login/Tournaments/IndexTournament.jsx'; // Tournaments Index <-
 import ShowTournament from './views/Login/Tournaments/ShowTournament.jsx';
 import EditTournament from './views/Login/Tournaments/EditTournament.jsx';
-//  CRUD TORNEOS 
-import IndexTeams from './views/Login/Teams/IndexTeams.jsx'; // Tournaments Index <-
+//  CRUD EQUIPOS 
+import IndexTeams from './views/Login/Teams/IndexTeam.jsx'; // Tournaments Index <-
+import ShowTeam from './views/Login/Teams/ShowTeam.jsx'; // Tournaments Index <-
 
 //  CRUD NOTIFICACIONES 
 import IndexNotifications from './views/Login/Notifications/IndexNotifications.jsx';
@@ -130,15 +131,15 @@ export default function MyRoute(){
               </AuthRoute>
             }
           />
-          {/* <Route
+          <Route
             path="/team/:teamName/:teamId" // Ruta show protegida mediante Police <-
             element={
               <AuthRoute requireEquipoOwnership={true}> 
-                <EquipoShow />
+                <ShowTeam />
               </AuthRoute>
             }
           />
-          <Route
+          {/* <Route
             path="/team/:teamName/:teamId/edit" // Ruta edit protegida mediante Police <-
             element={
               <AuthRoute requireEquipoOwnership={true}>

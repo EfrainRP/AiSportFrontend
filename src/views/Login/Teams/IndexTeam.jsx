@@ -18,25 +18,25 @@ import LayoutLogin from '../../LayoutLogin.jsx';
 
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 
-export default function IndexTeams() {
-    const [equipos, setEquipos] = React.useState([]);
+export default function IndexTeam() {
+    const [teams, setTeams] = React.useState([]);
     const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado 
 
     React.useEffect(() => { // Hace la solicitud al cargar la vista <-
-        const fetchEquipos = async () => {
+        const fetchTeams = async () => {
             await axiosInstance.get(`/equipos/${user.userId}`)
                 .then((response) => {
                     setTimeout(() => {
                         setLoading(false); // Cambia el estado para simular que la carga ha terminado
                       }, 1500); // Simula tiempo de carga
-                    setEquipos(response.data);
+                    setTeams(response.data);
                 })
                 .catch((error) => {
                     console.error("Error al obtener los equipos:", error);
                     setLoading(false); // Cambiar el estado de carga incluso en caso de error
                 })
         };
-        fetchEquipos();
+        fetchTeams();
     }, [user.userId]);
 
     return (
@@ -65,21 +65,21 @@ export default function IndexTeams() {
                         useFlexGap
                         sx={{ flexWrap: 'wrap'}}
                     >
-                        {equipos.length > 0 ? (
-                            equipos.map((equipo) => {
+                        {teams.length > 0 ? (
+                            teams.map((team) => {
                                 return (
-                                <Card variant="outlined" key={equipo.id} sx={{p:0}}>
-                                    <CardActionArea href={`/team/${equipo.name}/${equipo.id}`} sx={{p:2}}>
+                                <Card variant="outlined" key={team.id} sx={{p:0}}>
+                                    <CardActionArea href={`/team/${team.name}/${team.id}`} sx={{p:2}}>
                                         <CardMedia
                                             component="img"
                                             height={120}
-                                            // image={`http://localhost:3000/sporthub/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
-                                            image={URL_SERVER+`/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
-                                            alt={equipo.name}
+                                            // image={`http://localhost:3000/sporthub/api/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
+                                            image={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
+                                            alt={team.name}
                                         />
                                         <CardContent>
                                             <Typography gutterBottom variant="h5" component="span" sx={{mt:1, display: 'flex', justifyContent: 'center'}}>
-                                                <strong>{equipo.name}</strong>
+                                                <strong>{team.name}</strong>
                                             </Typography>
                                         </CardContent>
                                     </CardActionArea>
