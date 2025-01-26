@@ -29,6 +29,7 @@ import ShowTeam from './views/Login/Teams/ShowTeam.jsx'; // Tournaments Index <-
 import IndexNotifications from './views/Login/Notifications/IndexNotifications.jsx';
 //  CRUD Estadisticas 
 import Stadistics from './views/Login/Stadistics/Stadistics.jsx'; // Tournaments Index <-
+import StatTournament from './views/Login/Stadistics/StatTournament.jsx'; // Tournaments Index <-
 //  CRUD PERFIL 
 import ShowProfile from './views/Login/Profile/ShowProfile.jsx'; // Tournaments Index <-
 
@@ -206,15 +207,15 @@ export default function MyRoute(){
               </AuthRoute>
             }
           />
-          {/* <Route
-            path="/tournament/:tournamentName/:tournamentId/estadisticas" // Ruta SHOW (Estadisticas de un Torneo)
+          <Route
+            path="/tournament/:tournamentName/:tournamentId/stats" // Ruta SHOW (Estadisticas de un Torneo)
             element={ // Protegida Mediante Police al pertenecer a "Torneos" de un Usuario <-
               <AuthRoute requireTorneoOwnership={true}> 
-                <EstadisticasTorneo />
+                <StatTournament />
               </AuthRoute>
             }
           />
-          <Route
+          {/* <Route
             path="/team/:teamName/:teamId/estadisticas" // Ruta DISPLAY (Estadisticas de un Equipo)
             element={ // No protegida, debido a que no requiere paso por un CRUD <-
               <AuthRoute > 

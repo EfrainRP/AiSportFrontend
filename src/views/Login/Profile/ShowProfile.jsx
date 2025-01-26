@@ -35,7 +35,7 @@ const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 export default function ShowProfile() {
     const [profile, setProfile] = React.useState(null);
     const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado 
-console.log(profile);
+
     React.useEffect(() => { // Hace la solicitud al cargar la vista <-
         const fetchUser = async () => {
             await axiosInstance.get(`perfil/${user.userId}`)

@@ -41,8 +41,9 @@ import LoadingView from '../../../components/Login/LoadingView.jsx'
 import FolderIcon from '@mui/icons-material/Folder';
 import GroupsIcon from '@mui/icons-material/Groups';
 import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SendIcon from '@mui/icons-material/Send';
+import EqualizerIcon from '@mui/icons-material/Equalizer';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -276,9 +277,9 @@ export default function ShowTournament() {
                             <Divider variant="middle" sx={{my:2}}/>
                         </CardContent>
                         <CardActions>
-                            <Button variant="contained" size="small" href={`/tournament/${tournamentName}/${tournamentId}/edit`}>Edit</Button>
-                            <Button variant="contained" size="small" href={`/partido/create/${tournamentName}/${tournamentId}`}>Create match</Button>
-                            <Button variant="contained" size="small" href={`/tournament/${tournamentName}/${tournamentId}/estadisticas`}>See statistics</Button>
+                            <Button startIcon={<EditIcon/>} variant="contained" size="small" href={`/tournament/${tournamentName}/${tournamentId}/edit`}>Edit</Button>
+                            <Button startIcon={<AddIcon/>}variant="contained" size="small" href={`/partido/create/${tournamentName}/${tournamentId}`}>Create match</Button>
+                            <Button startIcon={<EqualizerIcon/>}variant="contained" size="small" href={`/tournament/${tournamentName}/${tournamentId}/stats`}>See statistics</Button>
                         </CardActions>
                     </Card>
                 </Container>
