@@ -137,10 +137,9 @@ export default function Dashboard() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const navigate = useNavigate(); // Hook para navegar
-
+  const navigate = useNavigate();
   const handleRowClick = (id) => {
-    navigate(`#`); // Redirige a la URL deseada
+    navigate(`/dashboard/profile/${user.name}`); // Redirige a la URL deseada
   };
 
   const handleChangePage = (event, newPage) => {
@@ -299,7 +298,7 @@ export default function Dashboard() {
                     .map((row, i) => {
                       i+=1; //Recorremos 1 a los elementos
                       return (
-                        <TableRow hover role="checkbox" tabIndex={-1} key={i} onClick={() => handleRowClick(`matches/${row.id}`)}>
+                        <TableRow hover role="checkbox" tabIndex={-1} key={i} onClick={() => handleRowClick(row.id)} style={{ cursor: 'pointer' }}> {/*TO DO: check url to match*/}
                           <TableCell key={i} width={50} align='center'>
                               {i}
                           </TableCell>
