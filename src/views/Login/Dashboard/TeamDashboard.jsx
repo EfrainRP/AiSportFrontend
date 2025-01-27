@@ -136,7 +136,7 @@ export default function TeamDashboard () {
               endIcon={<EqualizerIcon/>}
               color='secondary'
               variant="contained"
-              href={`/team/${team.name}/${teamId}/statistics`}>
+              href={`/team/${team.name}/${teamId}/stats`}>
                 Statistics
             </Button>
           </CardActions>

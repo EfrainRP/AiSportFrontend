@@ -35,10 +35,10 @@ import {
     LineElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
 } from 'chart.js';
 
-import { Line } from 'react-chartjs-2';
+import { Line, Bar } from 'react-chartjs-2';
 
 // Registrar los componentes de Chart.js para Graficar importado mediante npm install bootstrap chart.js react-chartjs-2 <- 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -101,8 +101,8 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
 }));
 
-export default function StatsTournament() {
-    const {tournamentId, tournamentName} = useParams();
+export default function StatsTeam() {
+    const {teamId, teamName} = useParams();
     const [stadistics, setStadistics] = React.useState([]);
     const [error, setError] = React.useState(null);
     const {loading, setLoading } = useAuth(); // Accede al usuario autenticado 
@@ -114,74 +114,21 @@ export default function StatsTournament() {
 
     React.useEffect(() => { // Hace la solicitud al cargar la vista <-
         const fetchStadistics = async () => {
-            await axiosInstance.get(`estadisticas/torneo/${tournamentId}`)
+            await axiosInstance.get(`estadisticas/equipo/${teamId}/${teamName}`)
                 .then((response) => {
                     setLoading(false); // Cambiar el estado de carga incluso en caso de error
                     setStadistics(response.data.data);
                     setError(null);
                 })
                 .catch((err) => {
-                    console.error("Error loading tournament statistics: ",err);
+                    console.error("Error loading team statistics: ",err);
                     setLoading(false); // Cambiar el estado de carga incluso en caso de error
-                    setError('Error loading tournament statistics.');
+                    setError('Error loading team stats, you may not have played a match yet to have stats.');
                 })
         };
         fetchStadistics();
-    }, [tournamentId]);
+    }, [equipoId]);
     
-    // Datos para la gráfica <-
-    const prepareGraphData = () => {
-        const rounds = [];
-        const labels = [];
-        const datasets = [];
-
-        // Agrupar estadísticas por rondas (pares de equipos)
-        for (let i = 0; i < stadistics.length; i += 2) {
-            const match = stadistics.slice(i, i + 2);
-            rounds.push(match);
-            if((Math.floor(i / 2) + 1) < 6){ // Muestra horizontalmente la cantidad de rondas máximas de un torneo (5) <-
-                labels.push(`Ronda ${Math.floor(i / 2) + 1}`);
-            }
-        }   
-
-        // Crear datasets para cada equipo
-        const teamsMap = new Map();
-        rounds.forEach((match, index) => { // Recorre para mostrar el nombre de los equipos de cada partido y su PT en la grafica <-
-            match.forEach((stats) => {
-                if (!teamsMap.has(stats.equipos.name)) {
-                teamsMap.set(stats.equipos.name, []);
-                }
-                teamsMap.get(stats.equipos.name).push(stats.PT);
-            });
-        });
-
-    // Convierte los datos de equipos en datasets
-    teamsMap.forEach((pts, name) => {
-        datasets.push({ // Labels e información visual de la Grafica 
-            label: name,
-            data: pts,
-            borderColor: getRandomColor(), // Color aleatorio para cada equipo
-            backgroundColor: 'rgba(0,0,0,0)',
-            fill: false,
-            tension: 0.4,
-        });
-        });
-
-    return {
-        labels,
-        datasets,
-        };
-    };
-
-    // Función para generar colores aleatorios para las líneas
-    const getRandomColor = () => {
-        const letters = '0123456789ABCDEF';
-        let color = '#';
-        for (let i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    };
     if(error){ // En caso de que este vacio
         return (
             <LoadingView 
@@ -194,27 +141,68 @@ export default function StatsTournament() {
                 message={'There may be a connection error on the server.'}
             />);
     }
-    const graphData = prepareGraphData();
 
     if(stadistics.length <= 0){
         return (
             <LayoutLogin>
-                <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `Statistics of the ${tournamentName} Tournament`} </Typography>
+                <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `Statistics of the ${teamName} Team`} </Typography>
                 <Typography variant='subtitle2' sx={{ mt:3 }}>
-                    Here you can consult the general stadictics tournament.
+                    Here you can consult the general stadictics team.
                 </Typography>
                 <Typography variant='h5' sx={{ m:4, display:'flex', alignContent:'center', justifyContent: 'center'}}>
-                    No statistics found for this tournament.
+                    No individual statistics were found for this team.
                 </Typography>
             </LayoutLogin>
         );
     }
+    //  Datos para el gráfico de líneas (PT por fecha)
+    const fechas = stadistics.estadisticas.map((register) =>
+        new Date(register.created_at).toLocaleDateString()
+    );
+    const puntosTotales = stadistics.estadisticas.map((register) => register.PT);
+
+    const lineChartData = {
+        labels: fechas,
+        datasets: [
+        {
+            label: 'Puntos Totales (PT) por Fecha',
+            data: puntosTotales,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            fill: true,
+        },
+        ],
+    };
+    
+    // Datos para el gráfico de barras (sumatorias totales)
+    const barChartData = {
+        labels: ['PT', 'CA', 'DC', 'CC'],
+        datasets: [
+        {
+            label: 'Totales',
+            data: [stadistics.totales.PT, stadistics.totales.CA, stadistics.totales.DC, stadistics.totales.CC],
+            backgroundColor: [
+            'rgba(255, 99, 132, 0.6)',
+            'rgba(54, 162, 235, 0.6)',
+            'rgba(255, 206, 86, 0.6)',
+            'rgba(75, 192, 192, 0.6)',
+            ],
+            borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            ],
+            borderWidth: 1,
+        },
+        ],
+    };
 
     return (
         <LayoutLogin>
-            <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `Statistics of the ${tournamentName} Tournament`} </Typography>
+            <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `Statistics of the ${teamName} Team`} </Typography>
             <Typography variant='subtitle2' sx={{ mt:3 }}>
-                Here you can consult the general stadictics tournament.
+                Here you can consult the general stadictics team.
             </Typography>
             <Box sx={{ borderBottom: 3, borderColor: 'divider' }}>
                 <Tabs centered value={valueTab} onChange={handleChange} >
@@ -228,27 +216,22 @@ export default function StatsTournament() {
                         <Table stickyHeader>
                         <TableHead>
                             <TableRow sx={{color:'secondary.main'}}>
-                                <StyledTableCell align="center"><strong>MATCH</strong></StyledTableCell>
-                                <StyledTableCell align="center"><strong>Name Team</strong></StyledTableCell>
+                                <StyledTableCell align="center"><strong>Date</strong></StyledTableCell>
                                 <StyledTableCell align="center"><strong>Total Points (PT)</strong></StyledTableCell>
-                                <StyledTableCell align="center"><strong>Creation Date</strong></StyledTableCell>
-                                <StyledTableCell align="center"><strong>Last Update Date</strong></StyledTableCell>
+                                <StyledTableCell align="center"><strong>Baskets Scored (CA)</strong></StyledTableCell>
+                                <StyledTableCell align="center"><strong>Defenses Completed (DC)</strong></StyledTableCell>
+                                <StyledTableCell align="center"><strong>Fields Completed (CC)</strong></StyledTableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {stadistics.map((row,i) => {
-                                const numberMatch = Math.floor(i / 2) + 1; // Número del partido
-                                const isFirstTeam = i % 2 === 0;
-                                
                                 return (
                                 <StyledTableRow key={i}>
-                                    {isFirstTeam && (
-                                        <StyledTableCell rowSpan={2} align="center">Partido {numberMatch}</StyledTableCell>
-                                    )}
-                                    <StyledTableCell align="center">{row.equipos.name}</StyledTableCell>
+                                    <StyledTableCell align="center">{new Date(registro.created_at).toLocaleDateString()}</StyledTableCell>
                                     <StyledTableCell align="center">{row.PT}</StyledTableCell>
-                                    <StyledTableCell align="center">{new Date(row.created_at).toLocaleDateString()}</StyledTableCell>
-                                    <StyledTableCell align="center">{new Date(row.updated_at).toLocaleDateString()}</StyledTableCell>
+                                    <StyledTableCell align="center">{row.CA}</StyledTableCell>
+                                    <StyledTableCell align="center">{row.DC}</StyledTableCell>
+                                    <StyledTableCell align="center">{row.CC}</StyledTableCell>
                                 </StyledTableRow>);
                             })}
                         </TableBody>
@@ -259,13 +242,13 @@ export default function StatsTournament() {
 
             <CustomTabPanel value={valueTab} index={1}> {/* Stadistics */}
                 <Paper elevation={10} sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', mt:2, bgcolor: 'secondary', minHeight: 350}}>
-                        <Line
-                            data={graphData}
-                            options={{
-                                responsive: true,
-                                maintainAspectRatio: false,
-                            }}
-                        />                    
+                    <Typography variant='h5'>Total Points by Date</Typography>
+                    <Line data={lineChartData} options={{ responsive: true }} />                   
+                </Paper>
+
+                <Paper elevation={10} sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', mt:2, bgcolor: 'secondary', minHeight: 350}}>
+                    <Typography variant='h5'>Total Sums</Typography>
+                    <Bar data={barChartData} options={{ responsive: true }} />                   
                 </Paper>
             </CustomTabPanel>
         </LayoutLogin>

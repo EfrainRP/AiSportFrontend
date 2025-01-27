@@ -23,15 +23,16 @@ import IndexTournament from './views/Login/Tournaments/IndexTournament.jsx'; // 
 import ShowTournament from './views/Login/Tournaments/ShowTournament.jsx';
 import EditTournament from './views/Login/Tournaments/EditTournament.jsx';
 //  CRUD EQUIPOS 
-import IndexTeams from './views/Login/Teams/IndexTeam.jsx'; // Tournaments Index <-
-import ShowTeam from './views/Login/Teams/ShowTeam.jsx'; // Tournaments Index <-
+import IndexTeams from './views/Login/Teams/IndexTeam.jsx'; 
+import ShowTeam from './views/Login/Teams/ShowTeam.jsx'; 
 //  CRUD NOTIFICACIONES 
 import IndexNotifications from './views/Login/Notifications/IndexNotifications.jsx';
 //  CRUD Estadisticas 
-import Stadistics from './views/Login/Stadistics/Stadistics.jsx'; // Tournaments Index <-
-import StatTournament from './views/Login/Stadistics/StatTournament.jsx'; // Tournaments Index <-
+import Stadistics from './views/Login/Stadistics/Stadistics.jsx'; 
+import StatTournament from './views/Login/Stadistics/StatTournament.jsx'; 
+import StatTeam from './views/Login/Stadistics/StatTeam.jsx'; 
 //  CRUD PERFIL 
-import ShowProfile from './views/Login/Profile/ShowProfile.jsx'; // Tournaments Index <-
+import ShowProfile from './views/Login/Profile/ShowProfile.jsx'; 
 
 export default function MyRoute(){
     return (
@@ -215,15 +216,15 @@ export default function MyRoute(){
               </AuthRoute>
             }
           />
-          {/* <Route
-            path="/team/:teamName/:teamId/estadisticas" // Ruta DISPLAY (Estadisticas de un Equipo)
+          <Route
+            path="/team/:teamName/:teamId/stats" // Ruta DISPLAY (Estadisticas de un Equipo)
             element={ // No protegida, debido a que no requiere paso por un CRUD <-
               <AuthRoute > 
-                <EstadisticasEquipo />
+                <StatTeam />
               </AuthRoute>
             }
           />
-          <Route //  < ------------- VIEWS SERVER IA ------------------------------------ >  
+          {/* <Route //  < ------------- VIEWS SERVER IA ------------------------------------ >  
             path="/dashboard/entrenamiento/IA" // Ruta INDEX <- (Antes de confirmación <-)
             element={
               <AuthRoute > 

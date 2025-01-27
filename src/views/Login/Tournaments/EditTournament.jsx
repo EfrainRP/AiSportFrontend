@@ -159,7 +159,7 @@ export default function EditTournament() {
                     <CardActions>
                         <Button size="small" href={`/tournament/${tournamentName}/${tournamentId}/edit`}>Edit</Button>
                         <Button size="small" href={`/partido/create/${tournamentName}/${tournamentId}`}>Create match</Button>
-                        <Button size="small" href={`/tournament/${tournamentName}/${tournamentId}/estadisticas`}>See statistics</Button>
+                        <Button size="small" href={`/tournament/${tournamentName}/${tournamentId}stats`}>See statistics</Button>
                     </CardActions>
                 </Card>
             }

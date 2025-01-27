@@ -108,7 +108,7 @@ export default function Stadistics() {
                             </StyledTableCell>
                             <StyledTableCell align="center">{row.equipo_id}</StyledTableCell>
                             <StyledTableCell align="center">
-                                <Button variant="contained" size="small" href={`/equipo/${row.name}/${row.equipo_id}/estadisticas`}>
+                                <Button variant="contained" size="small" href={`/equipo/${row.name}/${row.equipo_id}/stats`}>
                                     See
                                 </Button>
                             </StyledTableCell>
