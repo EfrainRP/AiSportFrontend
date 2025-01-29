@@ -24,7 +24,7 @@ import {
     FormLabel,
     FormControl,
     Link,
-    Container
+    Container,
 } from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
@@ -35,6 +35,7 @@ import { useAuth } from '../../../services/AuthContext'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx';
+import ConfirmDialog from '../../../components/Login/ConfirmDialog.jsx';
 
 const FormContainerEdit = styled(Stack)(({ theme }) => ({
     // height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
@@ -91,20 +92,19 @@ export default function EditTournament() {
     const { tournamentName, tournamentId } = useParams();
     const [tournament, setTournament] = React.useState({
         name: '',
-        location: '',
-        description: '',
-        StartDate: '',
-        EndDate: '',
-        countTeams: 0,
+        ubicacion: '',
+        descripcion: '',
+        fechaInicio: '',
+        fechaFin: '',
+        cantEquipo: 0,
     });
-
     const [fieldErrors, setFieldErrors] = React.useState({}); // Almacena errores específicos por campo desde el backend
     const [generalError, setGeneralError] = React.useState(''); // Almacena errores generales
     const [successMessage, setSuccessMessage] = React.useState(''); // Almacena el mensaje de éxito
 
     React.useEffect(() => {
         const fetchTournament = async () => {
-            await axiosInstance.get(`torneo/${tournamentName}/${tournamentId}`)
+            await axiosInstance.get(`/torneo/${tournamentName}/${tournamentId}`)
                 .then((response) => {
                     setTournament(response.data);
                     setGeneralError(null);
@@ -132,7 +132,8 @@ export default function EditTournament() {
         setFieldErrors({});
         setGeneralError('');
         setSuccessMessage(''); // Limpiar mensaje de éxito previo
-        await axiosInstance.put(`/torneo/${tournamentId}`, tournament)
+        console.log(tournament);
+        await axiosInstance.put(`/torneo/${tournamentId}`, tournament) //TO DO: check the request, no working
             .then((response) => {
                 setSuccessMessage('Success update Tournament!');
                 setTimeout(() => navigate(`/tournament/${tournament.name}/${tournamentId}}`), 2000);
@@ -150,18 +151,24 @@ export default function EditTournament() {
                 }
             })
     };
-    const handleDelete = async () => { // Metodo DELETE <-
-        const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este torneo?');
-        if (confirmDelete) {
-            await axios.delete(`http://localhost:5000/sporthub/api/torneo/${tournamentId}`)
-            .then((response) => {
-                setSuccessMessage('Delete tournament success!');
-                setTimeout(() => navigate('/tournaments'), 2000); // Redirige a la lista de torneos después de 2 segundos
-            }).catch ((err) => {
-                setGeneralError('Error al eliminar el torneo.');
-                console.error(err);
-            });
-        }
+
+    
+
+    const [openConfirm, setConfirm] = React.useState(false); //Mecanismo Alert
+    
+    const handleCloseConfirm = () => { //Boton cancel del dialog
+        setConfirm(false);
+    };
+    const handleDelete = async () => { // Metodo DELETE <- //Boton confirm del dialog
+        await axiosInstance.delete(`/torneo/${tournamentId}`)
+        .then((response) => {
+            setSuccessMessage('Delete tournament success!');
+            setTimeout(() => navigate('/tournaments'), 2000); // Redirige a la lista de torneos después de 2 segundos
+        }).catch ((err) => {
+            setGeneralError('Error al eliminar el torneo.');
+            console.error(err);
+        });
+        setConfirm(false);
     };
     
     const [homeTeam, setHomeTeam] = React.useState(""); //Autocomplete home team
@@ -194,120 +201,119 @@ export default function EditTournament() {
                         <FormControl>
                             <FormLabel htmlFor="name">Name: </FormLabel>
                             <TextField
-                                // error={passwordError}
-                                // helperText={passwordErrorMessage}
                                 name="name"
-                                placeholder={tournamentName}
                                 id="name"
+                                autoFocus
                                 fullWidth
                                 required
                                 variant="outlined"
                                 value={tournament.name}
+                                placeholder={tournament.name}
                                 onChange={handleChange}
+                                error={!!fieldErrors.name} //detecta si tiene algo contenido
+                                helperText={fieldErrors.name}
+                                color={!!fieldErrors.name ? 'error' : 'primary'}
                             />
                         </FormControl>
-                        {/* <FormControl>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <FormLabel htmlFor="password">Password</FormLabel>
-                                <Link
-                                    component="button"
-                                    type="button"
-                                    onClick={handleClickOpen}
-                                    onChange={passwordValidate}
-                                    variant="body2"
-                                    sx={{ alignSelf: 'baseline' }}
-                                >
-                                    Forgot your password?
-                                </Link>
-                            </Box>
-                                <TextField
-                                error={passwordError}
-                                helperText={passwordErrorMessage}
-                                name="password"
-                                placeholder="••••••"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
+                        <FormControl>
+                            <FormLabel htmlFor="ubicacion">Locaticon: </FormLabel>
+                            <TextField
+                                // error={passwordError}
+                                // helperText={passwordErrorMessage}
+                                // color={passwordError ? 'error' : 'primary'}
+                                name="ubicacion"
+                                id="ubicacion"
                                 autoFocus
                                 required
                                 fullWidth
                                 variant="outlined"
-                                color={passwordError ? 'error' : 'primary'}
+                                value={tournament.ubicacion}
+                                placeholder={tournament.ubicacion}
+                                onChange={handleChange}
                             />
-                            <FormControlLabel
-                                control={<Checkbox value="remember" color="primary" />}
-                                label="Remember me"
-                            />
-                            <ForgotPassword open={open} handleClose={handleClose} />
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                onClick={() => { emailValidate(); passwordValidate(); }}
-                            >
-                                Sign in
-                            </Button>
                         </FormControl>
-                        <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar}
-                            anchorOrigin={{ vertical: 'top', horizontal: 'center' }} key={{ vertical: 'top' } + { horizontal: 'center' }}>
-                            <Alert
-                                onClose={handleCloseSnackBar}
-                                severity="error"
-                            // sx={[
-                            //   (theme) => ({
-                            //     backgroundColor: theme.palette.error.light,
-                            //     border: `2px solid ${theme.palette.error.light}`,
-                            //     ...theme.applyStyles('dark', {
-                            //       backgroundColor: theme.palette.error.main,
-                            //       border: `2px solid ${theme.palette.error.main}`,
-                            //     }),
-                            //     '&:hover': {
-                            //       boxShadow: theme.shadows[2],
-                            //       backgroundColor: theme.palette.error.main,
-                            //       border: `2px solid ${theme.palette.error.main}`,
-                            //       ...theme.applyStyles('dark', {
-                            //         backgroundColor: theme.palette.error.dark,
-                            //         border: `2px solid ${theme.palette.error.dark}`
-                            //       }),
-                            //     },
-                            //   }),
-                            // ]}
-                            >
-                                {messageSignIn}
-                            </Alert>
-                        </Snackbar>
-                        <Typography sx={{ textAlign: 'center' }}>
-                            Don&apos;t have an account?{' '}
-                            <span>
-                                <Link
-                                    href="/signup"
-                                    variant="body2"
-                                    sx={{ alignSelf: 'center' }}
-                                >
-                                    Sign up
-                                </Link>
-                            </span>
-                        </Typography>
-                    </Box>
-                    <Divider>or</Divider>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <FormControl>
+                            <FormLabel htmlFor="descripcion">Description: </FormLabel>
+                            <TextField
+                                // error={passwordError}
+                                // helperText={passwordErrorMessage}
+                                name="descripcion"
+                                id="descripcion"
+                                sx={{
+                                    "& .MuiInputBase-root": { minHeight: "7rem" },
+                                }}
+                                multiline
+                                rows={5}
+                                defaultValue={tournament.descripcion || ""}
+                                onChange={handleChange}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel htmlFor="fechaInicio">Start Date: </FormLabel>
+                            <TextField
+                                // error={passwordError}
+                                // helperText={passwordErrorMessage}
+                                name="fechaInicio"
+                                id="fechaInicio"
+                                type="date"
+                                fullWidth
+                                required
+                                variant="outlined"
+                                value={tournament.fechaInicio.split('T')[0]}
+                                onChange={handleChange}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel htmlFor="fechaFin">End Date: </FormLabel>
+                            <TextField
+                                // error={passwordError}
+                                // helperText={passwordErrorMessage}
+                                name="fechaFin"
+                                id="fechaFin"
+                                type="date"
+                                fullWidth
+                                required
+                                variant="outlined"
+                                value={tournament.fechaFin.split('T')[0]}
+                                onChange={handleChange}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel htmlFor="cantEquipo">Number of Equipment: </FormLabel>
+                            <TextField
+                                // error={passwordError}
+                                // helperText={passwordErrorMessage}
+                                name="cantEquipo"
+                                id="cantEquipo"
+                                type="number"
+                                fullWidth
+                                required
+                                variant="outlined"
+                                value={tournament.cantEquipo}
+                                onChange={handleChange}
+                            />
+                        </FormControl>
+                        <Box sx={{display:'flex',flexDirection:'row', gap:2}}>
                         <Button
+                            type="submit"
                             fullWidth
-                            variant="outlined"
-                            onClick={() => alert('Sign in with Google')}
-                            startIcon={<GoogleIcon />}
+                            variant="contained"
+                            onClick={()=>setConfirm(true)}
+                            color='error'
                         >
-                            Sign in with Google
+                            Delete Tournament
                         </Button>
                         <Button
+                            type="submit"
                             fullWidth
-                            variant="outlined"
-                            onClick={() => alert('Sign in with Facebook')}
-                            startIcon={<FacebookIcon />}
+                            variant="contained"
+                            color='secondary'
                         >
-                            Sign in with Facebook
-                        </Button> */}
+                            Save changes
+                        </Button>
+                        </Box>
                     </Box>
+                    <ConfirmDialog open={openConfirm} handleClose={handleCloseConfirm} handleConfirm={handleDelete} messageTitle={'Are you sure to delete?'}/>
                 </Card>
             </FormContainerEdit>
         </LayoutLogin>
