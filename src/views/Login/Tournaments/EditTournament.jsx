@@ -99,20 +99,19 @@ export default function EditTournament() {
         cantEquipo: 0,
     });
     const [fieldErrors, setFieldErrors] = React.useState({}); // Almacena errores específicos por campo desde el backend
-    const [generalError, setGeneralError] = React.useState(''); // Almacena errores generales
-    const [successMessage, setSuccessMessage] = React.useState(''); // Almacena el mensaje de éxito
 
     React.useEffect(() => {
         const fetchTournament = async () => {
             await axiosInstance.get(`/torneo/${tournamentName}/${tournamentId}`)
                 .then((response) => {
                     setTournament(response.data);
-                    setGeneralError(null);
+                    setDataAlert({message:null});
                     setLoading(false);
                 }).catch((err) => {
-                    console.error('Error loading tournament:', err);
+                    // console.error('Error loading tournament:', err);
                     setLoading(true);
-                    setGeneralError("Error loading tournament");
+                    setOpenSnackBar(true);
+                    setDataAlert({severity:"error", message:'Error loading tournament'});
                 })
         };
         fetchTournament();
@@ -130,43 +129,54 @@ export default function EditTournament() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFieldErrors({});
-        setGeneralError('');
-        setSuccessMessage(''); // Limpiar mensaje de éxito previo
-        console.log(tournament);
+        // console.log(tournament);
         await axiosInstance.put(`/torneo/${tournamentId}`, tournament) //TO DO: check the request, no working
             .then((response) => {
-                setSuccessMessage('Success update Tournament!');
+                setOpenSnackBar(true);
+                setDataAlert({severity:"success", message:'Success update Tournament!'});
                 setTimeout(() => navigate(`/tournament/${tournament.name}/${tournamentId}}`), 2000);
             })
             .catch((err) => {
+                // console.log(err);
                 if (err.response && err.response.status === 400) {
                     const { field, message } = err.response.data;
                     if (field) {
                         setFieldErrors((prev) => ({ ...prev, [field]: message }));
                     } else {
-                        setGeneralError(message);
+                        setOpenSnackBar(true);
+                        setDataAlert({severity:"error", message:message});
                     }
                 } else {
-                    setGeneralError('Error update tournament.');
+                    setOpenSnackBar(true);
+                    setDataAlert({severity:"error", message:'Error update tournament.'});
                 }
             })
     };
 
+    const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
+    const [openSnackBar, setOpenSnackBar] = React.useState(false); // Mecanismo snackbar
     
+    const handleCloseSnackBar = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnackBar(false);
+    };
 
-    const [openConfirm, setConfirm] = React.useState(false); //Mecanismo Alert
-    
+    const [openConfirm, setConfirm] = React.useState(false); //Mecanismo confirm
     const handleCloseConfirm = () => { //Boton cancel del dialog
         setConfirm(false);
     };
     const handleDelete = async () => { // Metodo DELETE <- //Boton confirm del dialog
         await axiosInstance.delete(`/torneo/${tournamentId}`)
         .then((response) => {
-            setSuccessMessage('Delete tournament success!');
+            setOpenSnackBar(true);
+            setDataAlert({severity:"success", message:'Delete tournament success!'});
             setTimeout(() => navigate('/tournaments'), 2000); // Redirige a la lista de torneos después de 2 segundos
         }).catch ((err) => {
-            setGeneralError('Error al eliminar el torneo.');
-            console.error(err);
+            setOpenSnackBar(true);
+            setDataAlert({severity:"error", message:'Error delete tournament.'});
+            // console.error(err);
         });
         setConfirm(false);
     };
@@ -177,6 +187,16 @@ export default function EditTournament() {
     return (
         <LayoutLogin>
             <FormContainerEdit>
+                <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar} anchorOrigin={{ vertical: 'top', horizontal: 'center'}}>
+                    <Alert
+                        severity={dataAlert.severity}
+                        variant='filled'
+                        sx={{ width: '100%'}}
+                        onClose={handleCloseSnackBar}
+                    >
+                        {dataAlert.message}
+                    </Alert>
+                </Snackbar>
                 <Card variant="outlined">
                     <Typography
                         component="h1"
@@ -196,8 +216,6 @@ export default function EditTournament() {
                             gap: 2,
                         }}
                     >
-                        {generalError && <p>{generalError}</p>}
-                        {successMessage && <p>{successMessage}</p>} {/* Muestra el mensaje de éxito */}
                         <FormControl>
                             <FormLabel htmlFor="name">Name: </FormLabel>
                             <TextField
@@ -218,9 +236,9 @@ export default function EditTournament() {
                         <FormControl>
                             <FormLabel htmlFor="ubicacion">Locaticon: </FormLabel>
                             <TextField
-                                // error={passwordError}
-                                // helperText={passwordErrorMessage}
-                                // color={passwordError ? 'error' : 'primary'}
+                                error={!!fieldErrors.ubicacion}
+                                helperText={fieldErrors.ubicacion}
+                                color={!!fieldErrors.ubicacion ? 'error' : 'primary'}
                                 name="ubicacion"
                                 id="ubicacion"
                                 autoFocus
@@ -235,8 +253,9 @@ export default function EditTournament() {
                         <FormControl>
                             <FormLabel htmlFor="descripcion">Description: </FormLabel>
                             <TextField
-                                // error={passwordError}
-                                // helperText={passwordErrorMessage}
+                                error={!!fieldErrors.descripcion}
+                                helperText={fieldErrors.descripcion}
+                                color={!!fieldErrors.descripcion ? 'error' : 'primary'}
                                 name="descripcion"
                                 id="descripcion"
                                 sx={{
@@ -251,8 +270,9 @@ export default function EditTournament() {
                         <FormControl>
                             <FormLabel htmlFor="fechaInicio">Start Date: </FormLabel>
                             <TextField
-                                // error={passwordError}
-                                // helperText={passwordErrorMessage}
+                                error={!!fieldErrors.fechaInicio}
+                                helperText={fieldErrors.fechaInicio}
+                                color={!!fieldErrors.fechaInicio ? 'error' : 'primary'}
                                 name="fechaInicio"
                                 id="fechaInicio"
                                 type="date"
@@ -266,8 +286,9 @@ export default function EditTournament() {
                         <FormControl>
                             <FormLabel htmlFor="fechaFin">End Date: </FormLabel>
                             <TextField
-                                // error={passwordError}
-                                // helperText={passwordErrorMessage}
+                                error={!!fieldErrors.fechaFin}
+                                helperText={fieldErrors.fechaFin}
+                                color={!!fieldErrors.fechaFin ? 'error' : 'primary'}
                                 name="fechaFin"
                                 id="fechaFin"
                                 type="date"
@@ -281,8 +302,9 @@ export default function EditTournament() {
                         <FormControl>
                             <FormLabel htmlFor="cantEquipo">Number of Equipment: </FormLabel>
                             <TextField
-                                // error={passwordError}
-                                // helperText={passwordErrorMessage}
+                                error={!!fieldErrors.cantEquipo}
+                                helperText={fieldErrors.cantEquipo}
+                                color={!!fieldErrors.cantEquipo ? 'error' : 'primary'}
                                 name="cantEquipo"
                                 id="cantEquipo"
                                 type="number"
@@ -295,7 +317,6 @@ export default function EditTournament() {
                         </FormControl>
                         <Box sx={{display:'flex',flexDirection:'row', gap:2}}>
                         <Button
-                            type="submit"
                             fullWidth
                             variant="contained"
                             onClick={()=>setConfirm(true)}
