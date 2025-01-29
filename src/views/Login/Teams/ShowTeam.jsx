@@ -31,7 +31,6 @@ export default function ShowTeam() {
     const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado 
     const { teamName, teamId } = useParams(); // Obtiene el equipoName desde la URL
 
-
     React.useEffect(() => { // Hace la solicitud al cargar la vista <-
         const fetchTeam = async () => {
             await axiosInstance.get(`equipo/${teamName}/${teamId}`)

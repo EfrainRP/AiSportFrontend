@@ -17,7 +17,7 @@ import {
 import PropTypes from 'prop-types';
 
 import axiosInstance from "../../../services/axiosConfig.js";
-import { useParams } from 'react-router-dom';
+import { useParams,useLocation } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
@@ -76,6 +76,8 @@ export default function TournamentDashboard () {
     setOpenSnackBar(false);
   };
   
+  const location = useLocation();
+  const stateTab = location.state || 0;
   const [valueTab, setValueTab] = React.useState(0); // Mecanismo del Tab
   const handleChange = (event, newValue) => {
     setValueTab(newValue);
@@ -96,6 +98,7 @@ export default function TournamentDashboard () {
       await axiosInstance.get(`/partidos/${tournamentId}`)
       .then((response) => {
         setMatches(response.data);
+        setValueTab(stateTab);
       })
       .catch ((err) => {
         console.error('Error loading tournament matches:', err);
@@ -189,7 +192,7 @@ export default function TournamentDashboard () {
         message={`The tournament you are trying to access may not exist.`}
       />);
   }
-  console.log(matches);
+  // console.log(matches.length);
   const brackets = generateBracket(matches);
 
   return (
@@ -201,10 +204,10 @@ export default function TournamentDashboard () {
       <Box sx={{ borderBottom: 3, borderColor: 'divider' }}>
         <Tabs centered value={valueTab} onChange={handleChange} >
           <Tab icon={<FolderIcon />} label="Details" {...a11yProps(0)} />
-          {matches.legnth>0?
+          {matches.length>0?
             <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)}/>
             :
-            <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)} disabled color="red"/>
+            <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)} disabled />
           }
           <Tab  icon={<NotificationAddIcon />} label="Send Notifications" {...a11yProps(2)} />
         </Tabs>

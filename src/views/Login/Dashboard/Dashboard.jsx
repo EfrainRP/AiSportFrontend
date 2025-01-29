@@ -138,8 +138,8 @@ export default function Dashboard() {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const navigate = useNavigate();
-  const handleRowClick = (id) => {
-    navigate(`/dashboard/profile/${user.name}`); // Redirige a la URL deseada
+  const handleRowClick = (id, name) => {
+    navigate(`/dashboard/tournament/${name}/${id}`,{state:1}); // Redirige a la URL deseada, con valor 1 para el tab dashTournament
   };
 
   const handleChangePage = (event, newPage) => {
@@ -159,10 +159,10 @@ export default function Dashboard() {
             setLoading(false); // Cambia el estado para simular que la carga ha terminado
           }, 1500); // Simula tiempo de carga
           setData(response.data); // Establecer los datos en el estado
-          console.log(response.data);
+          // console.log(response.data);
 
         }).catch((error) => {
-          console.error('Error al obtener los datos del dashboard:', error);
+          // console.error('Error al obtener los datos del dashboard:', error);
           setLoading(false); // Cambiar el estado de carga incluso en caso de error
         });
     }
@@ -297,8 +297,10 @@ export default function Dashboard() {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, i) => {
                       i+=1; //Recorremos 1 a los elementos
+                      const tournament = row.torneos;
+                      console.log(row);
                       return (
-                        <TableRow hover role="checkbox" tabIndex={-1} key={i} onClick={() => handleRowClick(row.id)} style={{ cursor: 'pointer' }}> {/*TO DO: check url to match*/}
+                        <TableRow hover role="checkbox" tabIndex={-1} key={i} onClick={() => handleRowClick(tournament.id, tournament.name)} style={{ cursor: 'pointer' }}> {/*TO DO: check url to match*/}
                           <TableCell key={i} width={50} align='center'>
                               {i}
                           </TableCell>

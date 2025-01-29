@@ -35,6 +35,8 @@ import StatTournament from './views/Login/Stadistics/StatTournament.jsx';
 import StatTeam from './views/Login/Stadistics/StatTeam.jsx'; 
 //  CRUD PERFIL 
 import ShowProfile from './views/Login/Profile/ShowProfile.jsx'; 
+//  CRUD IA 
+import IndexIA from './views/Login/IA/IndexIA.jsx'; 
 
 export default function MyRoute(){
     return (
@@ -161,7 +163,8 @@ export default function MyRoute(){
                 <EquipoCreate />
               </AuthRoute>
             }
-          />          <Route // < ------------- CRUD PARTIDOS ------------------------------------ > 
+          />          
+          <Route // < ------------- CRUD PARTIDOS ------------------------------------ > 
             path="/match/:tournamentName/:tournamentId/:matchId/edit" // Ruta EDIT protegida mediante Police <-
             element={
               <AuthRoute requireTorneoOwnership={true}> 
@@ -176,7 +179,7 @@ export default function MyRoute(){
                 <PartidoCreate />
               </AuthRoute>
             }
-          />
+          />*/}
           <Route  // < ------------- NOTIFICACIONES ------------------------------------ >    
             path="/notifications"  
             element={
@@ -225,16 +228,16 @@ export default function MyRoute(){
               </AuthRoute>
             }
           />
-          {/* <Route //  < ------------- VIEWS SERVER IA ------------------------------------ >  
-            path="/dashboard/entrenamiento/IA" // Ruta INDEX <- (Antes de confirmación <-)
+          <Route //  < ------------- VIEWS SERVER IA ------------------------------------ >  
+            path="/dashboard/trainning/IA" // Ruta INDEX <- (Antes de confirmación <-)
             element={
               <AuthRoute > 
-                <AI />
+                <IndexIA />
               </AuthRoute>
             }
           />
-          <Route 
-            path="/dashboard/entrenamiento/IA/:teamId/:teamName" // Ruta SHOW <- (Confirmación del Server <-)
+          {/* <Route 
+            path="/dashboard/trainning/IA/:teamId/:teamName" // Ruta SHOW <- (Confirmación del Server <-)
             element={ //  Entrenamiento de IA Estadisticas personalizado por equipo <- 
               <AuthRoute > 
                 <AIShow />

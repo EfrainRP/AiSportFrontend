@@ -21,7 +21,7 @@ import Logout from '@mui/icons-material/Logout';
 import HomeIcon from '@mui/icons-material/Home';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import SearchIcon from '@mui/icons-material/Search';
+import SmartToyTwoToneIcon from '@mui/icons-material/SmartToyTwoTone';
 import ChatIcon from '@mui/icons-material/Chat';
 import Settings from '@mui/icons-material/Settings';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -39,7 +39,7 @@ const dataSideMenu = [ //TO DO: checar las urls
   {name: 'Home', img: <HomeIcon/>, url: '/dashboard' },
   {name: 'Tournaments', img: <EmojiEventsIcon/>, url: '/tournaments' },
   {name: 'Teams', img: <PeopleAltIcon/>, url: '/teams' },
-  {name: 'Search', img: <SearchIcon/>, url: '/dashboard/search' },
+  {name: 'IA', img: <SmartToyTwoToneIcon/>, url: '/dashboard/trainning/IA' },
   {name: 'Notifications', img: <ChatIcon/>, url: '/notifications' }
 ];
 
