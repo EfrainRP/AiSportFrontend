@@ -20,6 +20,7 @@ const AITraining = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [showPredictionModal, setShowPredictionModal] = useState(false);
   const [isManualClose, setIsManualClose] = useState(false); // Estado para controlar el cierre manual
+  const [showInfoModal, setShowInfoModal] = useState(true); // Estado para controlar el modal informativo
 
   // Actualiza las estadisticas de entrenmiento para los equipos y el usuario <-
   const sendDataToServer = async (url, data, prediction) => {
@@ -139,6 +140,11 @@ const AITraining = () => {
     }
   }, [prediction]);
 
+  // Efecto para mostrar el modal informativo al cargar la página
+  useEffect(() => {
+    setShowInfoModal(true);
+  }, []);
+
   return (
     <div className="container-fluid vh-100 d-flex flex-column p-4" style={{ backgroundColor: "#f8f9fa" }}>
       <h1 className="text-center mb-4 text-primary">Entrenamiento con IA - {equipoName}</h1>
@@ -254,6 +260,110 @@ const AITraining = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="primary" onClick={() => setShowPredictionModal(false)}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal informativo al cargar la página */}
+      <Modal show={showInfoModal} onHide={() => setShowInfoModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>💡SportAI Recomendaciones</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <p>Asegúrate de cumplir con los siguientes requerimientos antes de comenzar tu entrenamiento✅.</p>
+        <p>El entrenamiento individual está enfocado a medir el <strong> rendimiento de un solo jugador </strong> por entrenamiento y no de un equipo de jugadores🏀.</p>
+        <p>Recomendaciones de colocación de cámara para un análisis óptimo:</p>
+
+        {/* Imágenes en blanco y negro */}
+        <div className="d-flex justify-content-around align-items-center mb-3">
+          <img
+            src={`/sporthub/api/utils/uploads/tripie.jpg`}
+            alt="Cámara en trípode tomando una foto"
+            style={{ width: "250px", height: "auto", filter: "grayscale(100%)" }}
+            className="img-fluid rounded"
+          />
+        </div>
+
+        <ol>
+          {/* Punto 1 */}
+          <li>El jugador debe ocupar al menos un <strong>60% del cuadro</strong> o vista en cuerpo completo durante el entrenamiento.🤾‍♂️.</li>
+          <div className="d-flex justify-content-center mb-3">
+            <img
+              src={`/sporthub/api/utils/uploads/60camara.png`}
+              alt="60 de Camara"
+              style={{ width: "650px", height: "auto", filter: "grayscale(100%)" }}
+              className="img-fluid rounded"
+            />
+          </div>
+
+          {/* Punto 2 */}
+          <li>El área de juego debe estar lo más <strong>centrada</strong> y enfocada posible📷.</li>
+          <div className="d-flex justify-content-center mb-3">
+            <img
+              src={`/sporthub/api/utils/uploads/centro_camara.jpg`}
+              alt="Centro de Camara"
+              style={{ width: "200px", height: "auto", filter: "grayscale(100%)" }}
+              className="img-fluid rounded"
+            />
+          </div>
+
+          {/* Punto 3 */}
+          <li>Debe haber una distancia recomendable de <strong>2-5 metros</strong> desde la cámara al jugador y lugar de la canasta para un análisis más óptimo📐.</li>
+          <div className="d-flex justify-content-center mb-3">
+            <img
+              src={`/sporthub/api/utils/uploads/distanciaCamara.png`}
+              alt="Distancia de Camara"
+              style={{ width: "500px", height: "auto", filter: "grayscale(100%)" }}
+              className="img-fluid rounded"
+            />
+          </div>
+
+          {/* Punto 4 */}
+          <li>La altura de la cámara debe ser de entre <strong>1.50 cm a 2 m</strong> idealmente🎥.</li>
+          <div className="d-flex justify-content-center mb-3">
+            <img
+              src={`/sporthub/api/utils/uploads/altura.jpg`}
+              alt="Altura de Camara"
+              style={{ width: "500px", height: "auto", filter: "grayscale(100%)" }}
+              className="img-fluid rounded"
+            />
+          </div>
+
+          {/* Punto 5 */}
+          <li>El lugar debe contar con <strong>buena iluminación</strong>  de fondo para una detección óptima del jugador, pelota y cesta💡.</li>
+          <div className="d-flex justify-content-center mb-3">
+            <img
+              src={`/sporthub/api/utils/uploads/iluminacion.jpg`}
+              alt="Iluminacion en cancha"
+              style={{ width: "300px", height: "auto", filter: "grayscale(100%)" }}
+              className="img-fluid rounded"
+            />
+          </div>
+          <li>Para una mayor cobertura de puntos ciegos, acomoda el enfoque de la cámara de manera <strong>lateral</strong>  a la cancha:</li>
+          <div className="d-flex justify-content-center mb-3">
+          ❌
+            <img
+              src={`/sporthub/api/utils/uploads/cancha_frontal.jpg`}
+              alt="Cancha frontal" style={{ width: "200px", height: "auto", filter: "grayscale(100%)" }} className="img-fluid rounded"
+            />
+          ✅
+            <img
+              src={`/sporthub/api/utils/uploads/cancha_lateral.jpg`}
+              alt="Cancha lateral" style={{ width: "230px", height: "auto", filter: "grayscale(100%)" }} className="img-fluid rounded"
+            />
+          </div>
+        </ol>
+        <p>¡Listo! Ahora puedes comenzar a poner a prueba tus habilidades en el deporte de baloncesto✅.</p>
+        <p>-----------------------------------------------------------------------</p>
+        <p><strong> ***SportAI Nota***</strong> </p>
+        <p>Las estadísticas analizadas para el cálculo del rendimiento de un jugador son tomadas en base a 
+              métricas usadas en la NBA (Asociación Nacional de Baloncesto) sin embargo, el <strong>tiempo </strong> 
+              de entrenamiento puede influir considerablemente en los resultados, lo cual, <strong>no es considerado una métrica oficial</strong> en sí, 
+              pero es usada debido a que el tiempo es un factor clave en el análisis de un entrenamiento individual medible.</p>
+      </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={() => setShowInfoModal(false)}>
             Cerrar
           </Button>
         </Modal.Footer>
