@@ -12,17 +12,11 @@ import {
     IconButton,
     Stack,
     TextField,
-    Autocomplete,
-    Fab,
-    ButtonGroup,
-    Grow,
     Snackbar,
-    Alert,
-    Checkbox,
-    FormControlLabel,
-    Divider,
-    FormLabel,
     FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
     Link,
     Container,
 } from '@mui/material';
@@ -30,6 +24,7 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import DoDisturbOnTwoToneIcon from '@mui/icons-material/DoDisturbOnTwoTone';
 
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useParams, useNavigate } from 'react-router-dom';
@@ -69,6 +64,9 @@ export default function ShowAI() {
     const [prediction, setPrediction] = React.useState(null);
     const { teamName, teamId } = useParams();
     const [selectedTime, setSelectedTime] = React.useState("30");
+    const handleChangeSelect = (event) => {
+        setSelectedTime(event.target.value);
+    };
 
     const videoRef = React.useRef(null);
     const websocketRef = React.useRef(null);
@@ -198,61 +196,52 @@ export default function ShowAI() {
         return (
         <LoadingView/>);
     }
-    if(error){ 
-        return (
-        <LoadingView 
-            message={error}
-        />);
-    }
-    if(stats.length === 0){
-        return (
-            <LayoutLogin>
-                <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `SportHub Individual Performance Analyzer`} </Typography>
-                <Typography variant='h5' sx={{ m:4, display:'flex', alignContent:'center', justifyContent: 'center'}}>
-                    There are no available teams with a minimum match played that contain statistics for a training session.
-                </Typography>
-            </LayoutLogin>
-        );
-    }
-    console.log(selectedTeam);
+    console.log(selectedTime);
     return (
         <LayoutLogin>
-            <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `SportHub Individual Performance Analyzer`} </Typography>
+            <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AI Trainning`} </Typography>
             <Typography variant='subtitle2' sx={{ mt:3 }}>
                 Here you can consult the general analyzer.
             </Typography>
-            <Container sx={{display:'flex', alignContent:'center', justifyContent:'center', mt:4}}>
+            
+            {/* Controles de entrenamiento */}
+            <Container sx={{width:"100%", display:"flex", justifyContent:"center", alignContent:"center", mt:4}}>
                 <Card>
-                    <Typography variant='h6'>
-                        Choose your team to upgrade or add their stats:
-                    </Typography>
-                    <Autocomplete
-                        autoComplete
-                        autoSelect
-                        includeInputInList
-                        selectOnFocus
-                        options={stats}
-                        getOptionLabel={(option)=>option.name} // Muestra el nombre como etiqueta
-                        isOptionEqualToValue={(option, value) => option.equipo_id === value.equipo_id} // Compara por `id`
-                        value={selectedTeam || null}
-                        onChange={(e, newValue) => {
-                            setSelectedTeam(newValue || null);
-                        }}
-                        size="medium"
-                        renderInput={(params) => <TextField {...params} label="Choose a team" sx={{fontSize: '1px'}}/>}
-                    />
-                    {selectedTeam && 
-                        <CardActions sx={{display:'flex', justifyContent:'flex-end'}}>
-                            {/* Pasa el ID y el nombre del equipo */}
-                            <Button 
-                                color='success' 
-                                variant="contained"
-                                startIcon={<FitnessCenterIcon/>}
-                                href={`/dashboard/trainning/IA/${selectedTeam.equipo_id}/${selectedTeam.name}`}>
-                                Trainning this team
-                            </Button>
-                        </CardActions>
-                    }
+                    <CardContent sx={{display:"flex", justifyContent:"space-around", alignContent:"center"}}>
+                    <FormControl sx={{width:"30%"}} size="small" >
+                        <InputLabel>Time</InputLabel>
+                            <Select
+                                value={selectedTime}
+                                label="time"
+                                onChange={handleChangeSelect}
+                                displayEmpty
+                            >
+                                <MenuItem value={"30"}>30 seg</MenuItem>
+                                <MenuItem value={"60"}>1 min</MenuItem>
+                                <MenuItem value={"120"}>2 min</MenuItem>
+                                <MenuItem value={"180"}>3 min</MenuItem>
+                                <MenuItem value={"240"}>4 min</MenuItem>
+                                <MenuItem value={"300"}>5 min</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <Button 
+                            variant='contained'
+                            color="secondary"
+                            startIcon={<FitnessCenterIcon/>}
+                            onClick={startTraining} 
+                            disabled={isTraining}> 
+                                Start
+                        </Button>
+                        <Button 
+                            variant='contained'
+                            color="warning"
+                            onClick={stopTraining}  
+                            disabled={!isTraining}
+                            startIcon={<DoDisturbOnTwoToneIcon/>}
+                            > 
+                                Stop
+                        </Button>
+                    </CardContent>
                 </Card>
             </Container>
         </LayoutLogin>

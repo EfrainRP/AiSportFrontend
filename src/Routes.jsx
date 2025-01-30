@@ -36,6 +36,7 @@ import StatTeam from './views/Login/Stadistics/StatTeam.jsx';
 //  CRUD PERFIL 
 import ShowProfile from './views/Login/Profile/ShowProfile.jsx'; 
 //  CRUD IA 
+import ShowAI from './views/Login/AI/ShowAI.jsx'; 
 import IndexAI from './views/Login/AI/IndexAI.jsx'; 
 
 export default function MyRoute(){
@@ -236,14 +237,14 @@ export default function MyRoute(){
               </AuthRoute>
             }
           />
-          {/* <Route 
+          <Route 
             path="/dashboard/trainning/IA/:teamId/:teamName" // Ruta SHOW <- (Confirmación del Server <-)
             element={ //  Entrenamiento de IA Estadisticas personalizado por equipo <- 
               <AuthRoute > 
-                <AIShow />
+                <ShowAI />
               </AuthRoute>
             }
-          /> */}
+          />
         </Routes>
       </Router>
     </AuthProvider>
