@@ -441,4 +441,61 @@ export const inputsCustomizations = {
       }),
     },
   },
+  MuiAutocomplete: {
+    styleOverrides: {
+      root:({theme}) => ({
+        "&:hover .MuiOutlinedInput-notchedOutline": {
+          border: "none", // Quita el borde al pasar el mouse
+        },
+        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+          border: "none", // Quita el borde al enfocar
+        },
+        "& .MuiOutlinedInput-root": {
+          height: "48px",
+        },
+      }),
+      popupIndicator: ({ theme }) => ({
+        outline: "none",
+        border: "none",
+        "&:focus": {
+          outline: "none",
+        },
+        "&:active": {
+          outline: "none",
+        },
+        "&:focus-visible": {
+          outline: "none",
+        },
+        fontSize: "16px", // Tamaño del icono
+        width: "20px",    // Ancho más pequeño
+        height: "20px",   // Altura más pequeña
+        padding: "2px",   // Espaciado interno reducido
+        marginLeft: "5px",   
+      }),
+      endAdornment: ({ theme }) => ({
+        outline: "none",
+        border: "none",
+        "& .MuiAutocomplete-clearIndicator": {
+          border: "none",
+        },
+        "& .MuiAutocomplete-popupIndicator": {
+          border: "none",
+        },
+        "&:focus-visible": {
+          outline: "none",
+        },
+        height: "24px",  // Altura total más pequeña
+        minHeight: "24px",
+        "& .MuiAutocomplete-clearIndicator": {
+          width: "20px",
+          height: "20px",
+          padding: "2px",
+          fontSize: "16px",
+          outline: "none",
+          border: "none",
+        },
+
+      }),
+    },
+  },
 };

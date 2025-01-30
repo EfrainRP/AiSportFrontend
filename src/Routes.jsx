@@ -36,7 +36,7 @@ import StatTeam from './views/Login/Stadistics/StatTeam.jsx';
 //  CRUD PERFIL 
 import ShowProfile from './views/Login/Profile/ShowProfile.jsx'; 
 //  CRUD IA 
-import IndexIA from './views/Login/IA/IndexIA.jsx'; 
+import IndexAI from './views/Login/AI/IndexAI.jsx'; 
 
 export default function MyRoute(){
     return (
@@ -232,7 +232,7 @@ export default function MyRoute(){
             path="/dashboard/trainning/IA" // Ruta INDEX <- (Antes de confirmación <-)
             element={
               <AuthRoute > 
-                <IndexIA />
+                <IndexAI />
               </AuthRoute>
             }
           />
