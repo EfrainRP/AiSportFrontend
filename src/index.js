@@ -44,6 +44,7 @@ import EstadisticasTorneo from './views/Estadisticas/torneo'; // Estadisticas Sh
 //  VIEWS IA (SERVER) 
 import AI from './views/AI/index'; // AI Index <-
 import AIShow from './views/AI/show'; // AI Show <-
+import AIShowUser from './views/AI/user'; // AI AIShowUser <-
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -230,6 +231,14 @@ root.render(
             element={ //  Entrenamiento de IA Estadisticas personalizado por equipo <- 
               <AuthRoute > 
                 <AIShow />
+              </AuthRoute>
+            }
+          />
+          <Route 
+            path="/dashboard/entrenamiento/individual/IA/:userName" // Ruta SHOWUser <- (Estadisticas de entrenamiento individual <-)
+            element={ //  Entrenamiento de IA Estadisticas personalizado por usuario <- 
+              <AuthRoute > 
+                <AIShowUser />
               </AuthRoute>
             }
           />

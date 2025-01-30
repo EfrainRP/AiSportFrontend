@@ -105,7 +105,7 @@ const EstadisticasEquipo = () => {
       <h2>Puntos Totales por Fecha</h2>
       <Line data={lineChartData} options={{ responsive: true }} />
 
-      <h2>Sumatorias Totales</h2>
+      <h2>Estadísticas Totales</h2>
       <Bar data={barChartData} options={{ responsive: true }} />
 
       {estadisticas.estadisticas.length > 0 ? (
@@ -115,8 +115,8 @@ const EstadisticasEquipo = () => {
               <th>Fecha</th>
               <th>Puntos Totales (PT)</th>
               <th>Canastas Anotadas (CA)</th>
-              <th>Defensas Completadas (DC)</th>
-              <th>Campos Completados (CC)</th>
+              <th>Dominio del Control (DC)</th>
+              <th>Conteo de Contravenciones (CC)</th>
             </tr>
           </thead>
           <tbody>

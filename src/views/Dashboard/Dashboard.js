@@ -94,6 +94,9 @@ function Dashboard() {
                   Pon a prueba tú rendimiento individual en como basquetbolista en SportHub
                   <Link to={`/dashboard/entrenamiento/IA`}> Entrenamiento Individual con IA</Link>
                 </p>
+                <p>
+                  <Link to={`/dashboard/entrenamiento/individual/IA/${user.userName}`}> Estadísticas IA</Link>
+                </p>
                 <button className="btn btn-primary">Perfil</button>
                 <button className="btn btn-secondary ms-2" onClick={handleLogout}>
                   Cerrar Sesión
