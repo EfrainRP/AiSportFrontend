@@ -7,7 +7,7 @@ import {
     CardMedia,
     CardContent,
     CardActionArea,
-    Button,
+    Fab,
     Stack,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -17,6 +17,7 @@ import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 import LayoutLogin from '../../LayoutLogin.jsx';
 
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
+const centerJustify = {display: 'flex', justifyContent: 'center'};
 
 export default function IndexTeam() {
     const [teams, setTeams] = React.useState([]);
@@ -53,9 +54,9 @@ export default function IndexTeam() {
             {loading?
                 <Skeleton variant="rounded" width={'5%'} height={40} sx={{my: 3}} /> 
             :
-                <Button href='/team/create' variant="contained" color='info' sx={{color:'white', my: 3}} startIcon={<AddIcon/>}> Add </Button>
+                <Fab  href='/team/create' variant="extended" color='info' sx={{color:'white', my: 3}}><AddIcon/> Add</Fab>
             }  
-            <Box sx={{ width: '100%', height: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <Box sx={{ ...centerJustify, width: '100%', height: 'auto', alignItems: 'center'}}>
                 {loading ? 
                     <Skeleton variant="rounded" width={'95%'} height={350} /> 
                 :
@@ -73,12 +74,12 @@ export default function IndexTeam() {
                                         <CardMedia
                                             component="img"
                                             height={120}
-                                            // image={`http://localhost:3000/sporthub/api/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
+                                            // image={`http://localhost:3000/aiSport/api/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
                                             image={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
                                             alt={team.name}
                                         />
                                         <CardContent>
-                                            <Typography gutterBottom variant="h5" component="span" sx={{mt:1, display: 'flex', justifyContent: 'center'}}>
+                                            <Typography gutterBottom variant="h5" component="span" color='success.main' sx={{...centerJustify, mt:1}}>
                                                 <strong>{team.name}</strong>
                                             </Typography>
                                         </CardContent>

@@ -3,7 +3,7 @@ import {
     Typography,
     Skeleton,
     Box,
-    Button,
+    Fab,
     Stack,
     Container,
     Divider,
@@ -19,6 +19,8 @@ import {
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 import { useParams, Link, useNavigate } from 'react-router-dom';
+
+import EditIcon from '@mui/icons-material/Edit';
 
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx';
@@ -69,14 +71,14 @@ export default function ShowTeam() {
                         <CardMedia
                             component="img"
                             height={120}
-                            // image={`http://localhost:3000/sporthub/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
+                            // image={`http://localhost:3000/ai/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
                             image={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
                             alt={team.name}
                             sx={{height:'15rem'}}
                         />
                         <Divider variant="middle" sx={{my:2}}/>
                         <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
-                            <Typography variant='h5'> 
+                            <Typography variant='h5' color= 'success.main'> 
                                 <strong>Founder:</strong>
                             </Typography>
                             <Typography variant='h6' sx={{color: 'text.secondary'}}> 
@@ -85,10 +87,10 @@ export default function ShowTeam() {
                         </Container>
                         <Divider variant="middle" sx={{my:2}}/>
                         <Container sx={{gap:2}}>
-                            <Typography variant='h5'> 
+                            <Typography variant='h5' color= 'success.main'> 
                                 <strong>Miembros:</strong>
                             </Typography>
-                            <List>
+                            <List sx={{color: 'text.secondary'}}>
                             {team?.miembro_equipos?.length > 0 ? (
                                 team.miembro_equipos.map((miembro) => (
                                     <ListItemText key={miembro.user_miembro} sx={{textAlign:'center'}}>
@@ -103,8 +105,8 @@ export default function ShowTeam() {
                             </List>
                         </Container>
                     </CardContent>
-                    <CardActions>
-                        <Button variant="contained" size="small" href={`/team/${teamName}/${team.id}/edit`}>Edit Team</Button>
+                    <CardActions sx={{display: 'flex', justifyContent: 'center'}}>
+                        <Fab variant="extended" color='primary' size="small" href={`/team/${teamName}/${team.id}/edit`}><EditIcon sx={{ mr: 1 }}/> Edit</Fab>
                     </CardActions>
                 </Card>
             </Container>

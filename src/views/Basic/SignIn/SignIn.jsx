@@ -20,7 +20,7 @@ import {
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword.jsx';
-import { GoogleIcon, FacebookIcon, SporthubIcon } from '../../../components/CustomIcons.jsx';
+import { GoogleIcon, FacebookIcon, AiSportIcon } from '../../../components/CustomIcons.jsx';
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext.jsx'; // Importa el contexto
@@ -109,7 +109,7 @@ export default function SignIn(props) {
     setOpen(false);
   };
 
-  const handleSubmit = async (event) => { // Function to access SportHub
+  const handleSubmit = async (event) => { // Function to access AiSport
     event.preventDefault();
 
     if (emailError || passwordError) { // Error Input
@@ -191,7 +191,7 @@ export default function SignIn(props) {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-            <SporthubIcon/>
+            <AiSportIcon/>
           </div>
           <Typography
             component="h1"

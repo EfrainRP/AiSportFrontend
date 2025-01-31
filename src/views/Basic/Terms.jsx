@@ -86,7 +86,7 @@ export default function Terms(props){
                           <Typography component="li" variant="body3">Accessing or manipulating internal systems without authorization.</Typography>
                           
                         <Typography variant="subtitle2">
-                          If you have questions about these Terms, please contact us at <Typography component="span" sx={{ color: orange[500], fontWeight: 'bold' }}>sporthub@gmail.com</Typography> .
+                          If you have questions about these Terms, please contact us at <Typography component="span" sx={{ color: orange[500], fontWeight: 'bold' }}>ai@gmail.com</Typography> .
                         </Typography>
 
                         <Typography variant="subtitle2">Thank you for using our platform and enjoying basketball with us!

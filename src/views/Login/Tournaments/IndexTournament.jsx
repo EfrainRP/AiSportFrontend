@@ -29,6 +29,8 @@ import { Link } from 'react-router-dom';
 
 import LayoutLogin from '../../LayoutLogin.jsx';
 
+const centerJustify = {display:'flex', flexDirection: 'row', textAlign:'justify'};
+
 export default function IndexTournaments() {
     const [torneos, setTorneos] = React.useState([]);
     const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado 
@@ -70,7 +72,7 @@ export default function IndexTournaments() {
             {loading?
                 <Skeleton variant="rounded" width={'5%'} height={40} sx={{my: 3}} /> 
             :
-                <Button href='/tournament/create' variant="contained" color='info' sx={{color:'white', my: 3}} startIcon={<AddIcon/>}> Add </Button>
+                <Fab href='/tournament/create' variant="extended" color='info' sx={{color:'white', my: 3}}> <AddIcon/> Add </Fab>
             }  
                 {/* <Stack direction={'row'} sx={{my:2}}> */}
                     {/* <Button variant="contained" color='info' sx={{color:'white'}} startIcon={<SearchIcon/>} onClick={toggleSearch}> Search </Button>
@@ -117,13 +119,33 @@ export default function IndexTournaments() {
                                 return (
                                 <Card variant="outlined" key={torneo.id} sx={{p:0, width:'23%'}}>
                                     <CardActionArea href={`/tournament/${torneo.name}/${torneo.id}`} sx={{p:2}}>
-                                        <Typography gutterBottom variant="h5" component="div" sx={{display: 'flex', justifyContent:'center'}}>
+                                        <Typography gutterBottom variant="h5" component="div" color='success.main' sx={{display: 'flex', justifyContent:'center'}}>
                                             <strong>{torneo.name}</strong>
                                         </Typography>
-                                        <Typography><strong>Location:</strong> {torneo.ubicacion}</Typography>
-                                        <Typography sx={{textAlign:'justify'}}><strong>Description:</strong> {torneo.descripcion}</Typography>
-                                        <Typography><strong>Start date:</strong> {new Date(torneo.fechaInicio).toLocaleDateString()}</Typography>
-                                        <Typography><strong>End date:</strong> {new Date(torneo.fechaFin).toLocaleDateString()}</Typography>
+                                        <Typography sx={centerJustify}>
+                                            <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
+                                                <strong>Location:</strong>
+                                            </Typography >
+                                            {torneo.ubicacion}
+                                        </Typography >
+                                        <Typography sx={centerJustify}>
+                                            <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
+                                                <strong>Description:</strong>
+                                            </Typography >
+                                            {torneo.descripcion}
+                                        </Typography >
+                                        <Typography sx={centerJustify}>
+                                            <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
+                                                <strong>Start date:</strong>
+                                            </Typography >
+                                            {new Date(torneo.fechaInicio).toLocaleDateString()}
+                                        </Typography >
+                                        <Typography sx={centerJustify}>
+                                            <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
+                                                <strong>End date:</strong>
+                                            </Typography >
+                                            {new Date(torneo.fechaFin).toLocaleDateString()}
+                                        </Typography >
                                     </CardActionArea>
                                     {/* <CardActions>
                                         <Button size="small" href={`/torneo/${torneo.name}/${torneo.id}`}>See</Button>

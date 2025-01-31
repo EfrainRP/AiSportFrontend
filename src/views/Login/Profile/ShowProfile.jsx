@@ -63,7 +63,7 @@ export default function ShowProfile() {
             <Container sx={{width: {xs: '75vw', sm: '50vw'}}}>
                 <Card variant="outlined">
                     <CardContent>
-                        <Typography gutterBottom variant="h2" component="div" >
+                        <Typography gutterBottom variant="h2" component="div" sx={{display:'flex', justifyContent:'center'}}>
                             {loading?
                                 <Skeleton variant="rounded" width={'30%'} /> 
                                 : "Profile"}
@@ -72,7 +72,7 @@ export default function ShowProfile() {
                         <CardMedia
                             component="img"
                             height={120}
-                            // image={`http://localhost:3000/sporthub/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
+                            // image={`http://localhost:3000/ai/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
                             image={URL_SERVER+`/utils/uploads/${profile.image !== 'logoPerfil.jpg' ? profile.image : 'logoPerfil.jpg'}`} 
                             alt={"Profile"}
                             sx={{height:'15rem'}}
@@ -173,7 +173,7 @@ export default function ShowProfile() {
                     aria-controls="yourNotifications"
                     id="yourNotifications"
                     >
-                    <Typography component="span"> {profile.notifications_notifications_user_idTousers?.length<0?"Your Notifications: ":"You don´t have notifications "}</Typography>
+                    <Typography component="span"> {profile.notifications_notifications_user_idTousers?.length<0?"Your Notifications: ":<strong>You don´t have notifications </strong>}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <List sx={{m:0,p:0}}> {/*TODO: checar notificaciones con datos */}

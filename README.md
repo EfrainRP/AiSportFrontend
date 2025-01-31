@@ -3,7 +3,7 @@ Write in ./.env.development
 
 VITE_MYPORT_SERVER=5000
 
-VITE_URL_SERVER="http://localhost:$VITE_MYPORT_SERVER/sporthub/api"
+VITE_URL_SERVER="http://localhost:$VITE_MYPORT_SERVER/AiSport/api"
 
 
 # React + Vite

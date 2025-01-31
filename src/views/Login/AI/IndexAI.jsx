@@ -112,7 +112,7 @@ export default function IndexAI() {
     if(stats.length === 0){
         return (
             <LayoutLogin>
-                <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `SportHub Individual Performance Analyzer`} </Typography>
+                <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AiSport Individual Performance Analyzer`} </Typography>
                 <Typography variant='h5' sx={{ m:4, display:'flex', alignContent:'center', justifyContent: 'center'}}>
                     There are no available teams with a minimum match played that contain statistics for a training session.
                 </Typography>
@@ -122,7 +122,7 @@ export default function IndexAI() {
     console.log(selectedTeam);
     return (
         <LayoutLogin>
-            <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `SportHub Individual Performance Analyzer`} </Typography>
+            <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AiSport Individual Performance Analyzer`} </Typography>
             <Typography variant='subtitle2' sx={{ mt:3 }}>
                 Here you can consult the general analyzer.
             </Typography>

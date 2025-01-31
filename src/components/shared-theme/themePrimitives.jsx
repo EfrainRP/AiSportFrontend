@@ -123,7 +123,7 @@ export const getDesignTokens = (mode) => {
         }),
       },
       success: {
-        light: green[300],
+        light: '#388e3c',
         main: green[400],
         dark: green[800],
         ...(mode === 'dark' && {

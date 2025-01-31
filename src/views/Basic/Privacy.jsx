@@ -37,8 +37,8 @@ export default function Privacy(props){
               </Typography>
               
               <Typography variant="body1" paragraph>
-                Welcome to SportHub! Your privacy is important to us, and this Privacy Policy explains how we collect, use, and
-                protect your personal information when you use our services. By accessing or using SportHub, you agree to the
+                Welcome to AiSport! Your privacy is important to us, and this Privacy Policy explains how we collect, use, and
+                protect your personal information when you use our services. By accessing or using AiSport, you agree to the
                 practices described in this policy.
               </Typography>
 
@@ -100,7 +100,7 @@ export default function Privacy(props){
                 Contact Us
               </Typography>
               <Typography variant="body2" paragraph>
-                If you have any questions, contact us at <Typography component="span" sx={{ color: orange[500], fontWeight: 'bold' }}>sporthub@gmail.com</Typography>.
+                If you have any questions, contact us at <Typography component="span" sx={{ color: orange[500], fontWeight: 'bold' }}>AiSport@gmail.com</Typography>.
               </Typography>
 
               </Stack>

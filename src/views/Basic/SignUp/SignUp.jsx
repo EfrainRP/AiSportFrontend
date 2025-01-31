@@ -18,7 +18,7 @@ import { Box,
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 
-import { GoogleIcon, FacebookIcon, SporthubIcon } from '../../../components/CustomIcons.jsx';
+import { GoogleIcon, FacebookIcon, AiSportIcon } from '../../../components/CustomIcons.jsx';
 import LayoutBasic from '../../LayoutBasic.jsx'
 
 
@@ -227,7 +227,7 @@ export default function SignUp(props) {
             justifyContent: 'center',
             alignItems: 'center',
         }}>
-        <SporthubIcon/>
+        <AiSportIcon/>
         </div>
         <Typography
             component="h1"

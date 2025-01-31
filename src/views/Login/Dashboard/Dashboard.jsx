@@ -15,7 +15,9 @@ import {
   CardMedia,
   CardContent,
   CardActionArea,
+  Divider
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 import { useAuth } from '../../../services/AuthContext.jsx'; // Importa el AuthContext
 import axiosInstance from "../../../services/axiosConfig.js";
@@ -28,6 +30,14 @@ import Carousel from 'react-multi-carousel';
 import "react-multi-carousel/lib/styles.css";
 
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
+const centerJustify = {display: 'flex', alignContent:'center', textAlign:'justify', justifyContent:'space-evenly'};
+
+const TitleTypography = styled(Typography)(({ theme }) => ({
+  color: theme.palette.success.dark,
+  ...theme.applyStyles('dark', {
+    color: theme.palette.success.light,
+  }),
+}));
 
 const myResponsive = {
   superLargeDesktop: {
@@ -103,31 +113,6 @@ const columns = [
     },
   }
 ];
-// const columns = [
-//   { id: 'name', label: 'Name', minWidth: 170 },
-//   { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-//   {
-//     id: 'population',
-//     label: 'Population',
-//     minWidth: 170,
-//     align: 'right',
-//     format: (value) => value.toLocaleString('en-US'),
-//   },
-//   {
-//     id: 'size',
-//     label: 'Size\u00a0(km\u00b2)',
-//     minWidth: 170,
-//     align: 'right',
-//     format: (value) => value.toLocaleString('en-US'),
-//   },
-//   {
-//     id: 'density',
-//     label: 'Density',
-//     minWidth: 170,
-//     align: 'right',
-//     format: (value) => value.toFixed(2),
-//   },
-// ];
 
 export default function Dashboard() {
   const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado 
@@ -189,7 +174,11 @@ export default function Dashboard() {
       </Typography>
 
         {/* CARUSEL DE TORNEOS*/}
-      <Typography variant='h4' sx={{ mt: 6, mb: 2}}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'Tournaments Available'}</Typography>
+      <TitleTypography variant='h4' 
+        sx={{mt: 6, mb: 2,}}
+      >
+        {loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'Tournaments Available'}
+      </TitleTypography>
       <Box sx={{ width: '100%', height: 'auto', mx: 2 }}>
         {loading ? <Skeleton variant="rounded" sx={{mx:-2, width:'100%', height:150}}/> :
           <Carousel
@@ -209,11 +198,43 @@ export default function Dashboard() {
                   key={i}
                 >
                   <CardActionArea href={`/dashboard/tournament/${torneo.name}/${torneo.id}`} sx={{p:2}}>
-                    <Typography variant='h4' component='strong' sx={{display: 'flex', justifyContent:'center'}}>{torneo.name}</Typography>
-                    <Typography sx={{textAlign:'justify'}}><strong>Description: </strong>{torneo.descripcion}</Typography>
-                    <Typography><strong>Ubicación: </strong>{torneo.ubicacion}</Typography>
-                    <Typography><strong>Start date:</strong> {new Date(torneo.fechaInicio).toLocaleDateString()}</Typography>
-                    <Typography><strong>End date:</strong> {new Date(torneo.fechaFin).toLocaleDateString()}</Typography>
+                    <Typography variant='h4' component='strong' sx={centerJustify} color='success.main'>{torneo.name}</Typography>
+                    <Divider sx={{my:1}}/>
+                    <Typography sx={centerJustify}>
+                      <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
+                        <strong>Location: </strong>
+                      </Typography >
+                      {torneo.ubicacion}
+                    </Typography >
+                    <Typography sx={centerJustify}>
+                      <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
+                        <strong>Start date: </strong>
+                      </Typography >
+                      {new Date(torneo.fechaInicio).toLocaleDateString()}
+                    </Typography >
+                    <Typography sx={centerJustify}>
+                      <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
+                        <strong>End date: </strong>
+                      </Typography >
+                      {new Date(torneo.fechaFin).toLocaleDateString()}
+                    </Typography >
+                    <Typography sx={centerJustify}>
+                      <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
+                        {/* [
+                        (theme) => ({
+                          mr:2,
+                          textAlign:'justify',
+                          color: green[700],
+                          //     border: `2px solid ${theme.palette.error.light}`,
+                          ...theme.applyStyles('dark', {
+                          color: theme.palette.success.light,
+                          //       border: `2px solid ${theme.palette.error.main}`,
+                          }),
+                        })] */}
+                        <strong>Description: </strong>
+                      </Typography >
+                      {torneo.descripcion}
+                    </Typography>
                   </CardActionArea>
                 </Card>
                 );})
@@ -225,7 +246,11 @@ export default function Dashboard() {
       </Box>
 
         {/* CARUSEL DE EQUIPOS */}
-      <Typography variant='h4' sx={{ mt: 6, mb: 2}}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'Teams Available'}</Typography>
+      <TitleTypography variant='h4' 
+        sx={{mt: 6, mb: 2,}}
+      >
+        {loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'Teams Available'}
+      </TitleTypography>
       <Box sx={{ width: '100%', height: 'auto', mx: 2 }}>
         {loading ? <Skeleton variant="rounded" sx={{mx:-2, width:'100%', height:150}}/> :
           <Carousel
@@ -249,12 +274,15 @@ export default function Dashboard() {
                           alt={equipo.name}
                       />
                       <CardContent>
-                          <Typography variant="h5" component="span" sx={{display: 'flex', justifyContent: 'center'}}>
+                          <Typography variant="h5" component="span" color='success.main' sx={{...centerJustify, my:0.5}}>
                               <strong>{equipo.name}</strong>
                           </Typography>
-                          <Typography variant="subtitle" component="span" sx={{display: 'flex', justifyContent: 'center'}}>
-                              {equipo['users'].name}
-                          </Typography>
+                          <Typography sx={centerJustify}>
+                            <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
+                              <strong>Leader:</strong>
+                            </Typography >
+                            {equipo['users'].name}
+                          </Typography >
                       </CardContent>
                   </CardActionArea>
               </Card>
@@ -267,7 +295,11 @@ export default function Dashboard() {
       </Box>
 
         {/* TABLA DE PROXIMOS PARTIDOS */}
-      <Typography variant='h5' sx={{ mt: 6, mb: 2 }}>{loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'My Matches'}</Typography>
+      <TitleTypography variant='h4' 
+        sx={{mt: 6, mb: 2,}}
+      >
+          {loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'My Matches'}
+      </TitleTypography>
       <Box>
         {loading ? <Skeleton variant="rounded" height={440} />
           :

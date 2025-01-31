@@ -26,7 +26,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import Settings from '@mui/icons-material/Settings';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
-import { SporthubIcon } from '../CustomIcons.jsx';
+import { AiSportIcon } from '../CustomIcons.jsx';
 import { useAuth } from '../../services/AuthContext.jsx'; // Importa el AuthContext
 import { useNavigate, useLocation } from 'react-router-dom'; // Importa useNavigate
 import axiosInstance from '../../services/axiosConfig.js';
@@ -187,8 +187,8 @@ export default function SideMenu(props) {
 
           
             <Box sx={openList? { display: 'flex', flexGrow: 0.1, alignItems: 'center',} : { display:'none'}}>
-              <SporthubIcon fontSize={{md:30,xs:35}}/>
-              <Typography sx={{m:{md:1,xs:0.7}}} variant='h6'>SportHub</Typography>
+              <AiSportIcon fontSize={{md:30,xs:35}}/>
+              <Typography sx={{m:{md:1,xs:0.7}}} variant='h6'>AiSport</Typography>
             </Box>
           
           <IconButton onClick={toggleDrawer}>

@@ -60,7 +60,7 @@ export default function AboutUs(props){
                 </Typography>
 
                 <Typography variant="subtitle1">
-                  <EmailTwoToneIcon size='medium' color='warning'/> sporthub@gmail.com
+                  <EmailTwoToneIcon size='medium' color='warning'/> AiSport@gmail.com
                 </Typography>
 
                 <Typography variant="subtitle1">

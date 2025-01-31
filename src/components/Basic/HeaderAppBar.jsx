@@ -12,7 +12,7 @@ import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
-import { SporthubIcon } from '../CustomIcons.jsx';
+import { AiSportIcon } from '../CustomIcons.jsx';
 import ColorModeSelect from '../shared-theme/ColorModeSelect.jsx';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -52,10 +52,10 @@ export default function HeaderAppBar() {
       <Container maxWidth="lg">
         <StyledToolbar variant="dense" disableGutters>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, gap: 2 }}>
-            <SporthubIcon />
+            <AiSportIcon />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <Button href='/' variant="text" color="info" size="medium">
-                SPORTHUB
+                AiSport
               </Button>
               <Button href='/aboutus' variant="text" color="info" size="medium">
                 ABOUT US
@@ -107,7 +107,7 @@ export default function HeaderAppBar() {
                 </Box>
                 <MenuItem>
                   <Button href='/' variant="text" color="info" size="small">
-                    SPORTHUB
+                    AiSport
                   </Button>
                 </MenuItem>
                 <MenuItem>

@@ -67,7 +67,7 @@ export default function IndexNotifications() {
     const acceptNotification = async (notificacionId, torneoId) => {
         try {
         // Enviar la solicitud DELETE para aceptar la notificación
-        await axios.delete(`http://localhost:5000/sporthub/api/notificacion/${user.userId}/${torneoId}`);
+        await axios.delete(`http://localhost:5000/ai/api/notificacion/${user.userId}/${torneoId}`);
         
         // Eliminar la notificación aceptada del estado
         setNotificaciones((prev) => prev.filter((n) => n.id !== notificacionId));

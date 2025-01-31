@@ -76,7 +76,7 @@ export default function Stadistics() {
 
     return (
         <LayoutLogin>
-            <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'40%'} /> : `Welcome to SportHub Teams Statistics`} </Typography>
+            <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'40%'} /> : `Welcome to AiSport Teams Statistics`} </Typography>
             <Typography variant='subtitle2' sx={{ mt:3 }}>
                 {loading ? 
                     <Skeleton variant="rounded" width={'31%'}/> 

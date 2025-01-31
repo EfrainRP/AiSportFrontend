@@ -268,13 +268,13 @@ export default function EditTournament() {
     //                                     <p><strong>Fecha del Partido:</strong> {new Date(partido.fechaPartido).toISOString().split('T')[0]}</p>
     //                                     <p><strong>Hora:</strong> {new Date(partido.horaPartido).toLocaleTimeString()}</p>
     //                                     <img
-    //                                         src={`http://localhost:5000/sporthub/api/utils/uploads/${partido.equipoLocal.image !== 'logoEquipo.jpg' ? partido.equipoLocal.image : 'logoEquipo.jpg'}`}
+    //                                         src={`http://localhost:5000/AiSport/api/utils/uploads/${partido.equipoLocal.image !== 'logoEquipo.jpg' ? partido.equipoLocal.image : 'logoEquipo.jpg'}`}
     //                                         alt="Perfil"
     //                                         style={{ width: '120px', height: '50px' }} // Size IMG
     //                                     />
     //                                     <p><strong>Equipo Local:</strong> {partido.equipoLocal.name}</p>
     //                                     <img
-    //                                         src={`http://localhost:5000/sporthub/api/utils/uploads/${partido.equipoVisitante.image !== 'logoEquipo.jpg' ? partido.equipoVisitante.image : 'logoEquipo.jpg'}`}
+    //                                         src={`http://localhost:5000/AiSport/api/utils/uploads/${partido.equipoVisitante.image !== 'logoEquipo.jpg' ? partido.equipoVisitante.image : 'logoEquipo.jpg'}`}
     //                                         alt="Perfil"
     //                                         style={{ width: '120px', height: '50px' }} // Size IMG
     //                                     />
