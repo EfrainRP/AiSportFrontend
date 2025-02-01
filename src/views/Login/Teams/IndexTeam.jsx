@@ -79,7 +79,7 @@ export default function IndexTeam() {
                                             alt={team.name}
                                         />
                                         <CardContent>
-                                            <Typography gutterBottom variant="h5" component="span" color='success.main' sx={{...centerJustify, mt:1}}>
+                                            <Typography gutterBottom variant="h5" component="span" color='secondary' sx={{...centerJustify, mt:1}}>
                                                 <strong>{team.name}</strong>
                                             </Typography>
                                         </CardContent>

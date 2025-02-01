@@ -54,7 +54,7 @@ export default function Welcome(props) {
                 </Typography>
 
                 <Typography variant="subtitle1">
-                  <EmailTwoToneIcon fontSize='medium' color='warning'/> aiSport@gmail.com
+                  <EmailTwoToneIcon fontSize='medium' color='warning'/> AiSport@gmail.com
                 </Typography>
 
                 <Button href='/signin' color="secondary" variant="contained" size="medium">

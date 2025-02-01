@@ -198,27 +198,27 @@ export default function Dashboard() {
                   key={i}
                 >
                   <CardActionArea href={`/dashboard/tournament/${torneo.name}/${torneo.id}`} sx={{p:2}}>
-                    <Typography variant='h4' component='strong' sx={centerJustify} color='success.main'>{torneo.name}</Typography>
+                    <Typography variant='h4' component='strong' sx={centerJustify} color='secondary'>{torneo.name}</Typography>
                     <Divider sx={{my:1}}/>
-                    <Typography sx={centerJustify}>
+                    <Typography sx={{...centerJustify,color:'text.data'}}>
                       <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
                         <strong>Location: </strong>
                       </Typography >
                       {torneo.ubicacion}
                     </Typography >
-                    <Typography sx={centerJustify}>
+                    <Typography sx={{...centerJustify,color:'text.data'}}>
                       <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
                         <strong>Start date: </strong>
                       </Typography >
                       {new Date(torneo.fechaInicio).toLocaleDateString()}
                     </Typography >
-                    <Typography sx={centerJustify}>
+                    <Typography sx={{...centerJustify,color:'text.data'}}>
                       <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
                         <strong>End date: </strong>
                       </Typography >
                       {new Date(torneo.fechaFin).toLocaleDateString()}
                     </Typography >
-                    <Typography sx={centerJustify}>
+                    <Typography sx={{...centerJustify,color:'text.data'}}>
                       <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
                         {/* [
                         (theme) => ({
@@ -274,10 +274,10 @@ export default function Dashboard() {
                           alt={equipo.name}
                       />
                       <CardContent>
-                          <Typography variant="h5" component="span" color='success.main' sx={{...centerJustify, my:0.5}}>
+                          <Typography variant="h5" component="span" color='secondary' sx={{...centerJustify, my:0.5}}>
                               <strong>{equipo.name}</strong>
                           </Typography>
-                          <Typography sx={centerJustify}>
+                          <Typography sx={{...centerJustify,color:'text.data'}}>
                             <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
                               <strong>Leader:</strong>
                             </Typography >
@@ -305,16 +305,16 @@ export default function Dashboard() {
           :
         data.proximosPartidos.length>0?
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-            <TableContainer sx={{ maxHeight: 440 }}>
+            <TableContainer sx={{ maxHeight: 440}}>
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{backgroundColor: 'grey'}}> {/*Celda para el numero de elementos de la tabla, lo cual esta vacia*/}
+                    <TableCell sx={{backgroundColor: 'rgb(171, 167, 165)'}}> {/*Celda para el numero de elementos de la tabla, lo cual esta vacia*/}
                       {""}
                     </TableCell>
                     {columns.map((column) => (
                       <TableCell
-                        sx={{backgroundColor: 'grey'}}
+                        sx={{backgroundColor: 'rgb(171, 167, 165)'}}
                         key={column.extraIndex? column.id+'.'+column.extraIndex : column.id}
                         align={column.align}
                         style={{ minWidth: column.minWidth }}

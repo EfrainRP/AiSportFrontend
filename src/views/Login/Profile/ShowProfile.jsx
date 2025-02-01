@@ -3,7 +3,7 @@ import {
     Typography,
     Skeleton,
     Box,
-    Button,
+    Fab,
     Stack,
     Container,
     Divider,
@@ -18,10 +18,12 @@ import {
     Accordion,
     AccordionSummary,
     AccordionDetails,
-    Avatar
+    Avatar,
+    ListItemButton
 } from '@mui/material';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import EditIcon from '@mui/icons-material/Edit';
 
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
@@ -63,7 +65,7 @@ export default function ShowProfile() {
             <Container sx={{width: {xs: '75vw', sm: '50vw'}}}>
                 <Card variant="outlined">
                     <CardContent>
-                        <Typography gutterBottom variant="h2" component="div" sx={{display:'flex', justifyContent:'center'}}>
+                        <Typography gutterBottom variant="h2" component="div" color='secondary' sx={{display:'flex', justifyContent:'center'}}>
                             {loading?
                                 <Skeleton variant="rounded" width={'30%'} /> 
                                 : "Profile"}
@@ -79,53 +81,53 @@ export default function ShowProfile() {
                         />
                         <Divider variant="middle" sx={{my:2}}/>
                         <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
-                            <Typography variant='h5'> 
+                            <Typography variant='h5' color='primary'> 
                                 <strong>Name:</strong>
                             </Typography>
-                            <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                            <Typography variant='h6'> 
                                 {profile.name} {profile.fsurname} {profile.msurname}
                             </Typography>
                         </Container>
                         <Divider variant="middle" sx={{my:2}}/>
                         <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
-                            <Typography variant='h5'> 
+                            <Typography variant='h5' color='primary'> 
                                 <strong>Email:</strong>
                             </Typography>
-                            <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                            <Typography variant='h6'> 
                                 {profile.email}
                             </Typography>
                         </Container>
                         <Divider variant="middle" sx={{my:2}}/>
                         <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
-                            <Typography variant='h5'> 
+                            <Typography variant='h5' color='primary'> 
                                 <strong>Gender:</strong>
                             </Typography>
-                            <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                            <Typography variant='h6'> 
                                 {profile.gender}
                             </Typography>
                         </Container>
                         <Divider variant="middle" sx={{my:2}}/>
                         <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
-                            <Typography variant='h5'> 
+                            <Typography variant='h5' color='primary'> 
                                 <strong>Birthdate:</strong>
                             </Typography>
-                            <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                            <Typography variant='h6'> 
                                 {new Date(profile.birthdate).toISOString().split('T')[0]}
                             </Typography>
                         </Container>
                         <Divider variant="middle" sx={{my:2}}/>
                         <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
-                            <Typography variant='h5'> 
+                            <Typography variant='h5' color='primary'> 
                                 <strong>NickName:</strong>
                             </Typography>
-                            <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                            <Typography variant='h6'> 
                                 {profile.nickname || 'No nickname set'}
                             </Typography>
                         </Container>
                         <Divider variant="middle" sx={{my:2}}/>
                     </CardContent>
-                    <CardActions>
-                        <Button variant="contained" size="small" href={`/dashboard/profile/${user.userName}/edit`}>Edit Profile</Button>
+                    <CardActions sx={{display:'center', justifyContent: 'flex-end'}}>
+                        <Fab color='primary' variant="extended" size="small" href={`/dashboard/profile/${user.userName}/edit`}><EditIcon sx={{mr:1}}/>Edit</Fab>
                     </CardActions>
                 </Card>
                 <Accordion sx={{mt:2}}>
@@ -140,10 +142,12 @@ export default function ShowProfile() {
                     <List sx={{m:0,p:0}}>
                         {profile.equipos?.map((team, i) => (
                             <ListItem key={i}>
-                                <ListItemAvatar>
-                                    <Avatar src={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`}/>
-                                </ListItemAvatar>
-                                <ListItemText primary={team.name}/>
+                                <ListItemButton href={`/team/${team.name}/${team.id}`}>
+                                    <ListItemAvatar>
+                                        <Avatar src={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`}/>
+                                    </ListItemAvatar>
+                                    <ListItemText primary={team.name}/>
+                                </ListItemButton>
                             </ListItem>
                         ))}
                     </List>
@@ -161,7 +165,9 @@ export default function ShowProfile() {
                         <List sx={{m:0,p:0}}>
                             {profile.torneos?.map((torunament,i) => (
                                 <ListItem key={i}>
-                                    <ListItemText primary={torunament.name}/>
+                                    <ListItemButton href={`/tournament/${torunament.name}/${torunament.id}`}>
+                                        <ListItemText primary={torunament.name}/>
+                                    </ListItemButton>
                                 </ListItem>
                             ))}
                         </List>
@@ -173,7 +179,7 @@ export default function ShowProfile() {
                     aria-controls="yourNotifications"
                     id="yourNotifications"
                     >
-                    <Typography component="span"> {profile.notifications_notifications_user_idTousers?.length<0?"Your Notifications: ":<strong>You don´t have notifications </strong>}</Typography>
+                        <Typography component="span"> {profile.notifications_notifications_user_idTousers?.length<0?"Your Notifications: ":<strong>You don´t have notifications </strong>}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <List sx={{m:0,p:0}}> {/*TODO: checar notificaciones con datos */}

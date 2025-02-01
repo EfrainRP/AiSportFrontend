@@ -4,6 +4,19 @@ const defaultTheme = createTheme();
 
 const customShadows = [...defaultTheme.shadows];
 
+export const purple = {
+  50: 'hsl(266, 100%, 95%)',
+  100: 'hsl(266, 100%, 92%)',
+  200: 'hsl(266, 100%, 80%)',
+  300: 'hsl(266, 100%, 65%)',
+  400: 'hsl(266, 98%, 48%)',
+  500: 'hsl(266, 98.10%, 42.00%)',
+  600: 'hsl(266, 83.30%, 62.40%)',
+  700: 'hsl(266, 100%, 35%)',
+  800: 'hsl(266, 100%, 16%)',
+  900: 'hsl(266, 100%, 21%)',
+};
+
 export const brand = {
   50: 'hsl(210, 100%, 95%)',
   100: 'hsl(210, 100%, 92%)',
@@ -90,6 +103,12 @@ export const getDesignTokens = (mode) => {
           dark: brand[700],
         }),
       },
+      secondary: { // Agregando el color secundario
+        light: purple[300],
+        main: purple[500],  // Aquí defines el color principal secundario
+        dark: purple[700],
+        contrastText: purple[50],
+      },
       info: {
         light: brand[100],
         main: brand[300],
@@ -142,7 +161,7 @@ export const getDesignTokens = (mode) => {
         ...(mode === 'dark' && { default: gray[900], paper: 'hsl(220, 30%, 7%)' }),
       },
       text: {
-        primary: gray[800],
+        primary: 'hsl(0, 0%, 100%)', //gray[800],
         secondary: gray[600],
         warning: orange[400],
         ...(mode === 'dark' && {
@@ -219,14 +238,20 @@ export const colorSchemes = {
   light: {
     palette: {
       primary: {
-        light: brand[200],
-        main: brand[400],
+        light: brand[50],
+        main: brand[200],
         dark: brand[700],
         contrastText: brand[50],
       },
+      secondary: { // Agregando el color secundario
+        light: purple[300],
+        main: purple[200],  // Aquí defines el color principal secundario
+        dark: purple[700],
+        contrastText: purple[50],
+      },
       info: {
         light: brand[100],
-        main: brand[300],
+        main: brand[400],
         dark: brand[600],
         contrastText: gray[50],
       },
@@ -238,32 +263,33 @@ export const colorSchemes = {
       error: {
         light: red[300],
         main: red[400],
-        dark: red[800],
+        dark: red[600],
       },
       success: {
         light: green[300],
         main: green[400],
-        dark: green[800],
+        dark: green[600],
       },
       grey: {
         ...gray,
       },
-      divider: alpha(gray[300], 0.4),
+      divider: alpha(gray[800], 0.3),
       background: {
-        default: 'hsl(0, 0.00%, 98.80%)',
-        paper: 'hsl(220, 35%, 97%)',
+        default: 'rgba(228, 228, 228, 0.65)', //rgba(171, 167, 165, 0.85)
+        paper: 'rgba(182, 179, 176, 0.74)',
       },
-      text: {
+      text: { //Edited form text
         primary: gray[800],
         secondary: gray[600],
         warning: orange[400],
+        data: gray[50],
       },
       action: {
-        hover: alpha(gray[200], 0.2),
-        selected: `${alpha(gray[200], 0.3)}`,
+        hover: 'rgba(250, 165, 128, 0.44)',
+        selected: 'rgba(245, 131, 82, 0.68)',
       },
       baseShadow:
-        'hsla(220, 30%, 5%, 0.07) 0px 4px 16px 0px, hsla(220, 25%, 10%, 0.07) 0px 8px 16px -5px',
+        'hsla(224, 15.50%, 13.90%, 0.07) 0px 4px 16px 0px, hsla(222, 12.80%, 15.30%, 0.07) 0px 8px 16px -5px',
     },
   },
   dark: {
@@ -273,6 +299,12 @@ export const colorSchemes = {
         light: brand[300],
         main: brand[400],
         dark: brand[700],
+      },
+      secondary: {
+        light: purple[400],
+        main: purple[600],
+        dark: purple[800],
+        contrastText: gray[300],
       },
       info: {
         contrastText: brand[300],
@@ -298,7 +330,7 @@ export const colorSchemes = {
       grey: {
         ...gray,
       },
-      divider: alpha(gray[700], 0.6),
+      divider: alpha(gray[600], 0.6),
       background: {
         default: gray[900],
         paper: 'hsl(220, 30%, 7%)',

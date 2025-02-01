@@ -234,7 +234,7 @@ export default function ShowTournament() {
                                 <Typography variant='h5' color='primary'> 
                                     <strong>Location:</strong>
                                 </Typography>
-                                <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                                <Typography variant='h6'> 
                                     {tournament.ubicacion}
                                 </Typography>
                             </Container>
@@ -243,7 +243,7 @@ export default function ShowTournament() {
                                 <Typography variant='h5' color='primary'> 
                                     <strong>Description:</strong>
                                 </Typography>
-                                <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                                <Typography variant='h6'> 
                                     {tournament.descripcion}
                                 </Typography>
                             </Container>
@@ -252,7 +252,7 @@ export default function ShowTournament() {
                                 <Typography variant='h5' color='primary'> 
                                     <strong>Start Date:</strong>
                                 </Typography>
-                                <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                                <Typography variant='h6'> 
                                     {new Date(tournament.fechaInicio).toLocaleDateString()}
                                 </Typography>
                             </Container>
@@ -261,7 +261,7 @@ export default function ShowTournament() {
                                 <Typography variant='h5' color='primary'> 
                                     <strong>End Date:</strong>
                                 </Typography>
-                                <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                                <Typography variant='h6'> 
                                     {new Date(tournament.fechaFin).toLocaleDateString()}
                                 </Typography>
                             </Container>
@@ -270,14 +270,14 @@ export default function ShowTournament() {
                                 <Typography variant='h5' color='primary'> 
                                     <strong>Total Teams:</strong>
                                 </Typography>
-                                <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                                <Typography variant='h6'> 
                                     {tournament.cantEquipo}
                                 </Typography>
                             </Container>
                             <Divider variant="middle" sx={{my:2}}/>
                         </CardContent>
                         <CardActions sx={{display: 'flex', justifyContent:'center'}}>
-                            <Fab variant="extended" color='primary' size="small" href={`/tournament/${tournamentName}/${tournamentId}/edit`}><EditIcon sx={{ mr: 1 }}/> Edit</Fab>
+                            <Fab variant="extended" color='info' size="small" href={`/tournament/${tournamentName}/${tournamentId}/edit`}><EditIcon sx={{ mr: 1 }}/> Edit</Fab>
                             <Fab variant="extended" color='success' size="small" href={`/partido/create/${tournamentName}/${tournamentId}`}> <AddIcon sx={{ mr: 1 }}/> match</Fab>
                             <Fab variant="extended" color='warning' size="small" href={`/tournament/${tournamentName}/${tournamentId}/stats`}><EqualizerIcon sx={{ mr: 1 }}/> Stats</Fab>
                         </CardActions>
@@ -337,7 +337,7 @@ export default function ShowTournament() {
                             </Card>
                         ))
                     ) : (
-                        <Card>
+                        <Card variant="outlined">
                             <CardContent>
                             <Typography variant='subtitle2' sx={{textAlign: 'center'}}>There are no matches scheduled for this tournament or the number of teams is invalid.</Typography>
                             </CardContent>
@@ -347,7 +347,7 @@ export default function ShowTournament() {
 
                     {/* Mostrar ganador final solo si todos los partidos están completos, (se llego a countTeam-1)*/}
                     {isValidMatchesCount && matches.length > 0 && (
-                        <Card>
+                        <Card variant="outlined">
                             <CardContent sx={{textAlign:'center'}}>
                                 <Typography variant='h4'>Final Tournament Winner</Typography>
                                 <Typography variant='h3'><strong>Champion:</strong> {getWinner(matches[matches.length - 1])}</Typography>
@@ -358,8 +358,8 @@ export default function ShowTournament() {
             </CustomTabPanel>
             <CustomTabPanel value={valueTab} index={2}> {/*Tab Matches */}
                 <Container>
-                    <Typography variant='h4' sx={{textAlign: 'center', mb:2}}>Tournament Notifications</Typography>
-                    <List component={Card}>
+                    <Typography variant='h4' sx={{textAlign: 'center', mb:3}}>Tournament Notifications</Typography>
+                    <List component={Card} variant="outlined">
                         {notificaciones.length > 0 ? ( //TODO: checar la vista notificaciones con datos
                             notificaciones.map((notificacion,i) => (
                                 <ListItem key={i}>

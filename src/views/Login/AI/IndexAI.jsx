@@ -127,7 +127,7 @@ export default function IndexAI() {
                 Here you can consult the general analyzer.
             </Typography>
             <Container sx={{display:'flex', alignContent:'center', justifyContent:'center', mt:4}}>
-                <Card>
+                <Card variant='outlined'>
                     <Typography variant='h6'>
                         Choose your team to upgrade or add their stats:
                     </Typography>

@@ -102,7 +102,7 @@ export default function IndexNotifications() {
                         ( <Skeleton variant="rounded" width={'95%'} height={390}/> )
                         :
                         (notifications.length > 0?
-                            (<List>
+                            (<List component={Card} variant="outlined">
                                 {notifications.map((note, i) => {
                                 <ListItem >
                                     <ListItemAvatar>

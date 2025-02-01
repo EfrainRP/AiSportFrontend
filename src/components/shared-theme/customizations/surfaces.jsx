@@ -1,5 +1,5 @@
 import { alpha } from '@mui/material/styles';
-import { gray } from '../themePrimitives';
+import { gray, brand } from '../themePrimitives';
 
 /* eslint-disable import/prefer-default-export */
 export const surfacesCustomizations = {
@@ -15,6 +15,11 @@ export const surfacesCustomizations = {
         backgroundColor: (theme.vars || theme).palette.background.default,
         border: '1px solid',
         borderColor: (theme.vars || theme).palette.divider,
+        '&.Mui-disabled': {
+          backgroundColor: (theme.vars || theme).palette.background.default,
+          opacity: 0.7, // Hace que se vea más tenue
+          pointerEvents: "none", // Evita interacción
+        },
         ':before': {
           backgroundColor: 'transparent',
         },
@@ -66,9 +71,22 @@ export const surfacesCustomizations = {
           borderRadius: (theme.vars || theme).shape.borderRadius,
           border: `1px solid ${(theme.vars || theme).palette.divider}`,
           boxShadow: 'none',
+          color:gray[50],
           ...theme.applyStyles('dark', {
             backgroundColor: gray[800],
           }),
+          "&:has(.MuiCardActionArea-root)": { // Estilos cuando el Card tiene un CardActionArea dentro (no funciona en FireFox)
+            boxShadow: `0px 6px 15px ${alpha(gray[600],0.4)}`,
+            "&:hover": {
+              boxShadow: `10px 10px 10px ${alpha(gray[700],0.6)}`,
+            },
+            ...theme.applyStyles('dark', {
+              boxShadow: `0px 6px 15px ${alpha(gray[800],0.3)}`,
+              "&:hover": {
+                boxShadow: `10px 10px 10px ${alpha(gray[800],0.5)}`,
+              },
+            }),
+          },
           variants: [
             {
               props: {
@@ -77,7 +95,7 @@ export const surfacesCustomizations = {
               style: {
                 border: `1px solid ${(theme.vars || theme).palette.divider}`,
                 boxShadow: 'none',
-                background: 'hsl(0, 0%, 100%)',
+                background: 'rgba(74, 73, 73, 0.92)',
                 ...theme.applyStyles('dark', {
                   background: alpha(gray[900], 0.8),
                 }),
@@ -105,8 +123,23 @@ export const surfacesCustomizations = {
   },
   MuiCardActions: {
     styleOverrides: {
-      root: {
+      root:{
         padding: 0,
+      },
+    },
+  },
+  MuiCardActionArea: {
+    styleOverrides: {
+      root: ({ theme }) => {
+        return {
+          transition: "background-color 0.3s",
+          "&:hover": {
+            backgroundColor: alpha(gray[400],0.4),
+            ...theme.applyStyles('dark', {
+              backgroundColor: alpha(gray[700],0.2),
+            }),
+          },
+        };
       },
     },
   },

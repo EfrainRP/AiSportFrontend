@@ -296,8 +296,27 @@ export default function SideMenu(props) {
               ml={9}
             />
           }
+          {!openList && 
+          <ListItem key={'Logout'} disablePadding 
+            sx={{ mt: 'auto', ml:-0.5, flexDirection: 'row',}}
+          >
+            <ListItemButton
+              onClick={handleLogout}
+              sx={{
+                minHeight: 40,
+              }}
+            >
+              <ListItemIcon>
+                {loading?
+                  <CircularProgress size={20} sx={{ml:1}}/>
+                :
+                  <Logout sx={{ml:1.5, fontSize: 100 }}/>
+                }
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>}
           <ListItem key={'Profile'} disablePadding 
-            sx={{ mt: 'auto', ml:-0.5, flexDirection: 'row'}}
+            sx={[{ml:-0.5, flexDirection: 'row'},openList? {mt: 'auto'}: {mt: 1,}]}
           >
             <ListItemButton
               title={'Profile'}
@@ -305,7 +324,7 @@ export default function SideMenu(props) {
               href={`/dashboard/profile/${user.userName}`}
               onClick={handleClickMenu}
               sx={[{
-                  minHeight: 70,
+                  minHeight: 40,
                 },
                 //open? { justifyContent: 'initial',} : { justifyContent: 'center',},
               ]}>

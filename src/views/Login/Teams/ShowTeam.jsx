@@ -59,10 +59,10 @@ export default function ShowTeam() {
 
     return (
         <LayoutLogin>
-            <Container sx={{width: {xs: '75vw', sm: '50vw'}}}>
+            <Container sx={{width: {xs: '75vw', sm: '35vw'}}}>
                 <Card variant="outlined">
                     <CardContent>
-                        <Typography gutterBottom variant="h2" component="div" >
+                        <Typography gutterBottom variant="h2" component="div" color='primary' sx={{display:'flex', justifyContent: 'center'}}>
                             {loading?
                                 <Skeleton variant="rounded" width={'30%'} /> 
                                 : team.name}
@@ -78,19 +78,19 @@ export default function ShowTeam() {
                         />
                         <Divider variant="middle" sx={{my:2}}/>
                         <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
-                            <Typography variant='h5' color= 'success.main'> 
+                            <Typography variant='h5' color= 'secondary'> 
                                 <strong>Founder:</strong>
                             </Typography>
-                            <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                            <Typography variant='h6'> 
                                 {team.users?.name || 'Desconocido'}
                             </Typography>
                         </Container>
                         <Divider variant="middle" sx={{my:2}}/>
                         <Container sx={{gap:2}}>
-                            <Typography variant='h5' color= 'success.main'> 
+                            <Typography variant='h5' color= 'secondary'> 
                                 <strong>Miembros:</strong>
                             </Typography>
-                            <List sx={{color: 'text.secondary'}}>
+                            <List>
                             {team?.miembro_equipos?.length > 0 ? (
                                 team.miembro_equipos.map((miembro) => (
                                     <ListItemText key={miembro.user_miembro} sx={{textAlign:'center'}}>

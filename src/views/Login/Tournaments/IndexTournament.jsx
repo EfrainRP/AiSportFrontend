@@ -32,7 +32,7 @@ import LayoutLogin from '../../LayoutLogin.jsx';
 const centerJustify = {display:'flex', flexDirection: 'row', textAlign:'justify'};
 
 export default function IndexTournaments() {
-    const [torneos, setTorneos] = React.useState([]);
+    const [tournaments, setTorneos] = React.useState([]);
     const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado 
     const [view, setView] = React.useState('list');
     const [openSearch, setSearch] = React.useState(false);
@@ -51,7 +51,7 @@ export default function IndexTournaments() {
                     setTorneos(response.data);
                 })
                 .catch((error) => {
-                    console.error("Error al obtener los torneos:", error);
+                    console.error("Error loading tournaments:", error);
                     setLoading(false); // Cambiar el estado de carga incluso en caso de error
                 })
         };
@@ -81,7 +81,7 @@ export default function IndexTournaments() {
                         freeSolo
                         id="search-tournaments"
                         disableClearable
-                        options={torneos.map((option) => option.name)}
+                        options={tournaments.map((option) => option.name)}
                         sx={{width:'50%'}}
                         inputValue={inputValue}
                         onInputChange={(event, newInputValue) => {
@@ -114,41 +114,41 @@ export default function IndexTournaments() {
                         useFlexGap
                         sx={{ flexWrap: 'wrap'}}
                     >
-                        {torneos.length > 0 ? (
-                            torneos.map((torneo) => {
+                        {tournaments.length > 0 ? (
+                            tournaments.map((tournament) => {
                                 return (
-                                <Card variant="outlined" key={torneo.id} sx={{p:0, width:'23%'}}>
-                                    <CardActionArea href={`/tournament/${torneo.name}/${torneo.id}`} sx={{p:2}}>
-                                        <Typography gutterBottom variant="h5" component="div" color='success.main' sx={{display: 'flex', justifyContent:'center'}}>
-                                            <strong>{torneo.name}</strong>
+                                <Card variant="outlined" key={tournament.id} sx={{p:0, width:'23%'}}>
+                                    <CardActionArea href={`/tournament/${tournament.name}/${tournament.id}`} sx={{p:2}}>
+                                        <Typography gutterBottom variant="h5" component="div" color='secondary' sx={{display: 'flex', justifyContent:'center'}}>
+                                            <strong>{tournament.name}</strong>
                                         </Typography>
                                         <Typography sx={centerJustify}>
                                             <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
                                                 <strong>Location:</strong>
                                             </Typography >
-                                            {torneo.ubicacion}
+                                            {tournament.ubicacion}
                                         </Typography >
                                         <Typography sx={centerJustify}>
                                             <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
                                                 <strong>Description:</strong>
                                             </Typography >
-                                            {torneo.descripcion}
+                                            {tournament.descripcion}
                                         </Typography >
                                         <Typography sx={centerJustify}>
                                             <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
                                                 <strong>Start date:</strong>
                                             </Typography >
-                                            {new Date(torneo.fechaInicio).toLocaleDateString()}
+                                            {new Date(tournament.fechaInicio).toLocaleDateString()}
                                         </Typography >
                                         <Typography sx={centerJustify}>
                                             <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
                                                 <strong>End date:</strong>
                                             </Typography >
-                                            {new Date(torneo.fechaFin).toLocaleDateString()}
+                                            {new Date(tournament.fechaFin).toLocaleDateString()}
                                         </Typography >
                                     </CardActionArea>
                                     {/* <CardActions>
-                                        <Button size="small" href={`/torneo/${torneo.name}/${torneo.id}`}>See</Button>
+                                        <Button size="small" href={`/torneo/${tournament.name}/${tournament.id}`}>See</Button>
                                     </CardActions> */}
                                 </Card>
                                 );
