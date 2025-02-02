@@ -11,11 +11,12 @@ import {
   List, 
   ListItem,
   Divider,
+  IconButton,
 } from '@mui/material';
 import PropTypes from 'prop-types';
 
 import axiosInstance from "../../../services/axiosConfig.js";
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
@@ -24,6 +25,7 @@ import LoadingView from '../../../components/Login/LoadingView.jsx'
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 
 import EqualizerIcon from '@mui/icons-material/Equalizer';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -54,7 +56,10 @@ function a11yProps(index) {
   };
 }
 
+const centerJustify = {display: 'flex', alignContent:'center', textAlign:'justify', justifyContent:'center'};
+
 export default function TeamDashboard () {
+  const navigate = useNavigate();
   const { teamName, teamId  } = useParams();
   const [team, setTeam] = React.useState(null);
   
@@ -87,33 +92,38 @@ export default function TeamDashboard () {
       <Container sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%'}}>
         <Card sx={{minWidth:280, width:'80%'}}>
           <CardContent>
-          <Container sx={{display:'flex', justifyContent:'center'}}>
-              <Typography variant="h5" sx={{display:'flex', justifyContent:'center', color: 'text.secondary'}}>
-                <strong>Team's Detail: </strong>
-              </Typography>
-              <Typography variant="h6" sx={{mx:1}}>
-                {team.name}
-              </Typography>
-            </Container>
-            <Container sx={{display:'flex', justifyContent:'center'}}>
-              <Typography variant="subtitle1" sx={{display:'flex', justifyContent:'center', color: 'text.secondary'}}>
-                <strong>Organizer: </strong>
-              </Typography>
-              <Typography variant="subtitle1" sx={{mx:1}}>
-                { team.users?.name || 'Desconocido'}
-              </Typography>
+            <Container sx={{...centerJustify, alignItems:'center'}}>
+            <IconButton onClick={() => navigate(-1)}><ArrowBackIcon/></IconButton>
+              <Container>
+                <Container sx={centerJustify}>
+                  <Typography variant="h5" color='primary'>
+                    <strong>Team's Detail: </strong>
+                  </Typography>
+                  <Typography variant="h6" sx={{mx:1}}>
+                    {team.name}
+                  </Typography>
+                </Container>
+                <Container sx={centerJustify}>
+                  <Typography variant="subtitle1" color='primary'>
+                    <strong>Organizer: </strong>
+                  </Typography>
+                  <Typography variant="subtitle1" sx={{mx:1}}>
+                    { team.users?.name || 'Desconocido'}
+                  </Typography>
+                </Container>  
+              </Container>
             </Container>
             <Divider sx={{my:1}}/>
             <CardMedia
-            component="img"
-            alt={`Team ${team.name}`} 
-            height="295"
-            image={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
-          />
+              component="img"
+              alt={`Team ${team.name}`} 
+              height="295"
+              image={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
+            />
             <Divider sx={{my:2}}/>
             
             
-            <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
+            <Typography variant="subtitle1" color='primary'>
               <strong>Integrantes:</strong>
             </Typography>
             <List>
@@ -130,11 +140,10 @@ export default function TeamDashboard () {
 
           </CardContent>
           <Divider sx={{my:2}}/>
-          <CardActions >
+          <CardActions sx={centerJustify}>
             <Button 
               size="small"
               endIcon={<EqualizerIcon/>}
-              color='secondary'
               variant="contained"
               href={`/team/${team.name}/${teamId}/stats`}>
                 Statistics

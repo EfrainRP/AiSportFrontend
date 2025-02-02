@@ -7,10 +7,9 @@ import {
     CardActions,
     CardContent,
     CardActionArea,
-    ToggleButton,
+    IconButton,
     ToggleButtonGroup, 
     Fab,
-    IconButton , 
     Stack,
     TextField ,
     Autocomplete,
@@ -43,6 +42,7 @@ import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 import EqualizerIcon from '@mui/icons-material/Equalizer';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -73,7 +73,7 @@ function a11yProps(index) {
   };
 }
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
-const centerJustify = {display:'flex', flexDirection: 'row', textAlign:'justify'};
+const centerJustify = {display:'flex', textAlign:'justify'};
 
 export default function ShowTournament() {
     const { tournamentName, tournamentId } = useParams();
@@ -213,17 +213,19 @@ export default function ShowTournament() {
     return (
         <LayoutLogin>
             
-            <Typography gutterBottom variant="h2" component="div" sx={{ml:2}}>
-                {loading?
-                    <Skeleton variant="rounded" width={'30%'} /> 
-                    : tournament.name}
-            </Typography>
-
+            <Container sx={{...centerJustify}}>
+                <IconButton onClick={() => navigate(-1)}><ArrowBackIcon/></IconButton>
+                <Typography gutterBottom variant="h2" component="div" sx={{ml:2}}>
+                    {loading?
+                        <Skeleton variant="rounded" width={'30%'} /> 
+                        : tournament.name}
+                </Typography>
+            </Container>
             <Box sx={{ borderBottom: 3, borderColor: 'divider' }}>
                 <Tabs centered value={valueTab} onChange={handleChange} >
-                <Tab icon={<FolderIcon />} label="Details" {...a11yProps(0)} />
-                <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)}/>
-                <Tab  icon={<NotificationAddIcon />} label="Send Notifications" {...a11yProps(2)} />
+                    <Tab icon={<FolderIcon />} label="Details" {...a11yProps(0)} />
+                    <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)}/>
+                    <Tab  icon={<NotificationAddIcon />} label="Send Notifications" {...a11yProps(2)} />
                 </Tabs>
             </Box>
             <CustomTabPanel value={valueTab} index={0}> {/*Tab Details */}
@@ -277,7 +279,7 @@ export default function ShowTournament() {
                             <Divider variant="middle" sx={{my:2}}/>
                         </CardContent>
                         <CardActions sx={{display: 'flex', justifyContent:'center'}}>
-                            <Fab variant="extended" color='info' size="small" href={`/tournament/${tournamentName}/${tournamentId}/edit`}><EditIcon sx={{ mr: 1 }}/> Edit</Fab>
+                            <Fab variant="extended" color='info' size="small" href={`/tournament/${tournamentName}/${tournamentId}/edit`} sx={{color:'white'}}><EditIcon sx={{ mr: 1 }}/> Edit</Fab>
                             <Fab variant="extended" color='success' size="small" href={`/partido/create/${tournamentName}/${tournamentId}`}> <AddIcon sx={{ mr: 1 }}/> match</Fab>
                             <Fab variant="extended" color='warning' size="small" href={`/tournament/${tournamentName}/${tournamentId}/stats`}><EqualizerIcon sx={{ mr: 1 }}/> Stats</Fab>
                         </CardActions>

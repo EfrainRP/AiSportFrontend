@@ -12,12 +12,13 @@ import {
   Button,
   Alert,
   Snackbar, 
-  Divider
+  Divider,
+  IconButton,
 } from '@mui/material';
 import PropTypes from 'prop-types';
 
 import axiosInstance from "../../../services/axiosConfig.js";
-import { useParams,useLocation } from 'react-router-dom';
+import { useParams,useLocation,useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
@@ -28,8 +29,10 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-function CustomTabPanel(props) {
+const centerJustify = {display:'flex', flexDirection: 'row', textAlign:'justify'}; //estilos guardados
+function CustomTabPanel(props) { 
   const { children, value, index, ...other } = props;
 
   return (
@@ -59,6 +62,7 @@ function a11yProps(index) {
 }
 
 export default function TournamentDashboard () {
+  const navigate = useNavigate();
   const {user} = useAuth(); // Accede al usuario autenticado y al método logout
   const { tournamentName, tournamentId } = useParams();
   const [tournament, setTournament] = React.useState(null);
@@ -197,10 +201,12 @@ export default function TournamentDashboard () {
 
   return (
     <LayoutLogin>
-      <Typography variant='h2' sx={{ mt:2, mb:4 }}> 
-          {`Tournament: ${tournament.name}`}
-      </Typography>
-
+      <Container sx={{display: 'center',m:2, gap:'5%'}}>
+        <IconButton onClick={() => navigate(-1)}><ArrowBackIcon/></IconButton>
+        <Typography variant='h2'> 
+            {`Tournament: ${tournament.name}`}
+        </Typography>
+      </Container>
       <Box sx={{ borderBottom: 3, borderColor: 'divider' }}>
         <Tabs centered value={valueTab} onChange={handleChange} >
           <Tab icon={<FolderIcon />} label="Details" {...a11yProps(0)} />
@@ -217,51 +223,51 @@ export default function TournamentDashboard () {
         <Container sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%'}}>
           <Card sx={{minWidth:290, width:'80%'}}>
             <CardContent>
-              <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
-                <Typography variant='h5'> 
+              <Container sx={{...centerJustify, gap:2}}>
+                <Typography variant='h5' color='primary'> 
                   <strong>Location: </strong>
                 </Typography>
-                <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                <Typography variant='h6' sx={{color: 'text.data'}}> 
                   {tournament.ubicacion}
                 </Typography>
               </Container>
               <Divider variant="middle" sx={{my:2}}/>
             
-              <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
-                <Typography variant='h5'> 
+              <Container sx={{...centerJustify, gap:2}}>
+                <Typography variant='h5' color='primary'> 
                   <strong>Start Date:</strong>
                 </Typography>
-                <Typography variant='h6' sx={{color: 'text.secondary'}}> 
+                <Typography variant='h6' sx={{color: 'text.data'}}> 
                   {new Date(tournament.fechaInicio).toISOString().split('T')[0]}
                 </Typography>
               </Container>
               <Divider variant="middle" sx={{my:2}}/>
 
-              <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
-                <Typography variant='h5'> 
+              <Container sx={{...centerJustify, gap:2}}>
+                <Typography variant='h5' color='primary'> 
                   <strong>Final Date:</strong>
                 </Typography>
-                <Typography variant='h6' gutterBottom sx={{color: 'text.secondary'}}> 
+                <Typography variant='h6' gutterBottom sx={{color: 'text.data'}}> 
                   {new Date(tournament.fechaFin).toISOString().split('T')[0]}
                 </Typography>
               </Container>
               <Divider variant="middle" sx={{my:2}}/>
 
-              <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
-                <Typography variant='h5'> 
+              <Container sx={{...centerJustify, gap:2}}>
+                <Typography variant='h5' color='primary'> 
                   <strong>Total Teams:</strong>
                 </Typography>
-                <Typography variant='h6' gutterBottom sx={{color: 'text.secondary'}}> 
+                <Typography variant='h6' gutterBottom sx={{color: 'text.data'}}> 
                   {tournament.cantEquipo}
                 </Typography>
               </Container>
               <Divider variant="middle" sx={{my:2}}/>
 
-              <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
-                <Typography variant='h5'> 
+              <Container sx={{...centerJustify, gap:2}}>
+                <Typography variant='h5' color='primary'> 
                   <strong>Tournament Description:</strong>
                 </Typography>
-                <Typography variant='body1' gutterBottom sx={{color: 'text.secondary'}}> 
+                <Typography variant='body1' gutterBottom sx={{color: 'text.data'}}> 
                 {tournament.descripcion}
                 </Typography>
               </Container>
@@ -304,7 +310,7 @@ export default function TournamentDashboard () {
         <Container sx={{width:'90%'}}>
           <Card sx={{minWidth:200, width:'100%'}}>
             <CardContent>
-            <Typography variant='h4' sx={{textAlign:'center'}}> 
+            <Typography variant='h4' color='primary' sx={{textAlign:'center'}}> 
               Enviar Notificación de Participación
             </Typography>
             <Divider variant="middle" sx={{my:2}}/>

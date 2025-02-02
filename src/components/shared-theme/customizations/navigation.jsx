@@ -11,6 +11,59 @@ import { gray, brand } from '../themePrimitives';
 
 /* eslint-disable import/prefer-default-export */
 export const navigationCustomizations = {
+  MuiSpeedDial: {
+    styleOverrides: {
+      root: {
+        //width: 30, // Ancho personalizado
+        //height: 30, // Alto personalizado
+        
+      },
+      fab: ({ theme }) => ({
+        width: 35, // Tamaño del botón principal
+        height: 35,
+        minHeight: 'unset', // Para evitar que Material UI fuerce un tamaño mínimo
+        backgroundColor:alpha(theme.palette.secondary.dark, 0.8),
+        ':hover': {
+          backgroundColor: alpha(theme.palette.secondary.main, 0.7),
+        },
+        ...theme.applyStyles('dark', {
+          backgroundColor: theme.palette.secondary.light,
+          ':hover': {
+            backgroundColor: theme.palette.secondary.main,
+            borderColor: gray[200],
+        },
+        }),
+      }),
+      
+    },
+  },
+  // MuiSpeedDialIcon:{
+  //   styleOverrides: {
+  //     root:{
+  //       my:2,
+  //     },
+  //     icon:{
+  //         fontSize:25,
+  //       },
+  //     openIconOpen:{
+  //       fontSize:60,
+  //     },
+  //   }
+  // },
+  // MuiSpeedDialAction:{
+  //   styleOverrides: {
+  //     fab: {
+  //       width: 30, // Ancho del botón
+  //       height: 30, // Alto del botón
+  //       minHeight: "unset",
+  //       transition: "transform 0.3s ease-in-out",
+  //       m:0,
+  //       '& svg':{
+  //         fontSize: 20,
+  //       }
+  //     },
+  //   }
+  // },
   MuiMenuItem: {
     styleOverrides: {
       root: ({ theme }) => ({

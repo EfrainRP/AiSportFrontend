@@ -16,7 +16,8 @@ import {
     Autocomplete,
     Fab,
     ButtonGroup,
-    Grow  
+    Container, 
+    Divider 
 } from '@mui/material';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
@@ -28,8 +29,9 @@ import { useAuth } from '../../../services/AuthContext'; //  AuthContext
 import { Link } from 'react-router-dom';
 
 import LayoutLogin from '../../LayoutLogin.jsx';
+import Search from '../../../components/Login/Search.jsx';
 
-const centerJustify = {display:'flex', flexDirection: 'row', textAlign:'justify'};
+const centerJustify = {display:'flex', alignContent:'center', textAlign:'justify', justifyContent:'space-evenly'};
 
 export default function IndexTournaments() {
     const [tournaments, setTorneos] = React.useState([]);
@@ -41,6 +43,8 @@ export default function IndexTournaments() {
     };
     const [inputValue, setInputValue] = React.useState('');
     const toggleSearch = (flag) => { setSearch(!openSearch);};
+
+    const [selectedTournament, setSelectedTournament] = React.useState(null); // Estado para almacenar el searchTournament
     React.useEffect(() => { // Hace la solicitud al cargar la vista <-
         const fetchTorneos = async () => {
             await axiosInstance.get(`/torneos/${user.userId}`)
@@ -72,8 +76,29 @@ export default function IndexTournaments() {
             {loading?
                 <Skeleton variant="rounded" width={'5%'} height={40} sx={{my: 3}} /> 
             :
-                <Fab href='/tournament/create' variant="extended" color='info' sx={{color:'white', my: 3}}> <AddIcon/> Add </Fab>
-            }  
+                <Container sx={{display:'flex', justifyContent: 'flex-start', alignContent:'center', ml:0, mt: 3, mb:2,}}>
+                    <IconButton  component="a" href='/tournament/create' 
+                    sx={(theme)=>({
+                        mt: 1.5,
+                        backgroundColor: 'primary.dark',
+                        color:'white',
+                        '&:hover': { backgroundColor: 'primary.main' },
+                        ...theme.applyStyles('dark', {
+                            backgroundColor: 'primary.main',
+                            '&:hover': { backgroundColor: 'primary.dark' },
+                        }),
+                    })}>
+                        <AddIcon/>
+                    </IconButton>
+                    <Search myOptions={tournaments} myValue={selectedTournament} /*Se renderizara el buscador, si se cargo los datos correctamente*/
+                        onChange={(e, newValue) => {
+                            setSelectedTournament(newValue || null);
+                        }}
+                        isOptionEqualToValue = {(option, value) => option.name === value.name}
+                        myLabel={'Search Tournament'}
+                        toUrl={'tournament'}/>
+                </Container>
+            }   
                 {/* <Stack direction={'row'} sx={{my:2}}> */}
                     {/* <Button variant="contained" color='info' sx={{color:'white'}} startIcon={<SearchIcon/>} onClick={toggleSearch}> Search </Button>
                     <Grow  in={openSearch}>
@@ -122,34 +147,45 @@ export default function IndexTournaments() {
                                         <Typography gutterBottom variant="h5" component="div" color='secondary' sx={{display: 'flex', justifyContent:'center'}}>
                                             <strong>{tournament.name}</strong>
                                         </Typography>
-                                        <Typography sx={centerJustify}>
-                                            <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
-                                                <strong>Location:</strong>
-                                            </Typography >
+
+                                        <Divider sx={{my:1}}/>
+
+                                        <Container sx={centerJustify}>
+                                            <Typography variant='subtitle2' color='primary'> 
+                                            <strong>Location: </strong>
+                                            </Typography>
+                                            <Typography sx={{color: 'text.data'}}> 
                                             {tournament.ubicacion}
-                                        </Typography >
-                                        <Typography sx={centerJustify}>
-                                            <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
-                                                <strong>Description:</strong>
-                                            </Typography >
-                                            {tournament.descripcion}
-                                        </Typography >
-                                        <Typography sx={centerJustify}>
-                                            <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
-                                                <strong>Start date:</strong>
-                                            </Typography >
+                                            </Typography>
+                                        </Container>
+                    
+                                        <Container sx={centerJustify}>
+                                            <Typography variant='subtitle2' color='primary'> 
+                                            <strong>Start date: </strong>
+                                            </Typography>
+                                            <Typography sx={{color: 'text.data'}}> 
                                             {new Date(tournament.fechaInicio).toLocaleDateString()}
-                                        </Typography >
-                                        <Typography sx={centerJustify}>
-                                            <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
-                                                <strong>End date:</strong>
-                                            </Typography >
+                                            </Typography>
+                                        </Container>
+                                        
+                                        <Container sx={centerJustify}>
+                                            <Typography variant='subtitle2' color='primary'> 
+                                            <strong>End date: </strong>
+                                            </Typography>
+                                            <Typography sx={{color: 'text.data'}}> 
                                             {new Date(tournament.fechaFin).toLocaleDateString()}
-                                        </Typography >
+                                            </Typography>
+                                        </Container>
+                                        
+                                        <Container sx={centerJustify}>
+                                            <Typography variant='subtitle2' color='primary' sx={{mr:2}}> 
+                                            <strong>Description: </strong>
+                                            </Typography>
+                                            <Typography sx={{color: 'text.data'}}> 
+                                            {tournament.descripcion}
+                                            </Typography>
+                                        </Container>
                                     </CardActionArea>
-                                    {/* <CardActions>
-                                        <Button size="small" href={`/torneo/${tournament.name}/${tournament.id}`}>See</Button>
-                                    </CardActions> */}
                                 </Card>
                                 );
                             }))

@@ -14,6 +14,7 @@ import {
     List,
     ListItem,
     ListItemText,
+    IconButton
 } from '@mui/material';
 
 import axiosInstance from "../../../services/axiosConfig.js";
@@ -21,13 +22,16 @@ import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 import { useParams, Link, useNavigate } from 'react-router-dom';
 
 import EditIcon from '@mui/icons-material/Edit';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx';
 
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
+const centerJustify = {display:'flex', textAlign:'justify'};
 
 export default function ShowTeam() {
+    const navigate = useNavigate();
     const [team, setTeam] = React.useState(null);
     const [error, setError] = React.useState(null);
     const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado 
@@ -62,11 +66,14 @@ export default function ShowTeam() {
             <Container sx={{width: {xs: '75vw', sm: '35vw'}}}>
                 <Card variant="outlined">
                     <CardContent>
-                        <Typography gutterBottom variant="h2" component="div" color='primary' sx={{display:'flex', justifyContent: 'center'}}>
-                            {loading?
-                                <Skeleton variant="rounded" width={'30%'} /> 
-                                : team.name}
-                        </Typography>
+                        <Container sx={{...centerJustify, gap: '20%'}}>
+                            <IconButton onClick={() => navigate(-1)}><ArrowBackIcon/></IconButton>
+                            <Typography gutterBottom variant="h2" component="div" color='primary' >
+                                {loading?
+                                    <Skeleton variant="rounded" width={'30%'} /> 
+                                    : team.name}
+                            </Typography>
+                        </Container>
                         <Divider variant="middle" sx={{my:2}}/>
                         <CardMedia
                             component="img"

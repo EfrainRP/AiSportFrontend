@@ -15,7 +15,8 @@ import {
   CardMedia,
   CardContent,
   CardActionArea,
-  Divider
+  Divider, 
+  Container,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
@@ -24,6 +25,7 @@ import axiosInstance from "../../../services/axiosConfig.js";
 import LayoutLogin from '../../LayoutLogin.jsx';
 
 import LoadingCard from '../../../components/Login/LodingCard.jsx';
+import Search from '../../../components/Login/Search.jsx';
 
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import Carousel from 'react-multi-carousel';
@@ -122,6 +124,9 @@ export default function Dashboard() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
+  const [selectedTournament, setSelectedTournament] = React.useState(null); // Estado para almacenar el searchTournament
+  const [selectedTeam, setSelectedTeam] = React.useState(null); // Estado para almacenar el searchTeam
+  
   const navigate = useNavigate();
   const handleRowClick = (id, name) => {
     navigate(`/dashboard/tournament/${name}/${id}`,{state:1}); // Redirige a la URL deseada, con valor 1 para el tab dashTournament
@@ -155,7 +160,7 @@ export default function Dashboard() {
       fetchData(); // Llamar a la función solo si el usuario está definido
     }
   }, [[user]]);
-
+  console.log(data.torneos);
   return (
     <LayoutLogin>
       {/* Tiene el skeleton para dar una animacion de carga al cargar los datos */}
@@ -174,10 +179,21 @@ export default function Dashboard() {
       </Typography>
 
         {/* CARUSEL DE TORNEOS*/}
+      
       <TitleTypography variant='h4' 
-        sx={{mt: 6, mb: 2,}}
+        sx={{mt: 6, display: 'flex', flexDirection: 'row', alignItems: 'center'}}
       >
+        {/* Tournaments Available  */}
         {loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'Tournaments Available'}
+        {!loading && data.torneos.length > 0 &&
+          <Search myOptions={data.torneos} myValue={selectedTournament} /*Se renderizara el buscador, si se cargo los datos correctamente*/
+            onChange={(e, newValue) => {
+              setSelectedTournament(newValue || null);
+            }}
+            isOptionEqualToValue = {(option, value) => option.id === value.id}
+            myLabel={'Search Tournament'}
+            toUrl={'tournament'}/>
+        } 
       </TitleTypography>
       <Box sx={{ width: '100%', height: 'auto', mx: 2 }}>
         {loading ? <Skeleton variant="rounded" sx={{mx:-2, width:'100%', height:150}}/> :
@@ -200,41 +216,42 @@ export default function Dashboard() {
                   <CardActionArea href={`/dashboard/tournament/${torneo.name}/${torneo.id}`} sx={{p:2}}>
                     <Typography variant='h4' component='strong' sx={centerJustify} color='secondary'>{torneo.name}</Typography>
                     <Divider sx={{my:1}}/>
-                    <Typography sx={{...centerJustify,color:'text.data'}}>
-                      <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
+                    
+                    <Container sx={centerJustify}>
+                      <Typography variant='subtitle2' color='primary'> 
                         <strong>Location: </strong>
-                      </Typography >
-                      {torneo.ubicacion}
-                    </Typography >
-                    <Typography sx={{...centerJustify,color:'text.data'}}>
-                      <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
+                      </Typography>
+                      <Typography sx={{color: 'text.data'}}> 
+                        {torneo.ubicacion}
+                      </Typography>
+                    </Container>
+
+                    <Container sx={centerJustify}>
+                      <Typography variant='subtitle2' color='primary'> 
                         <strong>Start date: </strong>
-                      </Typography >
-                      {new Date(torneo.fechaInicio).toLocaleDateString()}
-                    </Typography >
-                    <Typography sx={{...centerJustify,color:'text.data'}}>
-                      <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
+                      </Typography>
+                      <Typography sx={{color: 'text.data'}}> 
+                        {new Date(torneo.fechaInicio).toLocaleDateString()}
+                      </Typography>
+                    </Container>
+                    
+                    <Container sx={centerJustify}>
+                      <Typography variant='subtitle2' color='primary'> 
                         <strong>End date: </strong>
-                      </Typography >
-                      {new Date(torneo.fechaFin).toLocaleDateString()}
-                    </Typography >
-                    <Typography sx={{...centerJustify,color:'text.data'}}>
-                      <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
-                        {/* [
-                        (theme) => ({
-                          mr:2,
-                          textAlign:'justify',
-                          color: green[700],
-                          //     border: `2px solid ${theme.palette.error.light}`,
-                          ...theme.applyStyles('dark', {
-                          color: theme.palette.success.light,
-                          //       border: `2px solid ${theme.palette.error.main}`,
-                          }),
-                        })] */}
+                      </Typography>
+                      <Typography sx={{color: 'text.data'}}> 
+                        {new Date(torneo.fechaFin).toLocaleDateString()}
+                      </Typography>
+                    </Container>
+                    
+                    <Container sx={centerJustify}>
+                      <Typography variant='subtitle2' color='primary' sx={{mr:2}}> 
                         <strong>Description: </strong>
-                      </Typography >
-                      {torneo.descripcion}
-                    </Typography>
+                      </Typography>
+                      <Typography sx={{color: 'text.data'}}> 
+                        {torneo.descripcion}
+                      </Typography>
+                    </Container>
                   </CardActionArea>
                 </Card>
                 );})
@@ -247,9 +264,18 @@ export default function Dashboard() {
 
         {/* CARUSEL DE EQUIPOS */}
       <TitleTypography variant='h4' 
-        sx={{mt: 6, mb: 2,}}
+        sx={{mt: 6, display: 'flex', flexDirection: 'row', alignItems: 'center'}}
       >
         {loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'Teams Available'}
+        {!loading && data.equipos.length > 0 && 
+          <Search myOptions={data.equipos} myValue={selectedTeam} /*Se renderizara el buscador, si se cargo los datos correctamente*/
+            onChange={(e, newValue) => {
+              setSelectedTeam(newValue || null);
+            }}
+            isOptionEqualToValue = {(option, value) => option.name === value.name}
+            myLabel={'Search Team'}
+            toUrl={'team'}/>
+        } 
       </TitleTypography>
       <Box sx={{ width: '100%', height: 'auto', mx: 2 }}>
         {loading ? <Skeleton variant="rounded" sx={{mx:-2, width:'100%', height:150}}/> :
@@ -263,7 +289,7 @@ export default function Dashboard() {
                 return (
                 <Card 
                   variant="outlined" 
-                  key={equipo.id} 
+                  key={i} 
                   sx={{p:0, m:1}}
                 >
                   <CardActionArea href={`/dashboard/team/${equipo.name}/${equipo.id}`} sx={{p:2}}>
@@ -274,15 +300,18 @@ export default function Dashboard() {
                           alt={equipo.name}
                       />
                       <CardContent>
+                      
                           <Typography variant="h5" component="span" color='secondary' sx={{...centerJustify, my:0.5}}>
                               <strong>{equipo.name}</strong>
                           </Typography>
-                          <Typography sx={{...centerJustify,color:'text.data'}}>
-                            <Typography variant='subtitle2' color='primary' sx={{mr:2}}>
-                              <strong>Leader:</strong>
-                            </Typography >
-                            {equipo['users'].name}
-                          </Typography >
+                          <Container sx={centerJustify}>
+                            <Typography variant='subtitle2' color='primary'> 
+                              <strong>Leader: </strong>
+                            </Typography>
+                            <Typography sx={{color: 'text.data'}}> 
+                              {equipo['users'].name}
+                            </Typography>
+                          </Container>
                       </CardContent>
                   </CardActionArea>
               </Card>
@@ -330,11 +359,10 @@ export default function Dashboard() {
                     .map((row, i) => {
                       i+=1; //Recorremos 1 a los elementos
                       const tournament = row.torneos;
-                      console.log(row);
                       return (
-                        <TableRow hover role="checkbox" tabIndex={-1} key={i} onClick={() => handleRowClick(tournament.id, tournament.name)} style={{ cursor: 'pointer' }}> {/*TO DO: check url to match*/}
+                        <TableRow hover role="checkbox" tabIndex={-1} key={i} onClick={() => handleRowClick(tournament.id, tournament.name)} style={{ cursor: 'pointer' }}> 
                           <TableCell key={i} width={50} align='center'>
-                              {i}
+                            {i}
                           </TableCell>
                           {columns.map((column,i) => {
                             i+=1; //Recorremos 1 a los elementos

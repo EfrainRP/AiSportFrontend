@@ -7,8 +7,9 @@ import {
     CardMedia,
     CardContent,
     CardActionArea,
-    Fab,
+    IconButton,
     Stack,
+    Container
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
@@ -16,12 +17,15 @@ import axiosInstance from "../../../services/axiosConfig.js";
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 import LayoutLogin from '../../LayoutLogin.jsx';
 
+import Search from '../../../components/Login/Search.jsx';
+
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 const centerJustify = {display: 'flex', justifyContent: 'center'};
 
 export default function IndexTeam() {
     const [teams, setTeams] = React.useState([]);
     const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado 
+    const [selectedTeam, setSelectedTeam] = React.useState(null); // Estado para almacenar el searchTeam
 
     React.useEffect(() => { // Hace la solicitud al cargar la vista <-
         const fetchTeams = async () => {
@@ -54,8 +58,30 @@ export default function IndexTeam() {
             {loading?
                 <Skeleton variant="rounded" width={'5%'} height={40} sx={{my: 3}} /> 
             :
-                <Fab  href='/team/create' variant="extended" color='info' sx={{color:'white', my: 3}}><AddIcon/> Add</Fab>
+                <Container sx={{display:'flex', justifyContent: 'flex-start', alignContent:'center', ml:0, mt: 3, mb:2,}}>
+                    <IconButton  component="a" href='/team/create' 
+                    sx={(theme)=>({
+                        mt: 1.5,
+                        backgroundColor: 'primary.dark',
+                        color:'white',
+                        '&:hover': { backgroundColor: 'primary.main' },
+                        ...theme.applyStyles('dark', {
+                            backgroundColor: 'primary.main',
+                            '&:hover': { backgroundColor: 'primary.dark' },
+                        }),
+                    })}>
+                        <AddIcon/>
+                    </IconButton>
+                    <Search myOptions={teams} myValue={selectedTeam} /*Se renderizara el buscador, si se cargo los datos correctamente*/
+                        onChange={(e, newValue) => {
+                            setSelectedTeam(newValue || null);
+                        }}
+                        isOptionEqualToValue = {(option, value) => option.name === value.name}
+                        myLabel={'Search Team'}
+                        toUrl={'team'}/>
+                </Container>
             }  
+            
             <Box sx={{ ...centerJustify, width: '100%', height: 'auto', alignItems: 'center'}}>
                 {loading ? 
                     <Skeleton variant="rounded" width={'95%'} height={350} /> 
