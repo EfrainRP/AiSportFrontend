@@ -23,12 +23,14 @@ export default function LayoutLogin(props) {
             width: '100%',
             minHeight: '100vh',
             backgroundRepeat: 'no-repeat',
-            backgroundImage:
-            'radial-gradient(ellipse at 60% 40%, hsla(29, 95.30%, 57.80%, 0.73), hsla(29, 77.40%, 77.50%, 0.94))',
+            ...theme.applyStyles('light', {
+              backgroundImage:
+              'radial-gradient(ellipse at 50% 5%, hsla(29, 95.30%, 57.80%, 0.73), hsla(29, 74.50%, 70.80%, 0.90))',
+            }),
             ...theme.applyStyles('dark', {
               backgroundImage:
               'radial-gradient(at 50% 50%, hsla(29, 90.90%, 30.20%, 0.85), hsla(29, 41.70%, 18.80%, 0.84))', 
-              }),
+            }),
             zIndex: 1
           })}
         >

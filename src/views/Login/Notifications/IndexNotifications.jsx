@@ -24,11 +24,13 @@ import {
     Autocomplete,
     Fab,
     ButtonGroup,
-    Grow  
+    Grow, 
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import DoDisturbAltOutlinedIcon from '@mui/icons-material/DoDisturbAltOutlined';
 
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
@@ -40,6 +42,7 @@ export default function IndexNotifications() {
     const [notifications, setNotifications] = React.useState([]);
     const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado 
     const [check, setCheck] = React.useState(false);
+    const [checkDelete, setCheckDelete] = React.useState(false);
 
     React.useEffect(() => {
         const fetchData = async () => {
@@ -54,7 +57,7 @@ export default function IndexNotifications() {
             })
             .catch((error) => {
                 console.error('Error al obtener las notificaciones:', error);
-                setLoading(false); // Cambiar el estado de carga incluso en caso de error
+                //setLoading(false); // Cambiar el estado de carga incluso en caso de error
             });
         };
 
@@ -63,26 +66,44 @@ export default function IndexNotifications() {
         }
     }, [user]);
 
+    // Función para manejar la actualizar de notificaciones
+    const denyNotifications = async (notificacionId) => {
+        setCheckDelete(true);
+        await axiosInstance.put(`/notificaciones/${notificacionId}`, {status: "rejected"})
+        .then((response)=>{
+            console.log(response.data);
+            alert('Notificación denegada con éxito.');
+        }).catch((err)=>{
+            console.error(err);
+            setCheckDelete(false);
+            // Verifica si hay una respuesta del servidor con un mensaje de error
+            if (err.response && err.response.data && err.response.data.message) {
+                alert(err.response.data.message); // Muestra el mensaje del backend
+            } else {
+                alert('Ocurrió un error al denegar la notificación.'); // Error genérico
+            }
+        });
+    };
     // Función para manejar la aceptación de notificaciones
     const acceptNotification = async (notificacionId, torneoId) => {
-        try {
+        setCheck(true);
         // Enviar la solicitud DELETE para aceptar la notificación
-        await axios.delete(`http://localhost:5000/ai/api/notificacion/${user.userId}/${torneoId}`);
-        
-        // Eliminar la notificación aceptada del estado
-        setNotificaciones((prev) => prev.filter((n) => n.id !== notificacionId));
-        
-        alert('Notificación aceptada con éxito.');
-        } catch (err) {
-        console.error('Error al aceptar la notificación:', err);
-        
-        // Verifica si hay una respuesta del servidor con un mensaje de error
-        if (err.response && err.response.data && err.response.data.message) {
-            alert(err.response.data.message); // Muestra el mensaje del backend
-        } else {
-            alert('Ocurrió un error al aceptar la notificación.'); // Error genérico
-        }
-        }
+        await axiosInstance.delete(`/notificacion/${user.userId}/${torneoId}`)
+        .then((response)=>{
+            // Eliminar la notificación aceptada del estado
+            setNotifications((prev) => prev.filter((n) => n.id !== notificacionId));
+            
+            alert('Notificación aceptada con éxito.');
+        }).catch((err)=>{
+            console.error('Error al aceptar la notificación:', err);
+            setCheck(false);
+            // Verifica si hay una respuesta del servidor con un mensaje de error
+            if (err.response && err.response.data && err.response.data.message) {
+                alert(err.response.data.message); // Muestra el mensaje del backend
+            } else {
+                alert('Ocurrió un error al aceptar la notificación.'); // Error genérico
+            }
+        });
     };
 
     return (
@@ -103,15 +124,20 @@ export default function IndexNotifications() {
                         :
                         (notifications.length > 0?
                             (
-                            <List component={Card}>
+                            <List component={Card} sx={{width:"93%"}}>
                                 {notifications.map((note, i) => {
                                     const colorStatus = note.status == 'rejected'? 'error' : 'success';
                                 return (
                                 <ListItem key={i}
                                     secondaryAction={
-                                        <IconButton edge="end" aria-label="actionNote" onClick={() => acceptNotification(note.id, note.torneo_id)}>
-                                            {check? <CheckCircleIcon/> : <RadioButtonUncheckedIcon/>}
-                                        </IconButton>
+                                        <ButtonGroup edge="end" variant="contained">
+                                            <Button color="success" aria-label="actionNote" startIcon={ check? <CheckCircleRoundedIcon/> : <RadioButtonUncheckedIcon/> } onClick={() => acceptNotification(note.id, note.torneo_id)}>
+                                                Accept
+                                            </Button>
+                                            <Button color="error" aria-label="actionNote" startIcon={checkDelete? <CheckCircleRoundedIcon/> : <DoDisturbAltOutlinedIcon/>} onClick={() => denyNotifications(note.id)}>
+                                                Deny
+                                            </Button>
+                                        </ButtonGroup>
                                     } 
                                 >
                                     <ListItemAvatar>
