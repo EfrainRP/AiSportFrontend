@@ -47,7 +47,7 @@ export default function IndexNotifications() {
             await axiosInstance.get(`/notificaciones/${user.userId}`)
             .then((response) => {
                 setNotifications(response.data); // Establecer las notificaciones en el estado
-                console.log(response.data);
+                // console.log(response.data);
                 setTimeout(() => {
                     setLoading(false); // Cambia el estado para simular que la carga ha terminado
                 }, 1500); // Simula tiempo de carga
@@ -102,22 +102,26 @@ export default function IndexNotifications() {
                         ( <Skeleton variant="rounded" width={'95%'} height={390}/> )
                         :
                         (notifications.length > 0?
-                            (<List component={Card} variant="outlined">
+                            (
+                            <List component={Card}>
                                 {notifications.map((note, i) => {
-                                <ListItem >
+                                    const colorStatus = note.status == 'rejected'? 'error' : 'success';
+                                return (
+                                <ListItem key={i}
+                                    secondaryAction={
+                                        <IconButton edge="end" aria-label="actionNote" onClick={() => acceptNotification(note.id, note.torneo_id)}>
+                                            {check? <CheckCircleIcon/> : <RadioButtonUncheckedIcon/>}
+                                        </IconButton>
+                                    } 
+                                >
                                     <ListItemAvatar>
-                                        <Avatar src={URL_SERVER+`/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`}/>
+                                        <Avatar src={URL_SERVER+`/utils/uploads/${note.equipos.image !== 'logoEquipo.jpg' ? note.equipos.image : 'logoEquipo.jpg'}`}/>
                                     </ListItemAvatar>
                                     <ListItemText
-                                        primary={<Typography>Your request for team <strong>{notificacion.equipos?.name}</strong> was <strong>{notificacion.status}</strong> for tournament  <strong>{notificacion.torneos?.name}.</strong></Typography>}
-                                        secondary= {<Typography>For more information, please contact the admin <strong>{notificacion.torneos?.users?.name} ({notificacion.torneos?.users?.email})</strong></Typography>}
-                                        secondaryAction={
-                                            <IconButton edge="end" aria-label="delete" onClick={() => acceptNotification(notificacion.id, notificacion.torneo_id)}>
-                                                {check? <CheckCircleIcon/> : <RadioButtonUncheckedIcon/>}
-                                            </IconButton>
-                                        } 
+                                        primary={<Typography>Your request for <Typography component={'strong'} color={'primary'}>team {note.equipos?.name}</Typography> was <Typography component={'strong'} color={colorStatus}>{note.status}</Typography> for <Typography component={'strong'} color={'primary.light'}>tournament {note.torneos?.name}.</Typography></Typography>}
+                                        secondary= {<Typography>For more information, please contact the admin <Typography component={'strong'} color={'secondary.main'}>{note.torneos?.users?.name} ({note.torneos?.users?.email})</Typography></Typography>}
                                     />
-                                </ListItem>
+                                </ListItem>)
                                 })}
                             </List>)
                             :

@@ -225,7 +225,7 @@ export default function ShowTournament() {
                 <Tabs centered value={valueTab} onChange={handleChange} >
                     <Tab icon={<FolderIcon />} label="Details" {...a11yProps(0)} />
                     <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)}/>
-                    <Tab  icon={<NotificationAddIcon />} label="Send Notifications" {...a11yProps(2)} />
+                    <Tab  icon={<NotificationAddIcon />} label="Notifications" {...a11yProps(2)} />
                 </Tabs>
             </Box>
             <CustomTabPanel value={valueTab} index={0}> {/*Tab Details */}

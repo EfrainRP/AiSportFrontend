@@ -238,9 +238,9 @@ export const colorSchemes = {
   light: {
     palette: {
       primary: {
-        light: brand[50],
-        main: brand[200],
-        dark: brand[700],
+        light: brand[200],
+        main: brand[300],
+        dark: brand[800],
         contrastText: brand[50],
       },
       secondary: { // Agregando el color secundario

@@ -55,7 +55,7 @@ export default function HeaderAppBar() {
             <AiSportIcon />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <Button href='/' variant="text" color="info" size="medium">
-                AiSport
+                AiSPORT
               </Button>
               <Button href='/aboutus' variant="text" color="info" size="medium">
                 ABOUT US

@@ -78,8 +78,10 @@ const Card = styled(MuiCard)(({ theme }) => ({
 export default function SignIn(props) {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
+
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+
   const [open, setOpen] = React.useState(false); //State forgot password
   
   const [messageSignIn, setMessage] = React.useState('');
@@ -112,13 +114,14 @@ export default function SignIn(props) {
   const handleSubmit = async (event) => { // Function to access AiSport
     event.preventDefault();
 
+    emailValidate(); 
+    passwordValidate();
     if (emailError || passwordError) { // Error Input
-      setMessage('Empty data');
       handleClickSnackBar();
       return;
     }
     const data = new FormData(event.currentTarget);
-    console.log(data.get("email"));
+    // console.log(data.get("email"));
 
     await axiosInstance.post('/login',{ // Conection to backend
       email: data.get('email'), 
@@ -132,50 +135,50 @@ export default function SignIn(props) {
         navigate('/dashboard');
     })
     .catch((error) => {
-      setMessage(error.response.data.message);
-      setMessage('Data Invalid');
+      // setMessage(error.response.data.message);
+      setMessage("Invalid Data");
       handleClickSnackBar();
       console.log(error.response.data.message)
     });
   };
 
   const emailValidate = async () => {
-    const email = document.getElementById('email');
+    const email = document.getElementById('email').value;
 
     setEmailError(false);
     setEmailErrorMessage('');
     setValidateInputs(true);
-    
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    console.log(email);
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
       setValidateInputs(false);
-    }
-    else{
-      await axiosInstance.post('/email',{email: email.value}) // Conection to backend
-      .then((response)=> {
-        console.log(response.data);
-        setValidateInputs(false);
-      })
-      .catch((error) => {
-        setEmailError(true);
-        setEmailErrorMessage('Email no valid');
-        // setMessage('Error ');
-        // handleClickSnackBar();
-        console.log(error.response.data.message)
-        setValidateInputs(true);
-      });
-    }
+    } 
+    // else{
+    //   await axiosInstance.post('/email',{email: email}) // Conection to backend
+    //   .then((response)=> {
+    //     console.log(response.data);
+    //     setValidateInputs(false);
+    //   })
+    //   .catch((error) => {
+    //     setEmailError(true);
+    //     setEmailErrorMessage('Email no valid');
+    //     // setMessage('Error ');
+    //     // handleClickSnackBar();
+    //     console.log(error.response.data.message)
+    //     setValidateInputs(true);
+    //   });
+    // }
   };
   
   const passwordValidate = () => {
-    const password = document.getElementById('password');
+    const password = document.getElementById('password').value;
     
     setPasswordError(false);
     setPasswordErrorMessage('');
     setValidateInputs(true);
   
-    if (!password.value || password.value.length < 6) {
+    if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 6 characters long.');
       setValidateInputs(false);
@@ -216,7 +219,7 @@ export default function SignIn(props) {
               <TextField
                 error={emailError}
                 helperText={emailErrorMessage}
-                onChange={emailValidate}
+                // onChange={emailValidate}
                 id="email"
                 type="email"
                 name="email"
@@ -267,7 +270,6 @@ export default function SignIn(props) {
               type="submit"
               fullWidth
               variant="contained"
-              onClick={() => {emailValidate(); passwordValidate(); }}
             >
               Sign in
             </Button>
