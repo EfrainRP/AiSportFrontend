@@ -39,7 +39,7 @@ const AIEquipo = () => {
 
   return (
     <div className="container mt-5">
-      <h1 className="text-center mb-4">Analizador de Rendimiento Individual SportHub</h1>
+      <h1 className="text-center mb-4">Analizador de Rendimiento Individual AiSport</h1>
       
       {estadisticas.length === 0 ? (
         <div className="card text-center">
