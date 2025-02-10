@@ -35,6 +35,7 @@ import { useAuth } from '../../../services/AuthContext'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx'
+import BackButton from '../../../components/Login/BackButton.jsx'
 
 import FolderIcon from '@mui/icons-material/Folder';
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -42,7 +43,6 @@ import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 import EqualizerIcon from '@mui/icons-material/Equalizer';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -214,7 +214,7 @@ export default function ShowTournament() {
         <LayoutLogin>
             
             <Container sx={{...centerJustify}}>
-                <IconButton onClick={() => navigate(-1)}><ArrowBackIcon/></IconButton>
+                <BackButton/>
                 <Typography gutterBottom variant="h2" component="div" sx={{ml:2}}>
                     {loading?
                         <Skeleton variant="rounded" width={'30%'} /> 

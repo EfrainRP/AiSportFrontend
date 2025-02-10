@@ -16,16 +16,16 @@ import {
 import PropTypes from 'prop-types';
 
 import axiosInstance from "../../../services/axiosConfig.js";
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx'
+import BackButton from '../../../components/Login/BackButton.jsx';
 
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 
 import EqualizerIcon from '@mui/icons-material/Equalizer';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -59,7 +59,6 @@ function a11yProps(index) {
 const centerJustify = {display: 'flex', alignContent:'center', textAlign:'justify', justifyContent:'center'};
 
 export default function TeamDashboard () {
-  const navigate = useNavigate();
   const { teamName, teamId  } = useParams();
   const [team, setTeam] = React.useState(null);
   
@@ -93,7 +92,7 @@ export default function TeamDashboard () {
         <Card sx={{minWidth:280, width:'80%'}}>
           <CardContent>
             <Container sx={{...centerJustify, alignItems:'center'}}>
-            <IconButton onClick={() => navigate(-1)}><ArrowBackIcon/></IconButton>
+            <BackButton/>
               <Container>
                 <Container sx={centerJustify}>
                   <Typography variant="h5" color='primary'>

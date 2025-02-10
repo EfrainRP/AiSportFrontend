@@ -13,23 +13,22 @@ import {
   Alert,
   Snackbar, 
   Divider,
-  IconButton,
 } from '@mui/material';
 import PropTypes from 'prop-types';
 
 import axiosInstance from "../../../services/axiosConfig.js";
-import { useParams,useLocation,useNavigate } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx'
+import BackButton from '../../../components/Login/BackButton.jsx';
 
 import FolderIcon from '@mui/icons-material/Folder';
 import GroupsIcon from '@mui/icons-material/Groups';
 import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const centerJustify = {display:'flex', flexDirection: 'row', textAlign:'justify'}; //estilos guardados
 function CustomTabPanel(props) { 
@@ -62,7 +61,6 @@ function a11yProps(index) {
 }
 
 export default function TournamentDashboard () {
-  const navigate = useNavigate();
   const {user} = useAuth(); // Accede al usuario autenticado y al método logout
   const { tournamentName, tournamentId } = useParams();
   const [tournament, setTournament] = React.useState(null);
@@ -202,7 +200,7 @@ export default function TournamentDashboard () {
   return (
     <LayoutLogin>
       <Container sx={{display: 'center',m:2, gap:'5%'}}>
-        <IconButton onClick={() => navigate(-1)}><ArrowBackIcon/></IconButton>
+        <BackButton/>
         <Typography variant='h2'> 
             {`Tournament: ${tournament.name}`}
         </Typography>

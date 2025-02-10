@@ -23,6 +23,7 @@ import {
     Divider,
     FormLabel,
     FormControl,
+    Input,
     Container,
 } from '@mui/material';
 import MuiCard from '@mui/material/Card';
@@ -30,7 +31,7 @@ import { styled } from '@mui/material/styles';
 
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../services/AuthContext'; //  AuthContext
+import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx';
@@ -86,33 +87,33 @@ const Card = styled(MuiCard)(({ theme }) => ({
     }),
 }));
 
-export default function EditTournament() {
+export default function EditTeam() {
     const navigate = useNavigate();
-    const {loading, setLoading}  = useAuth();
-    const { tournamentName, tournamentId } = useParams();
-    const [tournament, setTournament] = React.useState({
+    const {loading, setLoading, user}  = useAuth();
+    const { teamName, teamId } = useParams();
+    const [file, setFile] = React.useState(null);
+    const [team, setTeam] = React.useState({
         name: '',
-        ubicacion: '',
-        descripcion: '',
-        fechaInicio: '',
-        fechaFin: '',
-        cantEquipo: 0,
+        user_id: user?.userId || '',
+        miembros: [], // Inicializa miembros como un arreglo vacío
     });
     const [fieldErrors, setFieldErrors] = React.useState({}); // Almacena errores específicos por campo desde el backend
 
     const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
     const [openSnackBar, setOpenSnackBar] = React.useState(false); // Mecanismo snackbar
-    
+
     const [openConfirm, setConfirm] = React.useState(false); //Mecanismo confirm
     const handleCloseConfirm = () => { //Boton cancel del dialog
         setConfirm(false);
     };
-
     React.useEffect(() => {
-        const fetchTournament = async () => {
-            await axiosInstance.get(`/torneo/${tournamentName}/${tournamentId}`)
+        const fetchTeam = async () => {
+            await axiosInstance.get(`/equipo/${teamName}/${teamId}`)
                 .then((response) => {
-                    setTournament(response.data);
+                    setTeam({
+                        ...response.data,
+                        miembros: response.data.miembro_equipos || [], // Usar la relación 'miembro_equipos'
+                    });
                     setDataAlert({message:null});
                     setLoading(false);
                 }).catch((err) => {
@@ -122,8 +123,8 @@ export default function EditTournament() {
                     setDataAlert({severity:"error", message:'Error loading tournament'});
                 })
         };
-        fetchTournament();
-    }, [tournamentId]);
+        fetchTeam();
+    }, [teamId]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -134,31 +135,79 @@ export default function EditTournament() {
         setFieldErrors((prev) => ({ ...prev, [name]: '' })); // Limpia errores del campo modificado
     };
 
+    const handleMemberChange = (index, value) => {
+        const newMembers = [...equipo.miembros];
+        newMembers[index] = value;
+        setEquipo((prev) => ({ ...prev, miembros: newMiembros }));
+    };
+
+    const handleImageChange = (e) => {
+        const selectedFile = e.target.files[0];
+        setFile(selectedFile);
+    };
+
+    const handleAddMember = () => {
+    setTeam((prev) => ({ ...prev, miembros: [...prev.miembros, { user_miembro: '', id: Date.now() }] }));
+    };
+
+    const handleRemoveMember = (index) => {
+        setTeam((prev) => ({
+            ...prev,
+            miembros: prev.miembros.filter((_, i) => i !== index),
+        }));
+    };
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFieldErrors({});
-        // console.log(tournament);
-        await axiosInstance.put(`/torneo/${tournamentId}`, tournament) //TO DO: check the request, no working
-            .then((response) => {
-                setOpenSnackBar(true);
-                setDataAlert({severity:"success", message:'Success update Tournament!'});
-                setTimeout(() => navigate(`/tournament/${tournament.name}/${tournamentId}}`), 2000);
-            })
-            .catch((err) => {
-                // console.log(err);
-                if (err.response && err.response.status === 400) {
-                    const { field, message } = err.response.data;
-                    if (field) {
-                        setFieldErrors((prev) => ({ ...prev, [field]: message }));
-                    } else {
-                        setOpenSnackBar(true);
-                        setDataAlert({severity:"error", message:message});
-                    }
+
+        const formData = new FormData();
+        // Filtra los miembros vacíos antes de enviar el formulario
+        const miembrosValidos = equipo.miembros.filter(member => member.user_miembro.trim() !== '');
+        const equipoConMiembros = { ...equipo, miembros: miembrosValidos };
+
+        // Agrega los datos del equipo a FormData
+        formData.append('name', equipoConMiembros.name);
+        formData.append('user_id', equipoConMiembros.user_id);
+
+      // Agrega los miembros a ser enviados
+        equipoConMiembros.miembros.forEach((miembro, index) => {
+            formData.append(`miembros[${index}][user_miembro]`, miembro.user_miembro);
+        });
+    
+        // Agrega la imagen si se cargo
+        if (file) {
+            formData.append('image', file);
+        }
+
+        // Realizar la solicitud PUT con FormData <-
+        await axiosInstance.put(
+            `/equipo/${equipoId}`,
+            formData,
+            {
+            headers: {
+                'Content-Type': 'multipart/form-data', // Se envia FormData para la carga de la IMG <-
+            },
+            }
+        )
+        .then((response) => {
+            setOpenSnackBar(true);
+            setDataAlert({severity:"success", message:'Success update Team!'});
+            setTimeout(() => navigate(`/team/${equipo.name}/${teamId}`), 2000);})
+        .catch ((err) => {
+            if (err.response && err.response.status === 400) {
+                const { field, message } = err.response.data;
+                if (field) {
+                    setFieldErrors((prev) => ({ ...prev, [field]: message }));
                 } else {
                     setOpenSnackBar(true);
-                    setDataAlert({severity:"error", message:'Error update tournament.'});
+                    setDataAlert({severity:"error", message:message});
                 }
-            })
+            } else {
+                setOpenSnackBar(true);
+                setDataAlert({severity:"error", message:'Error update team.'});
+            }
+        })
     };
 
     const handleCloseSnackBar = (event, reason) => {
@@ -168,22 +217,28 @@ export default function EditTournament() {
         setOpenSnackBar(false);
     };
 
-    const handleDelete = async () => { // Metodo DELETE <- //Boton confirm del dialog
-        await axiosInstance.delete(`/torneo/${tournamentId}`)
+    const handleDelete = async () => { 
+        await axiosInstance.delete(`/equipo/${teamId}`)
         .then((response) => {
             setOpenSnackBar(true);
-            setDataAlert({severity:"success", message:'Delete tournament success!'});
-            setTimeout(() => navigate('/tournaments'), 2000); // Redirige a la lista de torneos después de 2 segundos
+            setDataAlert({severity:"success", message:'Delete team success!'});
+            setTimeout(() => navigate('/teams'), 2000); // Redirige a la lista de equipos después de 2 segundos
         }).catch ((err) => {
-            setOpenSnackBar(true);
-            setDataAlert({severity:"error", message:'Error delete tournament.'});
-            // console.error(err);
+            if (err.response && err.response.status === 400) {
+                const { field, message } = err.response.data;
+                if (field) {
+                    setFieldErrors((prev) => ({ ...prev, [field]: message }));
+                } else {
+                    setOpenSnackBar(true);
+                    setDataAlert({severity:"error", message:message});
+                }
+            } else {
+                setOpenSnackBar(true);
+                setDataAlert({severity:"error", message:'Error update team.'});
+            }
         });
         setConfirm(false);
     };
-    
-    const [homeTeam, setHomeTeam] = React.useState(""); //Autocomplete home team
-    const [guestTeam, setGuestTeam] = React.useState(""); //Autocomplete guest team
 
     return (
         <LayoutLogin>
@@ -199,14 +254,14 @@ export default function EditTournament() {
                     </Alert>
                 </Snackbar>
                 <Card variant="outlined">
-                    <Container sx={{display:'flex', textAlign:'justify', gap:5}}>
+                    <Container sx={{display:'flex', textAlign:'justify', gap:3}}>
                         <BackButton/>
                         <Typography
                             component="h1"
                             variant="h4"
                             sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
                         >
-                            Edit {tournamentName}
+                            Edit {teamName}
                         </Typography>
                     </Container>
                     
@@ -222,7 +277,7 @@ export default function EditTournament() {
                         }}
                     >
                         <FormControl>
-                            <FormLabel htmlFor="name">Name: </FormLabel>
+                            <FormLabel htmlFor="name">Name Team: </FormLabel>
                             <TextField
                                 name="name"
                                 id="name"
@@ -230,8 +285,8 @@ export default function EditTournament() {
                                 fullWidth
                                 required
                                 variant="outlined"
-                                value={tournament.name}
-                                placeholder={tournament.name}
+                                value={team.name}
+                                placeholder={team.name}
                                 onChange={handleChange}
                                 error={!!fieldErrors.name} //detecta si tiene algo contenido
                                 helperText={fieldErrors.name}
@@ -239,87 +294,48 @@ export default function EditTournament() {
                             />
                         </FormControl>
                         <FormControl>
-                            <FormLabel htmlFor="ubicacion">Locaticon: </FormLabel>
-                            <TextField
-                                error={!!fieldErrors.ubicacion}
-                                helperText={fieldErrors.ubicacion}
-                                color={!!fieldErrors.ubicacion ? 'error' : 'primary'}
-                                name="ubicacion"
-                                id="ubicacion"
-                                autoFocus
-                                required
-                                fullWidth
-                                variant="outlined"
-                                value={tournament.ubicacion}
-                                placeholder={tournament.ubicacion}
-                                onChange={handleChange}
-                            />
+                            <FormLabel htmlFor="miembros">Members: </FormLabel>
+                            {team.miembros && team.miembros.map((member, index) => (
+                                <Box display="flex" alignItems="center" id={"miembro"+index}>
+                                    <TextField
+                                        // error={!!fieldErrors.ubicacion}
+                                        // helperText={fieldErrors.ubicacion}
+                                        // color={!!fieldErrors.ubicacion ? 'error' : 'primary'}
+                                        name={"miembro"+index}
+                                        
+                                        autoFocus
+                                        required
+                                        fullWidth
+                                        variant="outlined"
+                                        value={member.user_miembro || ''}
+                                        placeholder={member.user_miembro || ''}
+                                        onChange={(e) => handleMemberChange(index, { ...member, user_miembro: e.target.value })}
+                                        sx={{display:"flex", gap:3}}
+                                    />
+                                    <Button variant="contained" color="error" onClick={() => handleRemoveMember(index)}>
+                                        Delete
+                                    </Button>
+                                </Box>
+                            ))}
                         </FormControl>
-                        <FormControl>
-                            <FormLabel htmlFor="descripcion">Description: </FormLabel>
-                            <TextField
-                                error={!!fieldErrors.descripcion}
-                                helperText={fieldErrors.descripcion}
-                                color={!!fieldErrors.descripcion ? 'error' : 'primary'}
-                                name="descripcion"
-                                id="descripcion"
-                                sx={{
-                                    "& .MuiInputBase-root": { minHeight: "7rem" },
-                                }}
-                                multiline
-                                rows={5}
-                                defaultValue={tournament.descripcion || ""}
-                                onChange={handleChange}
-                            />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel htmlFor="fechaInicio">Start Date: </FormLabel>
-                            <TextField
-                                error={!!fieldErrors.fechaInicio}
-                                helperText={fieldErrors.fechaInicio}
-                                color={!!fieldErrors.fechaInicio ? 'error' : 'primary'}
-                                name="fechaInicio"
-                                id="fechaInicio"
-                                type="date"
-                                fullWidth
-                                required
-                                variant="outlined"
-                                value={tournament.fechaInicio.split('T')[0]}
-                                onChange={handleChange}
-                            />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel htmlFor="fechaFin">End Date: </FormLabel>
-                            <TextField
-                                error={!!fieldErrors.fechaFin}
-                                helperText={fieldErrors.fechaFin}
-                                color={!!fieldErrors.fechaFin ? 'error' : 'primary'}
-                                name="fechaFin"
-                                id="fechaFin"
-                                type="date"
-                                fullWidth
-                                required
-                                variant="outlined"
-                                value={tournament.fechaFin.split('T')[0]}
-                                onChange={handleChange}
-                            />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel htmlFor="cantEquipo">Number of Equipment: </FormLabel>
-                            <TextField
-                                error={!!fieldErrors.cantEquipo}
-                                helperText={fieldErrors.cantEquipo}
-                                color={!!fieldErrors.cantEquipo ? 'error' : 'primary'}
-                                name="cantEquipo"
-                                id="cantEquipo"
-                                type="number"
-                                fullWidth
-                                required
-                                variant="outlined"
-                                value={tournament.cantEquipo}
-                                onChange={handleChange}
-                            />
-                        </FormControl>
+                        <Input
+                            type="file"
+                            onChange={handleImageChange}
+                            inputProps={{ accept: 'image/*' }} // Puedes especificar tipos de archivos si lo necesitas
+                            // error={!!fieldErrors.image}
+                            // helperText={fieldErrors.image}
+                            // color={!!fieldErrors.image ? 'error' : 'primary'}
+                            sx={{ display: 'none' }}
+                            id="file-input"
+                        />
+                        <FormLabel htmlFor="file-input">
+                            <Button variant="outlined" component="span">
+                                {file || 'Seleccionar archivo'}
+                            </Button>
+                        </FormLabel>
+                        <Button fullWidth variant="contained" color="warning" onClick={handleAddMember}>
+                            Add member
+                        </Button>
                         <Box sx={{display:'flex',flexDirection:'row', gap:2}}>
                         <Button
                             fullWidth
@@ -327,7 +343,7 @@ export default function EditTournament() {
                             onClick={()=>setConfirm(true)}
                             color='error'
                         >
-                            Delete Tournament
+                            Delete Team
                         </Button>
                         <Button
                             type="submit"
