@@ -136,9 +136,9 @@ export default function EditTeam() {
     };
 
     const handleMemberChange = (index, value) => {
-        const newMembers = [...equipo.miembros];
+        const newMembers = [...team.miembros];
         newMembers[index] = value;
-        setEquipo((prev) => ({ ...prev, miembros: newMiembros }));
+        setTeam((prev) => ({ ...prev, miembros: newMiembros }));
     };
 
     const handleImageChange = (e) => {
@@ -147,7 +147,7 @@ export default function EditTeam() {
     };
 
     const handleAddMember = () => {
-    setTeam((prev) => ({ ...prev, miembros: [...prev.miembros, { user_miembro: '', id: Date.now() }] }));
+        setTeam((prev) => ({ ...prev, miembros: [...prev.miembros, { user_miembro: '', id: Date.now() }] }));
     };
 
     const handleRemoveMember = (index) => {
@@ -163,15 +163,15 @@ export default function EditTeam() {
 
         const formData = new FormData();
         // Filtra los miembros vacíos antes de enviar el formulario
-        const miembrosValidos = equipo.miembros.filter(member => member.user_miembro.trim() !== '');
-        const equipoConMiembros = { ...equipo, miembros: miembrosValidos };
+        const memberValidate = team.miembros.filter(member => member.user_miembro.trim() !== '');
+        const teamsWithMembers = { ...team, miembros: memberValidate };
 
         // Agrega los datos del equipo a FormData
-        formData.append('name', equipoConMiembros.name);
-        formData.append('user_id', equipoConMiembros.user_id);
+        formData.append('name', teamsWithMembers.name);
+        formData.append('user_id', teamsWithMembers.user_id);
 
       // Agrega los miembros a ser enviados
-        equipoConMiembros.miembros.forEach((miembro, index) => {
+        teamsWithMembers.miembros.forEach((miembro, index) => {
             formData.append(`miembros[${index}][user_miembro]`, miembro.user_miembro);
         });
     
@@ -182,7 +182,7 @@ export default function EditTeam() {
 
         // Realizar la solicitud PUT con FormData <-
         await axiosInstance.put(
-            `/equipo/${equipoId}`,
+            `/equipo/${teamId}`,
             formData,
             {
             headers: {
@@ -193,7 +193,7 @@ export default function EditTeam() {
         .then((response) => {
             setOpenSnackBar(true);
             setDataAlert({severity:"success", message:'Success update Team!'});
-            setTimeout(() => navigate(`/team/${equipo.name}/${teamId}`), 2000);})
+            setTimeout(() => navigate(`/team/${team.name}/${teamId}`), 2000);})
         .catch ((err) => {
             if (err.response && err.response.status === 400) {
                 const { field, message } = err.response.data;
@@ -295,14 +295,16 @@ export default function EditTeam() {
                         </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="miembros">Members: </FormLabel>
-                            {team.miembros && team.miembros.map((member, index) => (
-                                <Box display="flex" alignItems="center" id={"miembro"+index}>
+                            {team.miembros.length>0?
+                            team.miembros.map((member, index) => (
+                                <Box display="flex" alignItems="center" key={index}>
+                                    <FormLabel htmlFor={`miembro-${index}`} sx={{ display: 'none' }}/>
                                     <TextField
                                         // error={!!fieldErrors.ubicacion}
                                         // helperText={fieldErrors.ubicacion}
                                         // color={!!fieldErrors.ubicacion ? 'error' : 'primary'}
-                                        name={"miembro"+index}
-                                        
+                                        name={`miembro-${index}`}
+                                        id={`miembro-${index}`}
                                         autoFocus
                                         required
                                         fullWidth
@@ -316,7 +318,10 @@ export default function EditTeam() {
                                         Delete
                                     </Button>
                                 </Box>
-                            ))}
+                            ))
+                            :
+                                <Typography id={'miembros'} sx={{display:'flex', justifyContent: 'center'}}>No members register.</Typography>
+                            }
                         </FormControl>
                         <Input
                             type="file"
@@ -330,7 +335,7 @@ export default function EditTeam() {
                         />
                         <FormLabel htmlFor="file-input">
                             <Button variant="outlined" component="span">
-                                {file || 'Seleccionar archivo'}
+                                {file || 'Select image'}
                             </Button>
                         </FormLabel>
                         <Button fullWidth variant="contained" color="warning" onClick={handleAddMember}>

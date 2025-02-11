@@ -105,7 +105,7 @@ export default function ShowTeam() {
                                 ))
                             ) : (
                                 <ListItem sx={{textAlign:'center'}}>
-                                    <ListItemText>No hay miembros para mostrar.</ListItemText>
+                                    <ListItemText>Members not registered.</ListItemText>
                                 </ListItem>
                             )}
                             </List>
