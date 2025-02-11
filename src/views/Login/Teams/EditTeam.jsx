@@ -25,6 +25,7 @@ import {
     FormControl,
     Input,
     Container,
+    CardMedia
 } from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
@@ -37,6 +38,8 @@ import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx';
 import ConfirmDialog from '../../../components/Login/ConfirmDialog.jsx';
 import BackButton from '../../../components/Login/BackButton.jsx';
+
+const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 
 const FormContainerEdit = styled(Stack)(({ theme }) => ({
     // height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
@@ -138,7 +141,7 @@ export default function EditTeam() {
     const handleMemberChange = (index, value) => {
         const newMembers = [...team.miembros];
         newMembers[index] = value;
-        setTeam((prev) => ({ ...prev, miembros: newMiembros }));
+        setTeam((prev) => ({ ...prev, miembros: newMembers }));
     };
 
     const handleImageChange = (e) => {
@@ -239,7 +242,7 @@ export default function EditTeam() {
         });
         setConfirm(false);
     };
-
+    console.log(team);
     return (
         <LayoutLogin>
             <FormContainerEdit>
@@ -264,7 +267,6 @@ export default function EditTeam() {
                             Edit {teamName}
                         </Typography>
                     </Container>
-                    
                     <Box
                         component="form"
                         onSubmit={handleSubmit}
@@ -276,6 +278,19 @@ export default function EditTeam() {
                             gap: 2,
                         }}
                     >
+                        <FormControl>
+                            <FormLabel htmlFor="file-input">
+                                <Button >
+                                    <CardMedia
+                                        component="img"
+                                        height={120}
+                                        // image={`http://localhost:3000/ai/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
+                                        image={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
+                                        alt={team.name}
+                                    />
+                                </Button>
+                            </FormLabel>
+                        </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="name">Name Team: </FormLabel>
                             <TextField
@@ -333,11 +348,6 @@ export default function EditTeam() {
                             sx={{ display: 'none' }}
                             id="file-input"
                         />
-                        <FormLabel htmlFor="file-input">
-                            <Button variant="outlined" component="span">
-                                {file || 'Select image'}
-                            </Button>
-                        </FormLabel>
                         <Button fullWidth variant="contained" color="warning" onClick={handleAddMember}>
                             Add member
                         </Button>
