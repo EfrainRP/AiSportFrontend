@@ -85,9 +85,10 @@ const Card = styled(MuiCard)(({ theme }) => ({
     }),
 }));
 
-export default function EditTournament() {
+export default function EditMatch() {
     const { tournamentName, tournamentId, matchId } = useParams();
     const { loading, setLoading } = useAuth(); // Obtención del usuario autenticado
+    const navigate = useNavigate();
 
     const [allTeams, setAllTeams] = React.useState([]);
     const [formNames, setNames] = React.useState({
@@ -108,7 +109,6 @@ export default function EditTournament() {
     const [errors, setErrors] = React.useState({});
     const [successMessage, setSuccessMessage] = React.useState('');
     const [generalError, setGeneralError] = React.useState('');
-    const navigate = useNavigate();
 
     // useEffect para hacer petición automática de los datos del torneo, partidos y notificaciones
     React.useEffect(() => {
@@ -124,43 +124,43 @@ export default function EditTournament() {
                 })
         };
 
-        // const fetchMatches = async () => {
-        //     await axiosInstance.get(`/partido/${tournamentId}/${matchId}`)
-        //         .then((response) => {
-        //             const match = response.data;
-        //             console.log("EQUIPOS", match.equipos_partidos_equipoLocal_idToequipos.name);
-        //             setNames({
-        //                 homeTeam: match.equipos_partidos_equipoLocal_idToequipos.name,
-        //                 guestTeam: match.equipos_partidos_equipoVisitante_idToequipos.name,
-        //             });
+        const fetchMatches = async () => {
+            await axiosInstance.get(`/partido/${tournamentId}/${matchId}`)
+                .then((response) => {
+                    const match = response.data;
+                    console.log("EQUIPOS", match.equipos_partidos_equipoLocal_idToequipos.name);
+                    setNames({
+                        homeTeam: match.equipos_partidos_equipoLocal_idToequipos.name,
+                        guestTeam: match.equipos_partidos_equipoVisitante_idToequipos.name,
+                    });
 
-        //             // Formatear hora
-        //             const timeMatch = match.horaPartido ? match.horaPartido.slice(11, 16) : ''; // HH:mm
+                    // Formatear hora
+                    const timeMatch = match.horaPartido ? match.horaPartido.slice(11, 16) : ''; // HH:mm
 
-        //             // Validar y formatear fecha (formato YYYY-MM-DD)
-        //             const dateMatch = match.fechaPartido ? match.fechaPartido.slice(0, 10) : ''; // YYYY-MM-DD
+                    // Validar y formatear fecha (formato YYYY-MM-DD)
+                    const dateMatch = match.fechaPartido ? match.fechaPartido.slice(0, 10) : ''; // YYYY-MM-DD
 
-        //             const session = match.jornada ? match.jornada.slice(0, 10) : ''; // YYYY-MM-DD
-        //             // Toma los datos obtenidos y los reformatea para poderlos mostrar en la vista <-
-        //             setFormData({
-        //                 homeTeamId: match.equipoLocal_id,
-        //                 guestTeamId: match.equipoVisitante_id,
-        //                 timeMatch, // Hora en formato HH:mm
-        //                 dateMatch, // Fecha en formato YYYY-MM-DD
-        //                 session, // Jornada cargada
-        //                 resHome: match.resLocal || 0,
-        //                 resGuest: match.resVisitante || 0,
-        //             });
-        //             setErrors(null);
-        //         }).catch((err) => {
-        //             console.error('Error loading data matches:', err);
-        //             setLoading(true);
-        //             setErrors("Error loading data matches");
-        //         })
-        // };
+                    const session = match.jornada ? match.jornada.slice(0, 10) : ''; // YYYY-MM-DD
+                    // Toma los datos obtenidos y los reformatea para poderlos mostrar en la vista <-
+                    setFormData({
+                        homeTeamId: match.equipoLocal_id,
+                        guestTeamId: match.equipoVisitante_id,
+                        timeMatch: match.horaPartido, // Hora en formato HH:mm
+                        dateMatch: match.fechaPartido, // Fecha en formato YYYY-MM-DD
+                        session: match.jornada, // Jornada cargada
+                        resHome: match.resLocal || 0,
+                        resGuest: match.resVisitante || 0,
+                    });
+                    setErrors(null);
+                }).catch((err) => {
+                    console.error('Error loading data matches:', err);
+                    setLoading(true);
+                    setErrors("Error loading data matches");
+                })
+        };
 
         fetchAllTeams();
-        // fetchMatches();
+        fetchMatches();
     }, [tournamentId, matchId]);
 
     const handleInputChange = (e) => {

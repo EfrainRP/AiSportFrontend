@@ -358,6 +358,7 @@ export default function EditTeam() {
                             gap: 2,
                         }}
                     >
+                        {/* TO DO: Checar el mecanismo de imagen */}
                         <ImageButton
                             component="label"
                             href={'#'}

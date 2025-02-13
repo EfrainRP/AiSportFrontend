@@ -27,7 +27,7 @@ import IndexTeams from './views/Login/Teams/IndexTeam.jsx';
 import ShowTeam from './views/Login/Teams/ShowTeam.jsx'; 
 import EditTeam from './views/Login/Teams/EditTeam.jsx'; 
 //  CRUD PARTIDOS 
-import EditMatch from './views/Login/Matches/EditMatches.jsx'; 
+import EditMatch from './views/Login/Matches/EditMatch.jsx'; 
 //  CRUD NOTIFICACIONES 
 import IndexNotifications from './views/Login/Notifications/IndexNotifications.jsx';
 //  CRUD Estadisticas 
@@ -165,12 +165,12 @@ export default function MyRoute(){
                 <EquipoCreate />
               </AuthRoute>
             }
-          />          
+          /> */}         
           <Route // < ------------- CRUD PARTIDOS ------------------------------------ > 
             path="/match/:tournamentName/:tournamentId/:matchId/edit" // Ruta EDIT protegida mediante Police <-
             element={
               <AuthRoute requireTorneoOwnership={true}> 
-                <EditMatch />
+                <EditMatch /> {/*TO DO: Checar funcionamiento */}
               </AuthRoute>
             }
           />
