@@ -25,7 +25,8 @@ import {
     FormControl,
     Input,
     Container,
-    CardMedia
+    CardMedia,
+    ButtonBase
 } from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
@@ -39,7 +40,85 @@ import LoadingView from '../../../components/Login/LoadingView.jsx';
 import ConfirmDialog from '../../../components/Login/ConfirmDialog.jsx';
 import BackButton from '../../../components/Login/BackButton.jsx';
 
+
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
+
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});
+
+const ImageButton = styled(ButtonBase)(({ theme }) => ({
+    position: 'relative',
+    height: 100,
+    left: '30%',
+    [theme.breakpoints.down('sm')]: {
+        width: '100% !important', // Overrides inline-style
+        height: 100,
+    },
+    '&:hover, &.Mui-focusVisible': {
+        zIndex: 1,
+        '& .MuiImageBackdrop-root': {
+            opacity: 0.15,
+        },
+        '& .MuiImageMarked-root': {
+            opacity: 0,
+        },
+        '& .MuiTypography-root': {
+            border: '1px solid currentColor',
+        },
+    },
+}));
+
+const ImageSrc = styled('span')({
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center 40%',
+});
+
+const Image = styled('span')(({ theme }) => ({
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: theme.palette.common.white,
+}));
+
+const ImageBackdrop = styled('span')(({ theme }) => ({
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: theme.palette.common.black,
+    opacity: 0.55,
+    transition: theme.transitions.create('opacity'),
+}));
+
+const ImageMarked = styled('span')(({ theme }) => ({
+    height: 3,
+    width: 18,
+    backgroundColor: theme.palette.common.white,
+    position: 'absolute',
+    bottom: -2,
+    left: 'calc(50% - 9px)',
+    transition: theme.transitions.create('opacity'),
+}));
 
 const FormContainerEdit = styled(Stack)(({ theme }) => ({
     // height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
@@ -92,7 +171,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
 
 export default function EditTeam() {
     const navigate = useNavigate();
-    const {loading, setLoading, user}  = useAuth();
+    const { loading, setLoading, user } = useAuth();
     const { teamName, teamId } = useParams();
     const [file, setFile] = React.useState(null);
     const [team, setTeam] = React.useState({
@@ -117,13 +196,13 @@ export default function EditTeam() {
                         ...response.data,
                         miembros: response.data.miembro_equipos || [], // Usar la relación 'miembro_equipos'
                     });
-                    setDataAlert({message:null});
+                    setDataAlert({ message: null });
                     setLoading(false);
                 }).catch((err) => {
-                    // console.error('Error loading tournament:', err);
+                    // console.error('Error loading team:', err);
                     setLoading(true);
                     setOpenSnackBar(true);
-                    setDataAlert({severity:"error", message:'Error loading tournament'});
+                    setDataAlert({ severity: "error", message: 'Error loading team' });
                 })
         };
         fetchTeam();
@@ -131,7 +210,7 @@ export default function EditTeam() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setTournament((prev) => ({
+        setTeam((prev) => ({
             ...prev,
             [name]: value,
         }));
@@ -159,7 +238,7 @@ export default function EditTeam() {
             miembros: prev.miembros.filter((_, i) => i !== index),
         }));
     };
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFieldErrors({});
@@ -173,11 +252,11 @@ export default function EditTeam() {
         formData.append('name', teamsWithMembers.name);
         formData.append('user_id', teamsWithMembers.user_id);
 
-      // Agrega los miembros a ser enviados
+        // Agrega los miembros a ser enviados
         teamsWithMembers.miembros.forEach((miembro, index) => {
             formData.append(`miembros[${index}][user_miembro]`, miembro.user_miembro);
         });
-    
+
         // Agrega la imagen si se cargo
         if (file) {
             formData.append('image', file);
@@ -188,29 +267,30 @@ export default function EditTeam() {
             `/equipo/${teamId}`,
             formData,
             {
-            headers: {
-                'Content-Type': 'multipart/form-data', // Se envia FormData para la carga de la IMG <-
-            },
+                headers: {
+                    'Content-Type': 'multipart/form-data', // Se envia FormData para la carga de la IMG <-
+                },
             }
         )
-        .then((response) => {
-            setOpenSnackBar(true);
-            setDataAlert({severity:"success", message:'Success update Team!'});
-            setTimeout(() => navigate(`/team/${team.name}/${teamId}`), 2000);})
-        .catch ((err) => {
-            if (err.response && err.response.status === 400) {
-                const { field, message } = err.response.data;
-                if (field) {
-                    setFieldErrors((prev) => ({ ...prev, [field]: message }));
+            .then((response) => {
+                setOpenSnackBar(true);
+                setDataAlert({ severity: "success", message: 'Success update Team!' });
+                setTimeout(() => navigate(`/team/${team.name}/${teamId}`), 2000);
+            })
+            .catch((err) => {
+                if (err.response && err.response.status === 400) {
+                    const { field, message } = err.response.data;
+                    if (field) {
+                        setFieldErrors((prev) => ({ ...prev, [field]: message }));
+                    } else {
+                        setOpenSnackBar(true);
+                        setDataAlert({ severity: "error", message: message });
+                    }
                 } else {
                     setOpenSnackBar(true);
-                    setDataAlert({severity:"error", message:message});
+                    setDataAlert({ severity: "error", message: 'Error update team.' });
                 }
-            } else {
-                setOpenSnackBar(true);
-                setDataAlert({severity:"error", message:'Error update team.'});
-            }
-        })
+            })
     };
 
     const handleCloseSnackBar = (event, reason) => {
@@ -220,45 +300,45 @@ export default function EditTeam() {
         setOpenSnackBar(false);
     };
 
-    const handleDelete = async () => { 
+    const handleDelete = async () => {
         await axiosInstance.delete(`/equipo/${teamId}`)
-        .then((response) => {
-            setOpenSnackBar(true);
-            setDataAlert({severity:"success", message:'Delete team success!'});
-            setTimeout(() => navigate('/teams'), 2000); // Redirige a la lista de equipos después de 2 segundos
-        }).catch ((err) => {
-            if (err.response && err.response.status === 400) {
-                const { field, message } = err.response.data;
-                if (field) {
-                    setFieldErrors((prev) => ({ ...prev, [field]: message }));
+            .then((response) => {
+                setOpenSnackBar(true);
+                setDataAlert({ severity: "success", message: 'Delete team success!' });
+                setTimeout(() => navigate('/teams'), 2000); // Redirige a la lista de equipos después de 2 segundos
+            }).catch((err) => {
+                if (err.response && err.response.status === 400) {
+                    const { field, message } = err.response.data;
+                    if (field) {
+                        setFieldErrors((prev) => ({ ...prev, [field]: message }));
+                    } else {
+                        setOpenSnackBar(true);
+                        setDataAlert({ severity: "error", message: message });
+                    }
                 } else {
                     setOpenSnackBar(true);
-                    setDataAlert({severity:"error", message:message});
+                    setDataAlert({ severity: "error", message: 'Error update team.' });
                 }
-            } else {
-                setOpenSnackBar(true);
-                setDataAlert({severity:"error", message:'Error update team.'});
-            }
-        });
+            });
         setConfirm(false);
     };
     console.log(team);
     return (
         <LayoutLogin>
             <FormContainerEdit>
-                <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar} anchorOrigin={{ vertical: 'top', horizontal: 'center'}}>
+                <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                     <Alert
                         severity={dataAlert.severity}
                         variant='filled'
-                        sx={{ width: '100%'}}
+                        sx={{ width: '100%' }}
                         onClose={handleCloseSnackBar}
                     >
                         {dataAlert.message}
                     </Alert>
                 </Snackbar>
                 <Card variant="outlined">
-                    <Container sx={{display:'flex', textAlign:'justify', gap:3}}>
-                        <BackButton/>
+                    <Container sx={{ display: 'flex', textAlign: 'justify', gap: 3 }}>
+                        <BackButton />
                         <Typography
                             component="h1"
                             variant="h4"
@@ -278,19 +358,49 @@ export default function EditTeam() {
                             gap: 2,
                         }}
                     >
-                        <FormControl>
-                            <FormLabel htmlFor="file-input">
-                                <Button >
-                                    <CardMedia
-                                        component="img"
-                                        height={120}
-                                        // image={`http://localhost:3000/ai/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
-                                        image={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
-                                        alt={team.name}
-                                    />
-                                </Button>
-                            </FormLabel>
-                        </FormControl>
+                        <ImageButton
+                            component="label"
+                            href={'#'}
+                            focusRipple
+                            key={team.name}
+                            style={{
+                                width: '40%',
+                            }}
+                        >
+                            <ImageSrc style={{ backgroundImage: `url(${URL_SERVER}/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'})` }} />
+                            <ImageBackdrop className="MuiImageBackdrop-root" />
+                            <Image>
+                                <Typography
+                                    component="span"
+                                    variant="subtitle2"
+                                    color="inherit"
+                                    sx={(theme) => ({
+                                        position: 'relative',
+                                        p: 4,
+                                        pt: 2,
+                                        pb: `calc(${theme.spacing(1)} + 6px)`,
+                                    })}
+                                >
+                                    Edit photo
+                                    <ImageMarked className="MuiImageMarked-root" />
+                                </Typography>
+                            </Image>
+                            {/*component input */}
+                            <VisuallyHiddenInput 
+                                type="file"
+                                onChange={handleImageChange}
+                                accept="image/*"
+                            />
+                        </ImageButton>
+                        {/* <CardActionArea sx={{ width: 200, position: "relative" }}>
+                        <CardMedia
+                            component="img"
+                            height={120}
+                            // image={`http://localhost:3000/ai/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
+                            image={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
+                            alt={team.name}
+                        />
+                        </CardActionArea> */}
                         <FormControl>
                             <FormLabel htmlFor="name">Name Team: </FormLabel>
                             <TextField
@@ -310,32 +420,32 @@ export default function EditTeam() {
                         </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="miembros">Members: </FormLabel>
-                            {team.miembros.length>0?
-                            team.miembros.map((member, index) => (
-                                <Box display="flex" alignItems="center" key={index}>
-                                    <FormLabel htmlFor={`miembro-${index}`} sx={{ display: 'none' }}/>
-                                    <TextField
-                                        // error={!!fieldErrors.ubicacion}
-                                        // helperText={fieldErrors.ubicacion}
-                                        // color={!!fieldErrors.ubicacion ? 'error' : 'primary'}
-                                        name={`miembro-${index}`}
-                                        id={`miembro-${index}`}
-                                        autoFocus
-                                        required
-                                        fullWidth
-                                        variant="outlined"
-                                        value={member.user_miembro || ''}
-                                        placeholder={member.user_miembro || ''}
-                                        onChange={(e) => handleMemberChange(index, { ...member, user_miembro: e.target.value })}
-                                        sx={{display:"flex", gap:3}}
-                                    />
-                                    <Button variant="contained" color="error" onClick={() => handleRemoveMember(index)}>
-                                        Delete
-                                    </Button>
-                                </Box>
-                            ))
-                            :
-                                <Typography id={'miembros'} sx={{display:'flex', justifyContent: 'center'}}>No members register.</Typography>
+                            {team.miembros.length > 0 ?
+                                team.miembros.map((member, index) => (
+                                    <Box display="flex" alignItems="center" key={index}>
+                                        <FormLabel htmlFor={`miembro-${index}`} sx={{ display: 'none' }} />
+                                        <TextField
+                                            // error={!!fieldErrors.ubicacion}
+                                            // helperText={fieldErrors.ubicacion}
+                                            // color={!!fieldErrors.ubicacion ? 'error' : 'primary'}
+                                            name={`miembro-${index}`}
+                                            id={`miembro-${index}`}
+                                            autoFocus
+                                            required
+                                            fullWidth
+                                            variant="outlined"
+                                            value={member.user_miembro || ''}
+                                            placeholder={member.user_miembro || ''}
+                                            onChange={(e) => handleMemberChange(index, { ...member, user_miembro: e.target.value })}
+                                            sx={{ display: "flex", gap: 3 }}
+                                        />
+                                        <Button variant="contained" color="error" onClick={() => handleRemoveMember(index)}>
+                                            Delete
+                                        </Button>
+                                    </Box>
+                                ))
+                                :
+                                <Typography id={'miembros'} sx={{ display: 'flex', justifyContent: 'center' }}>No members register.</Typography>
                             }
                         </FormControl>
                         <Input
@@ -351,26 +461,26 @@ export default function EditTeam() {
                         <Button fullWidth variant="contained" color="warning" onClick={handleAddMember}>
                             Add member
                         </Button>
-                        <Box sx={{display:'flex',flexDirection:'row', gap:2}}>
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            onClick={()=>setConfirm(true)}
-                            color='error'
-                        >
-                            Delete Team
-                        </Button>
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color='secondary'
-                        >
-                            Save changes
-                        </Button>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                onClick={() => setConfirm(true)}
+                                color='error'
+                            >
+                                Delete Team
+                            </Button>
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color='secondary'
+                            >
+                                Save changes
+                            </Button>
                         </Box>
                     </Box>
-                    <ConfirmDialog open={openConfirm} handleClose={handleCloseConfirm} handleConfirm={handleDelete} messageTitle={'Are you sure to delete?'}/>
+                    <ConfirmDialog open={openConfirm} handleClose={handleCloseConfirm} handleConfirm={handleDelete} messageTitle={'Are you sure to delete?'} />
                 </Card>
             </FormContainerEdit>
         </LayoutLogin>
