@@ -36,6 +36,7 @@ import StatTournament from './views/Login/Stadistics/StatTournament.jsx';
 import StatTeam from './views/Login/Stadistics/StatTeam.jsx'; 
 //  CRUD PERFIL 
 import ShowProfile from './views/Login/Profile/ShowProfile.jsx'; 
+import EditProfile from './views/Login/Profile/EditProfile.jsx'; 
 //  CRUD IA 
 import ShowAI from './views/Login/AI/ShowAI.jsx'; 
 import IndexAI from './views/Login/AI/IndexAI.jsx'; 
@@ -198,14 +199,14 @@ export default function MyRoute(){
               </AuthRoute>
             }
           />
-          {/* <Route
-            path="/dashboard/perfil/:userName/edit" // Ruta EDIT protegida mediante Police <-
+          <Route
+            path="/dashboard/profile/:userName/edit" // Ruta EDIT protegida mediante Police <-
             element={
               <AuthRoute > 
-                <PerfilEdit />
+                <EditProfile />
               </AuthRoute>
             }
-          />*/}
+          />
           <Route //  < ------------- VIEWS ESTADISTICAS ------------------------------------ >  
             path="/dashboard/statistics" // Ruta INDEX (Equipos con estadisticas <-)
             element={

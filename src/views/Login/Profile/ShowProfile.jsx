@@ -127,6 +127,7 @@ export default function ShowProfile() {
                         <Divider variant="middle" sx={{my:2}}/>
                     </CardContent>
                     <CardActions sx={{display:'center', justifyContent: 'flex-end'}}>
+                        
                         <Fab color='primary' variant="extended" size="small" href={`/dashboard/profile/${user.userName}/edit`}><EditIcon sx={{mr:1}}/>Edit</Fab>
                     </CardActions>
                 </Card>
