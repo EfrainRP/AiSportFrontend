@@ -313,7 +313,7 @@ export default function EditProfile() {
                 </Snackbar>
                 <Card variant="outlined">
                     <Container sx={{ display: 'flex', textAlign: 'justify', gap: 3 }}>
-                        <BackButton />
+                        <BackButton url={`/dashboard/profile/${profile.name}`}/>
                         <Typography
                             component="h1"
                             variant="h4"

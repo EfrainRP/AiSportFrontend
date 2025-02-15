@@ -22,10 +22,12 @@ import Search from "./views/Login/Search/Search.jsx";
 import IndexTournament from './views/Login/Tournaments/IndexTournament.jsx'; // Tournaments Index <-
 import ShowTournament from './views/Login/Tournaments/ShowTournament.jsx';
 import EditTournament from './views/Login/Tournaments/EditTournament.jsx';
+import CreateTournament from './views/Login/Tournaments/CreateTournament.jsx';
 //  CRUD EQUIPOS 
 import IndexTeams from './views/Login/Teams/IndexTeam.jsx'; 
 import ShowTeam from './views/Login/Teams/ShowTeam.jsx'; 
 import EditTeam from './views/Login/Teams/EditTeam.jsx'; 
+import CreateTeam from './views/Login/Teams/CreateTeam.jsx'; 
 //  CRUD PARTIDOS 
 import EditMatch from './views/Login/Matches/EditMatch.jsx'; 
 //  CRUD NOTIFICACIONES 
@@ -127,14 +129,14 @@ export default function MyRoute(){
               </AuthRoute>
             }
           />
-          {/* <Route
+          <Route
             path="/tournament/create" // Ruta create
             element={
               <AuthRoute>
-                <TorneoCreate />
+                <CreateTournament />
               </AuthRoute>
             }
-          />*/}
+          />
           <Route  // < ------------- CRUD EQUIPOS ------------------------------------ >    
             path="/teams"        // Ruta index 
             element={
@@ -159,14 +161,14 @@ export default function MyRoute(){
               </AuthRoute>
             }
           />
-          {/* <Route
+          <Route
             path="/team/create" // Ruta create
             element={
               <AuthRoute>
-                <EquipoCreate />
+                <CreateTeam />
               </AuthRoute>
             }
-          /> */}         
+          />        
           <Route // < ------------- CRUD PARTIDOS ------------------------------------ > 
             path="/match/:tournamentName/:tournamentId/:matchId/edit" // Ruta EDIT protegida mediante Police <-
             element={

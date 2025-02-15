@@ -8,11 +8,11 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 
 
-export default function BackButton() {
+export default function BackButton({url=-1}) {
     const navigate = useNavigate();
     
     return (
-        <IconButton onClick={() => navigate(-1)}><ArrowBackIcon/></IconButton>
+        <IconButton onClick={() => navigate(url)}><ArrowBackIcon/></IconButton>
     );
 }
 

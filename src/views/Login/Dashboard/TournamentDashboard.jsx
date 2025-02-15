@@ -200,7 +200,7 @@ export default function TournamentDashboard () {
   return (
     <LayoutLogin>
       <Container sx={{display: 'center',m:2, gap:'5%'}}>
-        <BackButton/>
+        <BackButton url={`/dashboard`}/>
         <Typography variant='h2'> 
             {`Tournament: ${tournament.name}`}
         </Typography>

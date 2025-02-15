@@ -66,7 +66,7 @@ export default function ShowTeam() {
                 <Card variant="outlined">
                     <CardContent>
                         <Container sx={{...centerJustify, gap: 2}}>
-                            <BackButton/>
+                            <BackButton url={`/teams`}/>
                             <Typography gutterBottom variant="h2" component="div" color='primary' >
                                 {loading?
                                     <Skeleton variant="rounded" width={'30%'} /> 

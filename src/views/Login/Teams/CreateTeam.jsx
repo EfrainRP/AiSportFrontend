@@ -32,7 +32,7 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 
 import axiosInstance from "../../../services/axiosConfig.js";
-import { useParams, useNavigate } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
@@ -169,44 +169,19 @@ const Card = styled(MuiCard)(({ theme }) => ({
     }),
 }));
 
-export default function EditTeam() {
+export default function CreateTeam() {
     const navigate = useNavigate();
     const { loading, setLoading, user } = useAuth();
-    const { teamName, teamId } = useParams();
     const [file, setFile] = React.useState(null);
     const [team, setTeam] = React.useState({
         name: '',
         user_id: user?.userId || '',
-        miembros: [], // Inicializa miembros como un arreglo vacío
+        miembros: ['', ''],// Inicializa miembros como un arreglo vacío
     });
     const [fieldErrors, setFieldErrors] = React.useState({}); // Almacena errores específicos por campo desde el backend
 
     const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
     const [openSnackBar, setOpenSnackBar] = React.useState(false); // Mecanismo snackbar
-
-    const [openConfirm, setConfirm] = React.useState(false); //Mecanismo confirm
-    const handleCloseConfirm = () => { //Boton cancel del dialog
-        setConfirm(false);
-    };
-    React.useEffect(() => {
-        const fetchTeam = async () => {
-            await axiosInstance.get(`/equipo/${teamName}/${teamId}`)
-                .then((response) => {
-                    setTeam({
-                        ...response.data,
-                        miembros: response.data.miembro_equipos || [], // Usar la relación 'miembro_equipos'
-                    });
-                    setDataAlert({ message: null });
-                    setLoading(false);
-                }).catch((err) => {
-                    // console.error('Error loading team:', err);
-                    setLoading(true);
-                    setOpenSnackBar(true);
-                    setDataAlert({ severity: "error", message: 'Error loading team' });
-                })
-        };
-        fetchTeam();
-    }, [teamId]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -228,54 +203,23 @@ export default function EditTeam() {
         setFile(selectedFile);
     };
 
-    const handleAddMember = () => {
-        setTeam((prev) => ({ ...prev, miembros: [...prev.miembros, { user_miembro: '', id: Date.now() }] }));
-    };
-
-    const handleRemoveMember = (index) => {
-        setTeam((prev) => ({
-            ...prev,
-            miembros: prev.miembros.filter((_, i) => i !== index),
-        }));
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFieldErrors({});
-
-        const formData = new FormData();
+console.log(team.miembros);
         // Filtra los miembros vacíos antes de enviar el formulario
-        const memberValidate = team.miembros.filter(member => member.user_miembro.trim() !== '');
+        const memberValidate = team.miembros.filter(member => member.trim() !== '');
         const teamsWithMembers = { ...team, miembros: memberValidate };
 
-        // Agrega los datos del equipo a FormData
-        formData.append('name', teamsWithMembers.name);
-        formData.append('user_id', teamsWithMembers.user_id);
-
-        // Agrega los miembros a ser enviados
-        teamsWithMembers.miembros.forEach((miembro, index) => {
-            formData.append(`miembros[${index}][user_miembro]`, miembro.user_miembro);
-        });
-
-        // Agrega la imagen si se cargo
-        if (file) {
-            formData.append('image', file);
-        }
-
-        // Realizar la solicitud PUT con FormData <-
-        await axiosInstance.put(
-            `/equipo/${teamId}`,
-            formData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data', // Se envia FormData para la carga de la IMG <-
-                },
-            }
+        // Realizar la solicitud
+        await axiosInstance.post(
+            `/equipo/create`,
+            teamsWithMembers,
         )
             .then((response) => {
                 setOpenSnackBar(true);
-                setDataAlert({ severity: "success", message: 'Success update Team!' });
-                setTimeout(() => navigate(`/team/${team.name}/${teamId}`), 2000);
+                setDataAlert({ severity: "success", message: 'Success create team!' });
+                setTimeout(() => navigate(`/teams`), 2000);
             })
             .catch((err) => {
                 if (err.response && err.response.status === 400) {
@@ -288,7 +232,7 @@ export default function EditTeam() {
                     }
                 } else {
                     setOpenSnackBar(true);
-                    setDataAlert({ severity: "error", message: 'Error update team.' });
+                    setDataAlert({ severity: "error", message: 'Error create team.' });
                 }
             })
     };
@@ -300,29 +244,6 @@ export default function EditTeam() {
         setOpenSnackBar(false);
     };
 
-    const handleDelete = async () => {
-        await axiosInstance.delete(`/equipo/${teamId}`)
-            .then((response) => {
-                setOpenSnackBar(true);
-                setDataAlert({ severity: "success", message: 'Delete team success!' });
-                setTimeout(() => navigate('/teams'), 2000); // Redirige a la lista de equipos después de 2 segundos
-            }).catch((err) => {
-                if (err.response && err.response.status === 400) {
-                    const { field, message } = err.response.data;
-                    if (field) {
-                        setFieldErrors((prev) => ({ ...prev, [field]: message }));
-                    } else {
-                        setOpenSnackBar(true);
-                        setDataAlert({ severity: "error", message: message });
-                    }
-                } else {
-                    setOpenSnackBar(true);
-                    setDataAlert({ severity: "error", message: 'Error update team.' });
-                }
-            });
-        setConfirm(false);
-    };
-    console.log(team);
     return (
         <LayoutLogin>
             <FormContainerEdit>
@@ -338,13 +259,13 @@ export default function EditTeam() {
                 </Snackbar>
                 <Card variant="outlined">
                     <Container sx={{ display: 'flex', textAlign: 'justify', gap: 3 }}>
-                        <BackButton url={`/team/${teamName}/${teamId}`}/>
+                        <BackButton url={`/teams`}/>
                         <Typography
                             component="h1"
                             variant="h4"
                             sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
                         >
-                            Edit {teamName}
+                            Create Team
                         </Typography>
                     </Container>
                     <Box
@@ -359,7 +280,7 @@ export default function EditTeam() {
                         }}
                     >
                         {/* TO DO: Checar el mecanismo de imagen */}
-                        <ImageButton
+                        {/* <ImageButton
                             component="label"
                             href={'#'}
                             focusRipple
@@ -386,22 +307,14 @@ export default function EditTeam() {
                                     <ImageMarked className="MuiImageMarked-root" />
                                 </Typography>
                             </Image>
-                            {/*component input */}
+                            
                             <VisuallyHiddenInput 
                                 type="file"
                                 onChange={handleImageChange}
                                 accept="image/*"
                             />
-                        </ImageButton>
-                        {/* <CardActionArea sx={{ width: 200, position: "relative" }}>
-                        <CardMedia
-                            component="img"
-                            height={120}
-                            // image={`http://localhost:3000/ai/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
-                            image={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
-                            alt={team.name}
-                        />
-                        </CardActionArea> */}
+                        </ImageButton> */}
+                        
                         <FormControl>
                             <FormLabel htmlFor="name">Name Team: </FormLabel>
                             <TextField
@@ -411,8 +324,8 @@ export default function EditTeam() {
                                 fullWidth
                                 required
                                 variant="outlined"
-                                value={team.name}
-                                placeholder={team.name}
+                                // value={team.name}
+                                placeholder={'my Team'}
                                 onChange={handleChange}
                                 error={!!fieldErrors.name} //detecta si tiene algo contenido
                                 helperText={fieldErrors.name}
@@ -421,32 +334,26 @@ export default function EditTeam() {
                         </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="miembros">Members: </FormLabel>
-                            {team.miembros.length > 0 ?
-                                team.miembros.map((member, index) => (
-                                    <Box display="flex" alignItems="center" key={index}>
-                                        <FormLabel htmlFor={`miembro-${index}`} sx={{ display: 'none' }} />
-                                        <TextField
-                                            // error={!!fieldErrors.ubicacion}
-                                            // helperText={fieldErrors.ubicacion}
-                                            // color={!!fieldErrors.ubicacion ? 'error' : 'primary'}
-                                            name={`miembro-${index}`}
-                                            id={`miembro-${index}`}
-                                            autoFocus
-                                            required
-                                            fullWidth
-                                            variant="outlined"
-                                            value={member.user_miembro || ''}
-                                            placeholder={member.user_miembro || ''}
-                                            onChange={(e) => handleMemberChange(index, { ...member, user_miembro: e.target.value })}
-                                            sx={{ display: "flex", gap: 3 }}
-                                        />
-                                        <Button variant="contained" color="error" onClick={() => handleRemoveMember(index)}>
-                                            Delete
-                                        </Button>
-                                    </Box>
-                                ))
-                                :
-                                <Typography id={'miembros'} sx={{ display: 'flex', justifyContent: 'center' }}>No members register.</Typography>
+                            {team.miembros.map((member, index) => (
+                                <Box display="flex" alignItems="center" key={index}>
+                                    <FormLabel htmlFor={`miembro-${index}`} sx={{ display: 'none' }} />
+                                    <TextField
+                                        // error={!!fieldErrors.ubicacion}
+                                        // helperText={fieldErrors.ubicacion}
+                                        // color={!!fieldErrors.ubicacion ? 'error' : 'primary'}
+                                        name={`miembro-${index}`}
+                                        id={`miembro-${index}`}
+                                        autoFocus
+                                        required
+                                        fullWidth
+                                        variant="outlined"
+                                        value={member || ''}
+                                        placeholder={member || `mymember${index+1}`}
+                                        onChange={(e) => handleMemberChange(index, e.target.value)}
+                                        sx={{ display: "flex", gap: 3 }}
+                                    />
+                                </Box>
+                            ))
                             }
                         </FormControl>
                         <Input
@@ -459,18 +366,7 @@ export default function EditTeam() {
                             sx={{ display: 'none' }}
                             id="file-input"
                         />
-                        <Button fullWidth variant="contained" color="warning" onClick={handleAddMember}>
-                            Add member
-                        </Button>
                         <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-                            <Button
-                                fullWidth
-                                variant="contained"
-                                onClick={() => setConfirm(true)}
-                                color='error'
-                            >
-                                Delete Team
-                            </Button>
                             <Button
                                 type="submit"
                                 fullWidth
@@ -481,7 +377,6 @@ export default function EditTeam() {
                             </Button>
                         </Box>
                     </Box>
-                    <ConfirmDialog open={openConfirm} handleClose={handleCloseConfirm} handleConfirm={handleDelete} messageTitle={'Are you sure to delete?'} />
                 </Card>
             </FormContainerEdit>
         </LayoutLogin>

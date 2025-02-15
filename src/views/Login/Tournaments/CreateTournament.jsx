@@ -33,7 +33,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
-import LoadingView from '../../../components/Login/LoadingView.jsx';
 import ConfirmDialog from '../../../components/Login/ConfirmDialog.jsx';
 import BackButton from '../../../components/Login/BackButton.jsx';
 
@@ -86,10 +85,9 @@ const Card = styled(MuiCard)(({ theme }) => ({
     }),
 }));
 
-export default function EditTournament() {
+export default function CreateTournament() {
     const navigate = useNavigate();
-    const {loading, setLoading}  = useAuth();
-    const { tournamentName, tournamentId } = useParams();
+    const {loading, setLoading, user}  = useAuth();
     const [tournament, setTournament] = React.useState({
         name: '',
         ubicacion: '',
@@ -102,28 +100,6 @@ export default function EditTournament() {
 
     const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
     const [openSnackBar, setOpenSnackBar] = React.useState(false); // Mecanismo snackbar
-    
-    const [openConfirm, setConfirm] = React.useState(false); //Mecanismo confirm
-    const handleCloseConfirm = () => { //Boton cancel del dialog
-        setConfirm(false);
-    };
-
-    React.useEffect(() => {
-        const fetchTournament = async () => {
-            await axiosInstance.get(`/torneo/${tournamentName}/${tournamentId}`)
-                .then((response) => {
-                    setTournament(response.data);
-                    setDataAlert({message:null});
-                    setLoading(false);
-                }).catch((err) => {
-                    // console.error('Error loading tournament:', err);
-                    setLoading(true);
-                    setOpenSnackBar(true);
-                    setDataAlert({severity:"error", message:'Error loading tournament'});
-                })
-        };
-        fetchTournament();
-    }, [tournamentId]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -138,11 +114,13 @@ export default function EditTournament() {
         e.preventDefault();
         setFieldErrors({});
         // console.log(tournament);
-        await axiosInstance.put(`/torneo/${tournamentId}`, tournament) //TO DO: check the request, no working
+        // Incluye el userId en el objeto torneo antes de enviarlo
+        const tournamentData = { ...tournament, userId: user.userId };
+        await axiosInstance.post(`/torneo/create`, tournamentData) //TO DO: check the request, no working
             .then((response) => {
                 setOpenSnackBar(true);
-                setDataAlert({severity:"success", message:'Success update Tournament!'});
-                setTimeout(() => navigate(`/tournament/${tournament.name}/${tournamentId}}`), 2000);
+                setDataAlert({severity:"success", message:'Success create tournament!'});
+                setTimeout(() => navigate(`/tournament`), 2000);
             })
             .catch((err) => {
                 // console.log(err);
@@ -167,24 +145,7 @@ export default function EditTournament() {
         }
         setOpenSnackBar(false);
     };
-
-    const handleDelete = async () => { // Metodo DELETE <- //Boton confirm del dialog
-        await axiosInstance.delete(`/torneo/${tournamentId}`)
-        .then((response) => {
-            setOpenSnackBar(true);
-            setDataAlert({severity:"success", message:'Delete tournament success!'});
-            setTimeout(() => navigate('/tournaments'), 2000); // Redirige a la lista de torneos después de 2 segundos
-        }).catch ((err) => {
-            setOpenSnackBar(true);
-            setDataAlert({severity:"error", message:'Error delete tournament.'});
-            // console.error(err);
-        });
-        setConfirm(false);
-    };
     
-    const [homeTeam, setHomeTeam] = React.useState(""); //Autocomplete home team
-    const [guestTeam, setGuestTeam] = React.useState(""); //Autocomplete guest team
-
     return (
         <LayoutLogin>
             <FormContainerEdit>
@@ -200,13 +161,13 @@ export default function EditTournament() {
                 </Snackbar>
                 <Card variant="outlined">
                     <Container sx={{display:'flex', textAlign:'justify', gap:5}}>
-                        <BackButton url={`/tournament/${tournamentName}/${tournamentId}`}/>
+                        <BackButton/>
                         <Typography
-                            component="h1"
-                            variant="h4"
+                            // component="h1"
+                            variant="h1"
                             sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
                         >
-                            Edit {tournamentName}
+                            Create Tournament
                         </Typography>
                     </Container>
                     
@@ -230,8 +191,8 @@ export default function EditTournament() {
                                 fullWidth
                                 required
                                 variant="outlined"
-                                value={tournament.name}
-                                placeholder={tournament.name}
+                                
+                                placeholder={'myTournament'}
                                 onChange={handleChange}
                                 error={!!fieldErrors.name} //detecta si tiene algo contenido
                                 helperText={fieldErrors.name}
@@ -246,7 +207,6 @@ export default function EditTournament() {
                                 color={!!fieldErrors.ubicacion ? 'error' : 'primary'}
                                 name="ubicacion"
                                 id="ubicacion"
-                                autoFocus
                                 required
                                 fullWidth
                                 variant="outlined"
@@ -321,25 +281,16 @@ export default function EditTournament() {
                             />
                         </FormControl>
                         <Box sx={{display:'flex',flexDirection:'row', gap:2}}>
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            onClick={()=>setConfirm(true)}
-                            color='error'
-                        >
-                            Delete Tournament
-                        </Button>
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color='secondary'
-                        >
-                            Save changes
-                        </Button>
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color='secondary'
+                            >
+                                Save changes
+                            </Button>
                         </Box>
                     </Box>
-                    <ConfirmDialog open={openConfirm} handleClose={handleCloseConfirm} handleConfirm={handleDelete} messageTitle={'Are you sure to delete?'}/>
                 </Card>
             </FormContainerEdit>
         </LayoutLogin>

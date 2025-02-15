@@ -92,7 +92,7 @@ export default function TeamDashboard () {
         <Card sx={{minWidth:280, width:'80%'}}>
           <CardContent>
             <Container sx={{...centerJustify, alignItems:'center'}}>
-            <BackButton/>
+            <BackButton url={`/dashboard`}/>
               <Container>
                 <Container sx={centerJustify}>
                   <Typography variant="h5" color='primary'>

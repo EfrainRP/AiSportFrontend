@@ -214,7 +214,7 @@ export default function ShowTournament() {
         <LayoutLogin>
             
             <Container sx={{...centerJustify}}>
-                <BackButton/>
+                <BackButton url={`/tournaments`}/>
                 <Typography gutterBottom variant="h2" component="div" sx={{ml:2}}>
                     {loading?
                         <Skeleton variant="rounded" width={'30%'} /> 
