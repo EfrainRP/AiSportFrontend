@@ -280,7 +280,7 @@ export default function ShowTournament() {
                         </CardContent>
                         <CardActions sx={{display: 'flex', justifyContent:'center'}}>
                             <Fab variant="extended" color='info' size="small" href={`/tournament/${tournamentName}/${tournamentId}/edit`} sx={{color:'white'}}><EditIcon sx={{ mr: 1 }}/> Edit</Fab>
-                            <Fab variant="extended" color='success' size="small" href={`/partido/create/${tournamentName}/${tournamentId}`}> <AddIcon sx={{ mr: 1 }}/> match</Fab>
+                            <Fab variant="extended" color='success' size="small" href={`/match/create/${tournamentName}/${tournamentId}`}> <AddIcon sx={{ mr: 1 }}/> match</Fab>
                             <Fab variant="extended" color='warning' size="small" href={`/tournament/${tournamentName}/${tournamentId}/stats`}><EqualizerIcon sx={{ mr: 1 }}/> Stats</Fab>
                         </CardActions>
                     </Card>
