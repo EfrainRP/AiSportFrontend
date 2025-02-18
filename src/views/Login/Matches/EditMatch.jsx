@@ -34,7 +34,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
-import LoadingView from '../../../components/Login/LoadingView.jsx';
+import BackButton from '../../../components/Login/BackButton.jsx';
 
 const FormContainerEdit = styled(Stack)(({ theme }) => ({
     // height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
@@ -91,36 +91,40 @@ export default function EditMatch() {
     const navigate = useNavigate();
 
     const [allTeams, setAllTeams] = React.useState([]);
-    const [formNames, setNames] = React.useState({
-        homeTeam: '',
-        guestTeam: '',
-    });
-
     const [formData, setFormData] = React.useState({
-        homeTeamId: '',
-        guestTeamId: '',
-        timeMatch: '',
-        dateMatch: '',
-        session: '',
-        resHome: 0,
-        resGuest: 0,
+        equipoLocalId: '',
+        equipoVisitanteId: '',
+        horaPartido: '',
+        fechaPartido: '',
+        jornada: '',
+        resLocal: 0,
+        resVisitante: 0,
     });
+    const [formTeam, setFormTeam] = React.useState({ //Autocomplete teams
+        equipoLocal:'',
+        equipoVisitante: '',
+    }); 
 
-    const [errors, setErrors] = React.useState({});
-    const [successMessage, setSuccessMessage] = React.useState('');
-    const [generalError, setGeneralError] = React.useState('');
-
+    const [fieldErrors, setFieldErrors] = React.useState({}); // Almacena errores específicos por campo desde el backend
+    const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
+    const [openSnackBar, setOpenSnackBar] = React.useState(false); // Mecanismo snackbar
+    const handleCloseSnackBar = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnackBar(false);
+    };
     // useEffect para hacer petición automática de los datos del torneo, partidos y notificaciones
     React.useEffect(() => {
         const fetchAllTeams = async () => {
             await axiosInstance.get(`/equipos/torneo/${tournamentId}`)
                 .then((response) => {
                     setAllTeams(response.data);
-                    setErrors(null);
+                    setFieldErrors(null);
                 }).catch((err) => {
                     console.error('Error loading teams:', err);
                     setLoading(true);
-                    setErrors("Error loading teams");
+                    setFieldErrors("Error loading teams");
                 })
         };
 
@@ -151,11 +155,11 @@ export default function EditMatch() {
                         resHome: match.resLocal || 0,
                         resGuest: match.resVisitante || 0,
                     });
-                    setErrors(null);
+                    setFieldErrors(null);
                 }).catch((err) => {
                     console.error('Error loading data matches:', err);
                     setLoading(true);
-                    setErrors("Error loading data matches");
+                    setFieldErrors("Error loading data matches");
                 })
         };
 
@@ -169,7 +173,7 @@ export default function EditMatch() {
             ...formData,
             [name]: value,
         });
-        setErrors((prevErrors) => ({ ...prevErrors, [name]: null }));
+        setFieldErrors((prevErrors) => ({ ...prevErrors, [name]: null }));
     };
 
     const handleSubmit = async (e) => {
@@ -190,131 +194,32 @@ export default function EditMatch() {
             })
     };
 
-    const [homeTeam, setHomeTeam] = React.useState(formNames.homeTeam); //Autocomplete home team
-    const [guestTeam, setGuestTeam] = React.useState(""); //Autocomplete guest team
     console.log(allTeams);
     return (
-    //     <LayoutLogin>
-    //         <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'40%'} /> : 'Tournament Details'} </Typography>
-
-    //         {loading ?
-    //             <Skeleton variant="rounded" width={'40%'} />
-    //             :
-    //             <Card variant="outlined">
-    //                 <CardContent>
-    //                     <Typography gutterBottom variant="h5" component="div">
-    //                         {tournaments.name}
-    //                     </Typography>
-    //                     <Typography><strong>Location:</strong> {tournaments.ubicacion}</Typography>
-    //                     <Typography><strong>Description:</strong> {tournaments.descripcion}</Typography>
-    //                     <Typography><strong>Start Date:</strong> {new Date(tournaments.fechaInicio).toLocaleDateString()}</Typography>
-    //                     <Typography><strong>End Date:</strong> {new Date(tournaments.fechaFin).toLocaleDateString()}</Typography>
-    //                     <Typography><strong>Total Teams:</strong> {tournaments.cantEquipo}</Typography>
-    //                 </CardContent>
-    //                 <CardActions>
-    //                     <Button size="small" href={`/tournament/${tournamentName}/${tournamentId}/edit`}>Edit</Button>
-    //                     <Button size="small" href={`/partido/create/${tournamentName}/${tournamentId}`}>Create match</Button>
-    //                     <Button size="small" href={`/tournament/${tournamentName}/${tournamentId}stats`}>See statistics</Button>
-    //                 </CardActions>
-    //             </Card>
-    //         }
-
-    //         <h2>Notificaciones del Torneo</h2>
-    //         <div>
-    //             {notificaciones.length > 0 ? (
-    //                 notificaciones.map((notificacion) => (
-    //                     <div key={notificacion.id} style={{ marginBottom: '20px', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}>
-    //                         <p><strong>Equipo:</strong> {notificacion.equipos.name}</p>
-    //                         <p><strong>Usuario:</strong> {notificacion.users_notifications_user_idTousers.name}</p>
-    //                         <p><strong>Email:</strong> {notificacion.users_notifications_user_idTousers.email}</p>
-    //                         <p><strong>Status:</strong> {notificacion.status}</p>
-
-    //                         {/* Botones para aceptar o denegar la notificación */}
-    //                         {notificacion.status === 'pending' && (
-    //                             <div>
-    //                                 <button onClick={() => handleNotificacionResponse(notificacion.id, 'accepted')}>Aceptar</button>
-    //                                 <button onClick={() => handleNotificacionResponse(notificacion.id, 'rejected')}>Denegar</button>
-    //                             </div>
-    //                         )}
-    //                     </div>
-    //                 ))
-    //             ) : (
-    //                 <p>No hay notificaciones pendientes para este torneo.</p>
-    //             )}
-    //         </div>
-
-    //         <h2>Partidos del Torneo</h2>
-    //         <div>
-    //             {isValidEquipoCount ? ( // Si es un torneo valido (4,8,16,32) genera los brackets <-
-    //                 // Brakets contiene los partidos como: brackets = [
-    //                 // [{ partido1, partido2 }, { partido3, partido4 }],  // Ronda 1
-    //                 //[{ partido5, partido6 }],  // Ronda 2
-    //                 //[{ partido7 }]  // Ronda 3
-    //                 brackets.map((round, index) => ( // "Map" itera en el array, y "Round" es un array de "partidos" por ronda
-    //                     <div key={index}>     {/* Index indica la Ronda actual <- donde "key" actualiza el DOM (Interfaz de programacion) dinamicamente */}
-    //                         <h3>Ronda {index + 1}</h3>
-    //                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-    //                             {round.map((partido, partidoIndex) => (
-    //                                 <div
-    //                                     key={partidoIndex}
-    //                                     style={{
-    //                                         marginBottom: '20px',
-    //                                         border: '1px solid #ccc',
-    //                                         padding: '10px',
-    //                                         borderRadius: '5px',
-    //                                         width: '48%',
-    //                                     }}
-    //                                 >
-    //                                     <p><strong>Fecha del Partido:</strong> {new Date(partido.fechaPartido).toISOString().split('T')[0]}</p>
-    //                                     <p><strong>Hora:</strong> {new Date(partido.horaPartido).toLocaleTimeString()}</p>
-    //                                     <img
-    //                                         src={`http://localhost:5000/AiSport/api/utils/uploads/${partido.equipoLocal.image !== 'logoEquipo.jpg' ? partido.equipoLocal.image : 'logoEquipo.jpg'}`}
-    //                                         alt="Perfil"
-    //                                         style={{ width: '120px', height: '50px' }} // Size IMG
-    //                                     />
-    //                                     <p><strong>Equipo Local:</strong> {partido.equipoLocal.name}</p>
-    //                                     <img
-    //                                         src={`http://localhost:5000/AiSport/api/utils/uploads/${partido.equipoVisitante.image !== 'logoEquipo.jpg' ? partido.equipoVisitante.image : 'logoEquipo.jpg'}`}
-    //                                         alt="Perfil"
-    //                                         style={{ width: '120px', height: '50px' }} // Size IMG
-    //                                     />
-    //                                     <p><strong>Equipo Visitante:</strong> {partido.equipoVisitante.name}</p>
-
-    //                                     <p><strong>Resultado:</strong> {partido.resLocal} - {partido.resVisitante}</p>
-    //                                     {/* Botones de Editar y Eliminar */}
-    //                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-    //                                         <button onClick={() => handleEditar(partido.id)}>Editar</button>
-    //                                         <button onClick={() => handleEliminar(partido.id)}>Eliminar</button>
-    //                                     </div>
-    //                                 </div>
-    //                             ))}
-    //                         </div>
-    //                     </div>
-    //                 ))
-    //             ) : (
-    //                 <p>No hay partidos programados para este torneo o la cantidad de equipos no es válida.</p>
-    //             )}
-
-    //             {/* Mostrar ganador final solo si todos los partidos están completos, (se llego a cantEquipo-1)*/}
-    //             {isValidPartidosCount && partidos.length > 0 && (
-    //                 <div>
-    //                     <h3>Ganador Final del Torneo</h3>
-    //                     <p><strong>Campeón:</strong> {getWinner(partidos[partidos.length - 1])}</p>
-    //                 </div>
-    //             )}
-    //         </div>
-    //     </LayoutLogin>
-    // );
         <LayoutLogin>
             <FormContainerEdit>
-                <Card variant="outlined">
-                    <Typography
-                        component="h1"
-                        variant="h4"
-                        sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+                <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar} anchorOrigin={{ vertical: 'top', horizontal: 'center'}}>
+                    <Alert
+                        severity={dataAlert.severity}
+                        variant='filled'
+                        sx={{ width: '100%'}}
+                        onClose={handleCloseSnackBar}
                     >
-                        Edit Match
-                    </Typography>
+                        {dataAlert.message}
+                    </Alert>
+                </Snackbar>
+                <Card variant="outlined">
+                    <Container sx={{display:'flex', textAlign:'justify', gap:5}}>
+                        <BackButton/>
+                        <Typography
+                            component="h1"
+                            variant="h2"
+                            sx={{fontSize: '160%' }}
+                        >
+                            Edit match to {tournamentName} Tournament
+                        </Typography>
+                    </Container>
+                    
                     <Box
                         component="form"
                         onSubmit={handleSubmit}
@@ -327,133 +232,156 @@ export default function EditMatch() {
                         }}
                     >
                         <FormControl>
-                            <FormLabel htmlFor="homeTeam">Home Team</FormLabel>
+                            <FormLabel htmlFor="homeTeam">Home Team:</FormLabel>
                             <Autocomplete
                                 autoComplete
                                 autoSelect
                                 includeInputInList
                                 selectOnFocus
-                                inputValue={formData["homeTeamId"]? formData["homeTeamId"] : ""}
-                                onChange={(event, newValue) => {
-                                    const { name, value } = e.target;
+                                // inputValue={homeTeam}
+                                // onInputChange={(event, newInputValue) => {
+                                //     setHomeTeam(newInputValue)}}
+                                // value={homeTeam}
+                                onChange={(e, newValue) => {
+                                    // setHomeTeam(newValue);
                                     setFormData({
                                         ...formData,
-                                        [name]: value,
+                                        equipoLocalId: newValue?.id,
                                     });
                                 }}
                                 options={allTeams}
-                                getOptionLabel={(option)=>option.name} // Muestra el nombre como etiqueta
-                                isOptionEqualToValue={(option, value) => option.id === value.id} // Compara por `id`
+                                getOptionLabel={(option)=>option?.name?? "The HomeTeam"} // Muestra el nombre como etiqueta
+                                isOptionEqualToValue={(option, value) => option?.id === value.id} // Compara por `id`
                                 renderInput={(params) => 
-                                    <TextField {...params} label="Home Team" 
-                                    error={errors.equipo}
-                                    helperText={errors.equipo}
+                                    <TextField {...params}
+                                    placeholder='MyHomeTeam name'
+                                    error={!!fieldErrors.equipo}
+                                    helperText={fieldErrors.equipo}
                                     variant="outlined"
-                                    color={errors.equipo ? 'error' : 'primary'}
+                                    color={!!fieldErrors.equipo ? 'error' : 'primary'}
                                     />}
                             />
                         </FormControl>
-                        {/* <FormControl>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <FormLabel htmlFor="password">Password</FormLabel>
-                                <Link
-                                    component="button"
-                                    type="button"
-                                    onClick={handleClickOpen}
-                                    onChange={passwordValidate}
-                                    variant="body2"
-                                    sx={{ alignSelf: 'baseline' }}
-                                >
-                                    Forgot your password?
-                                </Link>
-                            </Box>
+                        <FormControl>
+                            <FormLabel htmlFor="guestTeam">Guest Team:</FormLabel>
+                            <Autocomplete
+                                autoComplete
+                                autoSelect
+                                includeInputInList
+                                selectOnFocus
+                                // inputValue={guestTeam}
+                                // onInputChange={(event, newInputValue) => {
+                                //     setGuestTeam(newInputValue)}}
+                                // value={formData.equipoVisitanteId}
+                                onChange={(e, newValue) => {
+                                    setFormData({
+                                        ...formData,
+                                        equipoVisitanteId: newValue?.id,
+                                    });
+                                }}
+                                options={allTeams}
+                                getOptionLabel={(option)=>option?.name?? "The GuestTeam"} // Muestra el nombre como etiqueta
+                                isOptionEqualToValue={(option, value) => option?.id === value.id} // Compara por `id`
+                                renderInput={(params) => 
+                                    <TextField {...params}
+                                    placeholder='MyGuestTeam name'
+                                    error={!!fieldErrors.equipo}
+                                    helperText={fieldErrors.equipo}
+                                    variant="outlined"
+                                    color={!!fieldErrors.equipo ? 'error' : 'primary'}
+                                    />}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel htmlFor="horaPartido">Match time: </FormLabel>
                             <TextField
-                                error={passwordError}
-                                helperText={passwordErrorMessage}
-                                name="password"
-                                placeholder="••••••"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
-                                autoFocus
-                                required
+                                error={!!fieldErrors.horaPartido}
+                                helperText={fieldErrors.horaPartido}
+                                color={!!fieldErrors.horaPartido ? 'error' : 'primary'}
+                                name="horaPartido"
+                                id="horaPartido"
+                                type="time"
                                 fullWidth
+                                required
                                 variant="outlined"
-                                color={passwordError ? 'error' : 'primary'}
+                                value={formData.horaPartido}
+                                onChange={handleInputChange}
                             />
-                            <FormControlLabel
-                                control={<Checkbox value="remember" color="primary" />}
-                                label="Remember me"
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel htmlFor="fechaPartido">Match time: </FormLabel>
+                            <TextField
+                                error={!!fieldErrors.fechaPartido}
+                                helperText={fieldErrors.fechaPartido}
+                                color={!!fieldErrors.fechaPartido ? 'error' : 'primary'}
+                                name="fechaPartido"
+                                id="fechaPartido"
+                                type="date"
+                                fullWidth
+                                required
+                                variant="outlined"
+                                value={formData.fechaPartido}
+                                onChange={handleInputChange}
                             />
-                            <ForgotPassword open={open} handleClose={handleClose} />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel htmlFor="jornada">Match day: </FormLabel>
+                            <TextField
+                                error={!!fieldErrors.jornada}
+                                helperText={fieldErrors.jornada}
+                                color={!!fieldErrors.jornada ? 'error' : 'primary'}
+                                name="jornada"
+                                id="jornada"
+                                type="date"
+                                fullWidth
+                                required
+                                variant="outlined"
+                                value={formData.jornada}
+                                onChange={handleInputChange}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel htmlFor="resLocal">Home result: </FormLabel>
+                            <TextField
+                                error={!!fieldErrors.resLocal}
+                                helperText={fieldErrors.resLocal}
+                                color={!!fieldErrors.resLocal ? 'error' : 'primary'}
+                                name="resLocal"
+                                id="resLocal"
+                                type="number"
+                                fullWidth
+                                required
+                                variant="outlined"
+                                value={formData.resLocal}
+                                onChange={handleInputChange}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel htmlFor="resVisitante">Guest result: </FormLabel>
+                            <TextField
+                                error={!!fieldErrors.resVisitante}
+                                helperText={fieldErrors.resVisitante}
+                                color={!!fieldErrors.resVisitante ? 'error' : 'primary'}
+                                name="resVisitante"
+                                id="resVisitante"
+                                type="number"
+                                fullWidth
+                                required
+                                variant="outlined"
+                                value={formData.resVisitante}
+                                onChange={handleInputChange}
+                            />
+                        </FormControl>
+                        <Box sx={{display:'flex',flexDirection:'row', gap:2}}>
                             <Button
                                 type="submit"
                                 fullWidth
                                 variant="contained"
-                                onClick={() => { emailValidate(); passwordValidate(); }}
+                                color='secondary'
                             >
-                                Sign in
+                                Create Match
                             </Button>
-                        </FormControl>
-                        <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar}
-                            anchorOrigin={{ vertical: 'top', horizontal: 'center' }} key={{ vertical: 'top' } + { horizontal: 'center' }}>
-                            <Alert
-                                onClose={handleCloseSnackBar}
-                                severity="error"
-                            // sx={[
-                            //   (theme) => ({
-                            //     backgroundColor: theme.palette.error.light,
-                            //     border: `2px solid ${theme.palette.error.light}`,
-                            //     ...theme.applyStyles('dark', {
-                            //       backgroundColor: theme.palette.error.main,
-                            //       border: `2px solid ${theme.palette.error.main}`,
-                            //     }),
-                            //     '&:hover': {
-                            //       boxShadow: theme.shadows[2],
-                            //       backgroundColor: theme.palette.error.main,
-                            //       border: `2px solid ${theme.palette.error.main}`,
-                            //       ...theme.applyStyles('dark', {
-                            //         backgroundColor: theme.palette.error.dark,
-                            //         border: `2px solid ${theme.palette.error.dark}`
-                            //       }),
-                            //     },
-                            //   }),
-                            // ]}
-                            >
-                                {messageSignIn}
-                            </Alert>
-                        </Snackbar>
-                        <Typography sx={{ textAlign: 'center' }}>
-                            Don&apos;t have an account?{' '}
-                            <span>
-                                <Link
-                                    href="/signup"
-                                    variant="body2"
-                                    sx={{ alignSelf: 'center' }}
-                                >
-                                    Sign up
-                                </Link>
-                            </span>
-                        </Typography>
-                    </Box>
-                    <Divider>or</Divider>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                        <Button
-                            fullWidth
-                            variant="outlined"
-                            onClick={() => alert('Sign in with Google')}
-                            startIcon={<GoogleIcon />}
-                        >
-                            Sign in with Google
-                        </Button>
-                        <Button
-                            fullWidth
-                            variant="outlined"
-                            onClick={() => alert('Sign in with Facebook')}
-                            startIcon={<FacebookIcon />}
-                        >
-                            Sign in with Facebook
-                        </Button> */}
+                        </Box>
                     </Box>
                 </Card>
             </FormContainerEdit>

@@ -101,6 +101,8 @@ export default function CreateMatch() {
         resLocal: 0,
         resVisitante: 0,
     });
+    // const [homeTeam, setHomeTeam] = React.useState(''); //Autocomplete home team
+    // const [guestTeam, setGuestTeam] = React.useState(''); //Autocomplete guest team
 
     const [fieldErrors, setFieldErrors] = React.useState({}); // Almacena errores específicos por campo desde el backend
     const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
@@ -157,8 +159,6 @@ export default function CreateMatch() {
             })
     };
 
-    const [homeTeam, setHomeTeam] = React.useState(''); //Autocomplete home team
-    const [guestTeam, setGuestTeam] = React.useState(''); //Autocomplete guest team
     console.log(formData);
 
     if(fieldErrors.cantPartidos){
