@@ -115,17 +115,17 @@ export default function CreateMatch() {
     };
 
     React.useEffect(() => {
-        const fetchAllTeams = async () => {
-            await axiosInstance.get(`/equipos/torneo/${tournamentId}`)
+        const fetchAllTeams = async () => { // TO DO: error si no hay torenos registrados
+            await axiosInstance.get(`equipos/torneo/${tournamentId}`)
                 .then((response) => {
+                    setLoading(false);
+                    console.log(response.data);
                     setAllTeams(response.data);
                     setDataAlert({message:null});
-                    setLoading(false);
                 }).catch((err) => {
-                    console.error('Error loading teams:', err);
                     setLoading(true);
-                    setOpenSnackBar(true);
                     setDataAlert({severity:"error", message:'Error loading teams'});
+                    setOpenSnackBar(true);
                 })
         };
 
@@ -280,7 +280,7 @@ export default function CreateMatch() {
                             />
                         </FormControl>
                         <FormControl>
-                            <FormLabel htmlFor="fechaPartido">Match time: </FormLabel>
+                            <FormLabel htmlFor="fechaPartido">Match date: </FormLabel>
                             <TextField
                                 error={!!fieldErrors.fechaPartido}
                                 helperText={fieldErrors.fechaPartido}
