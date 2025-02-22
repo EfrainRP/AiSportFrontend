@@ -120,10 +120,10 @@ export default function CreateTournament() {
             .then((response) => {
                 setOpenSnackBar(true);
                 setDataAlert({severity:"success", message:'Success create tournament!'});
-                setTimeout(() => navigate(`/tournament`), 2000);
+                setTimeout(() => navigate(`/tournaments`), 2000);
             })
             .catch((err) => {
-                // console.log(err);
+                console.log(err);
                 if (err.response && err.response.status === 400) {
                     const { field, message } = err.response.data;
                     if (field) {
@@ -134,7 +134,7 @@ export default function CreateTournament() {
                     }
                 } else {
                     setOpenSnackBar(true);
-                    setDataAlert({severity:"error", message:'Error update tournament.'});
+                    setDataAlert({severity:"error", message:'Error create tournament.'});
                 }
             })
     };
@@ -192,7 +192,7 @@ export default function CreateTournament() {
                                 required
                                 variant="outlined"
                                 
-                                placeholder={'myTournament'}
+                                placeholder='myTournament'
                                 onChange={handleChange}
                                 error={!!fieldErrors.name} //detecta si tiene algo contenido
                                 helperText={fieldErrors.name}
@@ -210,8 +210,8 @@ export default function CreateTournament() {
                                 required
                                 fullWidth
                                 variant="outlined"
+                                placeholder='anyLocation'
                                 value={tournament.ubicacion}
-                                placeholder={tournament.ubicacion}
                                 onChange={handleChange}
                             />
                         </FormControl>
@@ -227,6 +227,7 @@ export default function CreateTournament() {
                                     "& .MuiInputBase-root": { minHeight: "7rem" },
                                 }}
                                 multiline
+                                placeholder='Any description about tournament'
                                 rows={5}
                                 defaultValue={tournament.descripcion || ""}
                                 onChange={handleChange}
