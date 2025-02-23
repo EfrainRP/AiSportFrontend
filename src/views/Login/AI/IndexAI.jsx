@@ -131,6 +131,15 @@ export default function IndexAI() {
                     <Typography variant='h6'>
                         Choose your team to upgrade or add their stats:
                     </Typography>
+                    <Typography 
+                        component='label' 
+                        variant='subtitle2' 
+                        sx={[( theme ) => ({
+                            color: (theme.vars || theme).palette.grey[400],
+                            my:-1
+                        })]}>
+                            Choose a team:
+                    </Typography>
                     <Autocomplete
                         autoComplete
                         autoSelect
@@ -144,7 +153,8 @@ export default function IndexAI() {
                             setSelectedTeam(newValue || null);
                         }}
                         size="medium"
-                        renderInput={(params) => <TextField {...params} label="Choose a team" sx={{fontSize: '1px'}}/>}
+                        renderInput={(params) => <TextField {...params} sx={{fontSize: '1px'}}
+                        placeholder={'Select any team'}/>}
                     />
                     {selectedTeam && 
                         <CardActions sx={{display:'flex', justifyContent:'flex-end'}}>

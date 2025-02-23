@@ -156,7 +156,7 @@ export const getDesignTokens = (mode) => {
       },
       divider: mode === 'dark' ? alpha(gray[700], 0.6) : alpha(gray[300], 0.4),
       background: {
-        default: 'hsl(0, 0%, 99%)',
+        default: gray[100],
         paper: 'hsl(220, 35%, 97%)',
         ...(mode === 'dark' && { default: gray[900], paper: 'hsl(220, 30%, 7%)' }),
       },
@@ -275,8 +275,8 @@ export const colorSchemes = {
       },
       divider: alpha(gray[800], 0.3),
       background: {
-        default: 'rgba(228, 228, 228, 0.65)', //rgba(171, 167, 165, 0.85)
-        paper: 'rgba(182, 179, 176, 0.74)',
+        default: 'rgba(217, 217, 217, 0.95)', //rgba(171, 167, 165, 0.85)
+        paper: 'rgb(168, 166, 166)', //Edited
       },
       text: { //Edited form text
         primary: gray[800],
@@ -285,8 +285,8 @@ export const colorSchemes = {
         data: gray[50],
       },
       action: {
-        hover: 'rgba(250, 165, 128, 0.44)',
-        selected: 'rgba(245, 131, 82, 0.68)',
+        hover: 'rgba(250, 165, 128, 0.83)',
+        selected: 'rgba(245, 131, 82, 0.88)',
       },
       baseShadow:
         'hsla(224, 15.50%, 13.90%, 0.07) 0px 4px 16px 0px, hsla(222, 12.80%, 15.30%, 0.07) 0px 8px 16px -5px',
