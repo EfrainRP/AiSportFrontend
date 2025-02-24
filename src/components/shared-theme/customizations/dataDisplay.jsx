@@ -197,6 +197,22 @@ export const dataDisplayCustomizations = {
       }),
     },
   },
+  MuiTable: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        '& .MuiTableCell-head': { 
+          backgroundColor: 'rgba(140, 176, 208, 0.89)',
+          ...theme.applyStyles('dark', {
+            backgroundColor: 'rgba(7, 56, 99, 0.76)',},
+        )},
+        // '& .MuiTableCell-body': { 
+        //   backgroundColor: 'rgb(170, 86, 44)',
+        //   ...theme.applyStyles('dark', {
+        //     backgroundColor: 'rgb(170, 86, 44)',},
+        // )}
+      }),
+    },
+  },
   MuiTablePagination: {
     styleOverrides: {
       actions: {

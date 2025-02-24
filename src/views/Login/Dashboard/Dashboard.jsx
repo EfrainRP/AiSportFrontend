@@ -338,12 +338,11 @@ export default function Dashboard() {
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{backgroundColor: 'rgb(171, 167, 165)'}}> {/*Celda para el numero de elementos de la tabla, lo cual esta vacia*/}
+                    <TableCell > {/*Celda para el numero de elementos de la tabla, lo cual esta vacia*/}
                       {""}
                     </TableCell>
                     {columns.map((column) => (
                       <TableCell
-                        sx={{backgroundColor: 'rgb(171, 167, 165)'}}
                         key={column.extraIndex? column.id+'.'+column.extraIndex : column.id}
                         align={column.align}
                         style={{ minWidth: column.minWidth }}
