@@ -31,12 +31,13 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-export default function DialogComponent({modalTittle, modalBody, open, handleClose}) {
+export default function DialogComponent({modalTittle, modalBody, open, handleClose, maxWidth}) {
     return (
         <BootstrapDialog
             onClose={handleClose}
             aria-labelledby="customized-dialog-title"
             open={open}
+            maxWidth={maxWidth}
             >
             <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
                 {modalTittle}

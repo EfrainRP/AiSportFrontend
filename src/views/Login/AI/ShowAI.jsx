@@ -23,7 +23,14 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    DialogActions, 
+    DialogActions,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Divider,
+
 } from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
@@ -38,6 +45,31 @@ import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx';
 import DialogComponent from '../../../components/Login/DialogComponent.jsx';
+
+const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
+
+const StyledListNumber = styled(List)(({ theme }) => ({
+    listStyleType: "integer", 
+    pl: 2 
+}));
+const StyledList = styled(ListItem)(({ theme }) => ({
+    display: "list-item"  
+}));
+
+const StyledBox = styled('div')(({ theme }) => ({
+    display:'flex',
+    justifyContent:'center',
+    marginTop:15,
+    marginBottom:2,
+}));
+const StyledBoxIMG = styled('img')(({ theme }) => ({
+    borderRadius: theme.shape.borderRadius * 2, // Aplica border-radius
+    filter: "grayscale(100%)",
+    transition: "filter 0.3s ease", // Agrega animación al efecto
+    "&:hover": {
+        filter: "grayscale(50%)", // Quita el efecto al pasar el mouse
+    },
+}));
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
@@ -76,7 +108,7 @@ export default function ShowAI() {
 
     const videoRef = React.useRef(null);
     const websocketRef = React.useRef(null);
-    
+
     // Estados para controlar los modales
     const [showModal, setShowModal] = React.useState(false);
     const [modalMessage, setModalMessage] = React.useState("");
@@ -88,8 +120,8 @@ export default function ShowAI() {
 
     // Devices
     const [devices, setDevices] = React.useState([]);
-    const [selectedDeviceId, setSelectedDeviceId] = React.useState(""); 
-    
+    const [selectedDeviceId, setSelectedDeviceId] = React.useState("");
+
     React.useEffect(() => {
         // Obtener todas las cámaras disponibles
         navigator.mediaDevices.enumerateDevices().then((deviceInfos) => {
@@ -103,11 +135,11 @@ export default function ShowAI() {
         if (mediaStreamRef.current) {
         mediaStreamRef.current.getTracks().forEach(track => track.stop());
         }
-    
+
         const constraints = {
         video: { deviceId: { exact: deviceId } } // Selecciona la cámara específica
         };
-    
+
         navigator.mediaDevices.getUserMedia(constraints)
         .then((stream) => {
             mediaStreamRef.current = stream;
@@ -123,23 +155,23 @@ export default function ShowAI() {
             console.error("Error al acceder a la cámara:", error);
         });
     };
-    
+
     const resetCameraSelection = () => {
         // Detener la cámara actual si existe
         if (mediaStreamRef.current) {
         mediaStreamRef.current.getTracks().forEach(track => track.stop());
         mediaStreamRef.current = null;
         }
-    
+
         // Limpiar el video
         if (videoRef.current) {
         videoRef.current.srcObject = null;
         }
-    
+
         // Reiniciar la selección de la cámara
         setSelectedDeviceId("");
     };
-    
+
     const sendDataToServer = async (url, data, prediction) => {
         try {
             await axiosInstance.put(url, {
@@ -158,36 +190,36 @@ export default function ShowAI() {
             setShowModal(true);
             return;
         }
-    
+
         setIsTraining(true);
         setIsManualClose(false);
-    
+
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: selectedDeviceId } } });
             mediaStreamRef.current = stream;
             const video = document.createElement('video');
             video.srcObject = stream;
             video.play();
-        
+
             websocketRef.current = new WebSocket("ws://192.168.100.170:8765");
-        
+
             websocketRef.current.onopen = () => {
-                setModalMessage("SportAI: Conexión de entrenamiento exitosa.");
+                setModalMessage("AiSport: Conexión de entrenamiento exitosa.");
                 setShowModal(true);
                 websocketRef.current.send(JSON.stringify({
                 start: true,
                 time: parseInt(selectedTime),
                 }));
-        
+
                 let lastSendTime = 0;
                 const frameInterval = 1000 / 25;  // 25 FPS a 40 ms por frame
-        
+
                 const sendFrame = () => {
                 if (!websocketRef.current || websocketRef.current.readyState !== WebSocket.OPEN) {
                     return; // No envía si el WebSocket no está abierto
                 }
                 const now = performance.now();
-                if (now - lastSendTime >= frameInterval) {  
+                if (now - lastSendTime >= frameInterval) {
                     if (video.readyState === video.HAVE_ENOUGH_DATA) {
                     const canvas = document.createElement('canvas');
                     canvas.width = 640;
@@ -195,7 +227,7 @@ export default function ShowAI() {
                     const context = canvas.getContext('2d');
                     context.drawImage(video, 0, 0, canvas.width, canvas.height);
                     const imageData = canvas.toDataURL('image/jpeg', 0.8);
-                    
+
                     if (imageData.length > 100) {
                         websocketRef.current.send(imageData);
                     }
@@ -204,24 +236,24 @@ export default function ShowAI() {
                 }
                 requestAnimationFrame(sendFrame);
                 };
-                
+
                 sendFrame();
             };
-        
+
             websocketRef.current.onmessage = (event) => {
                 const data = JSON.parse(event.data);
-        
+
                 if (data.prediction) {
                 setPrediction(data.prediction);
                 } else {
                 setJsonData(data);
                 }
-        
+
                 if (data && data.prediction) {
                     sendDataToServer(`/entrenamiento/equipo/AI/${equipoId}`, data, data.prediction);
                     sendDataToServer(`/entrenamiento/user/AI/${user.userId}`, data, data.prediction);
                 }
-        
+
                 if (canvasRef.current && data.image) {
                 const img = new Image();
                 img.src = `data:image/jpeg;base64,${data.image}`;
@@ -231,22 +263,22 @@ export default function ShowAI() {
                 };
                 }
             };
-        
+
             websocketRef.current.onerror = (error) => {
-                setModalMessage(`SportAI: WebSocket error: ${error.message}`);
+                setModalMessage(`AiSport: WebSocket error: ${error.message}`);
                 setShowModal(true);
             };
-        
+
             websocketRef.current.onclose = () => {
                 if (isManualClose) {
                     setModalMessage("El entrenamiento se ha interrumpido debido a un problema inesperado, la conexión ha sido finalizada.");
                 } else if (prediction) {
-                    setModalMessage("SportAI: Conexión finalizada exitosamente.");
+                    setModalMessage("AiSport: Conexión finalizada exitosamente.");
                 } else {
                     setModalMessage("El entrenamiento se ha interrumpido debido a un problema inesperado, la conexión ha sido finalizada.");
                 }
                     setShowModal(true);
-                
+
                 // Reiniciar la selección de la cámara
                 resetCameraSelection();
             };
@@ -265,9 +297,9 @@ export default function ShowAI() {
             websocketRef.current.send(JSON.stringify({ stop: true }));
             setTimeout(() => {
                 websocketRef.current.close();
-                setModalMessage("SportAI: Conexión finalizada exitosamente.");
+                setModalMessage("AiSport: Conexión finalizada exitosamente.");
                 setShowModal(true);
-        
+
                 // Limpiar el canvas
                 const context = videoRef.current.getContext("2d");
                 context.clearRect(0, 0, videoRef.current.width, videoRef.current.height);
@@ -308,7 +340,7 @@ export default function ShowAI() {
         setShowInfoModal(true);
     }, []);
 
-    if(loading){ 
+    if(loading){
         return (
         <LoadingView/>);
     }
@@ -319,7 +351,7 @@ export default function ShowAI() {
             <Typography variant='subtitle2' sx={{ mt:3 }}>
                 Here you can consult the general analyzer.
             </Typography>
-            
+
             {/* Controles de entrenamiento */}
             <Container sx={{width:"100%", display:"flex", justifyContent:"center", alignContent:"center", mt:4}}>
                 <Card>
@@ -340,21 +372,21 @@ export default function ShowAI() {
                                 <MenuItem value={"300"}>5 min</MenuItem>
                             </Select>
                         </FormControl>
-                        <Button 
+                        <Button
                             variant='contained'
                             color="secondary"
                             startIcon={<FitnessCenterIcon/>}
-                            onClick={startTraining} 
-                            disabled={isTraining}> 
+                            onClick={startTraining}
+                            disabled={isTraining}>
                                 Start
                         </Button>
-                        <Button 
+                        <Button
                             variant='contained'
                             color="warning"
-                            onClick={stopTraining}  
+                            onClick={stopTraining}
                             disabled={!isTraining}
                             startIcon={<DoDisturbOnTwoToneIcon/>}
-                            > 
+                            >
                                 Stop
                         </Button>
                     </CardContent>
@@ -363,8 +395,8 @@ export default function ShowAI() {
 
             <DialogComponent modalTittle={'Mensaje del sistema'} modalBody={modalMessage} open={showModal} handleClose={() => setShowModal(false)}/>
 
-            <DialogComponent 
-                modalTittle={'Predicción del entrenamiento'} 
+            <DialogComponent
+                modalTittle={'Predicción del entrenamiento'}
                 modalBody={prediction ? (
                     <>
                         <p><strong>Rendimiento:</strong> {prediction.performance}</p>
@@ -374,101 +406,116 @@ export default function ShowAI() {
                     </>
                     ) : (
                         <p>No hay datos de predicción disponibles.</p>
-                    )} 
-                open={showPredictionModal} 
+                    )}
+                open={showPredictionModal}
                 handleClose={() => setShowPredictionModal(false)}/>
 
-            <DialogComponent 
-                modalTittle={'💡SportAI Recomendaciones'} 
+            <DialogComponent
+                maxWidth={'md'}// ó lg
+                modalTittle={'💡AiSport Tips'}
                 modalBody={
-                    <>
-                        <p>Asegúrate de cumplir con los siguientes requerimientos antes de comenzar tu entrenamiento✅.</p>
-          <p>El entrenamiento individual está enfocado a medir el <strong> rendimiento de un solo jugador </strong> por entrenamiento y no de un equipo de jugadores🏀.</p>
-          <p>Recomendaciones de colocación de cámara para un análisis óptimo:</p>
-          <div className="d-flex justify-content-around align-items-center mb-3">
-            <img
-              src={`/sporthub/api/utils/uploads/tripie.jpg`}
-              alt="Cámara en trípode tomando una foto"
-              style={{ width: "250px", height: "auto", filter: "grayscale(100%)" }}
-              className="img-fluid rounded"
-            />
-          </div>
-          <ol>
-            <li>El jugador debe ocupar al menos un <strong>60% del cuadro</strong> o vista en cuerpo completo durante el entrenamiento.🤾‍♂️.</li>
-            <div className="d-flex justify-content-center mb-3">
-              <img
-                src={`/sporthub/api/utils/uploads/60camara.png`}
-                alt="60 de Camara"
-                style={{ width: "650px", height: "auto", filter: "grayscale(100%)" }}
-                className="img-fluid rounded"
-              />
-            </div>
-            <li>El área de juego debe estar lo más <strong>centrada</strong> y enfocada posible📷.</li>
-            <div className="d-flex justify-content-center mb-3">
-              <img
-                src={`/sporthub/api/utils/uploads/centro_camara.jpg`}
-                alt="Centro de Camara"
-                style={{ width: "200px", height: "auto", filter: "grayscale(100%)" }}
-                className="img-fluid rounded"
-              />
-            </div>
-            <li>Debe haber una distancia recomendable de <strong>2-5 metros</strong> desde la cámara al jugador y lugar de la canasta para un análisis más óptimo📐.</li>
-            <div className="d-flex justify-content-center mb-3">
-              <img
-                src={`/sporthub/api/utils/uploads/distanciaCamara.png`}
-                alt="Distancia de Camara"
-                style={{ width: "500px", height: "auto", filter: "grayscale(100%)" }}
-                className="img-fluid rounded"
-              />
-            </div>
-            <li>La altura de la cámara debe ser de entre <strong>1.50 cm a 2 m</strong> idealmente🎥.</li>
-            <div className="d-flex justify-content-center mb-3">
-              <img
-                src={`/sporthub/api/utils/uploads/altura.jpg`}
-                alt="Altura de Camara"
-                style={{ width: "500px", height: "auto", filter: "grayscale(100%)" }}
-                className="img-fluid rounded"
-              />
-            </div>
-            <li>El lugar debe contar con <strong>buena iluminación</strong>  de fondo para una detección óptima del jugador, pelota y cesta💡.</li>
-            <div className="d-flex justify-content-center mb-3">
-              <img
-                src={`/sporthub/api/utils/uploads/iluminacion.jpg`}
-                alt="Iluminacion en cancha"
-                style={{ width: "300px", height: "auto", filter: "grayscale(100%)" }}
-                className="img-fluid rounded"
-              />
-            </div>
-            <li>Para una mayor cobertura de puntos ciegos, acomoda el enfoque de la cámara de manera <strong>lateral</strong>  a la cancha:</li>
-            <div className="d-flex justify-content-center mb-3">
-            ❌
-              <img
-                src={`/sporthub/api/utils/uploads/cancha_frontal.jpg`}
-                alt="Cancha frontal" style={{ width: "200px", height: "auto", filter: "grayscale(100%)" }} className="img-fluid rounded"
-              />
-            ✅
-              <img
-                src={`/sporthub/api/utils/uploads/cancha_lateral.jpg`}
-                alt="Cancha lateral" style={{ width: "230px", height: "auto", filter: "grayscale(100%)" }} className="img-fluid rounded"
-              />
-            </div>
-          </ol>
-          <p>¡Listo! Ahora puedes comenzar a poner a prueba tus habilidades en el deporte de baloncesto✅.</p>
-          <p>-----------------------------------------------------------------------</p>
-          <p><strong> ***SportAI Nota***</strong> </p>
-          <p>Las estadísticas analizadas para el cálculo del rendimiento de un jugador son tomadas en base a 
-                métricas usadas en la NBA (Asociación Nacional de Baloncesto) sin embargo, el <strong>tiempo </strong> 
-                de entrenamiento puede influir considerablemente en los resultados, lo cual, <strong>no es considerado una métrica oficial</strong> en sí, 
-                pero es usada debido a que el tiempo es un factor clave en el análisis de un entrenamiento individual medible.</p>
-                    </>
-                    } 
-                open={showInfoModal} 
+                <Container>
+                    <Typography>Make sure you meet the following requirements before beginning your training. ✅</Typography>
+                    <Typography>Individual training is focused on measuring <strong>the performance of a single player </strong>per training session and not of a team of players. 🏀</Typography>
+                    <Typography>Camera placement recommendations for optimal analysis:</Typography>
+                    <StyledBox>
+                        <StyledBoxIMG
+                        src={URL_SERVER+`/utils/uploads/tripie.jpg`}
+                        alt="Cámara en trípode tomando una foto"
+                        sx={{ width: "250px", height: "auto"}}
+                        />
+                    </StyledBox>
+                    <StyledListNumber component='ol'>
+                        <StyledList component='li'>
+                            <ListItemText>The player must occupy at least <strong>60% of the frame</strong> or full body view during training. 🤾‍♂️</ListItemText>
+                            <StyledBox>
+                                <StyledBoxIMG 
+                                    src={URL_SERVER+`/utils/uploads/60camara.png`}
+                                    alt="60 de Camara"
+                                    sx={{ width: "650px", height: "auto"}}
+                                />
+                            </StyledBox>
+                        </StyledList>
+                        <StyledList component='li'>
+                            <ListItemText>The playing area should be as <strong>centered</strong> and focused as possible.📷</ListItemText>
+                            <StyledBox>
+                                <StyledBoxIMG
+                                    src={URL_SERVER+`/utils/uploads/centro_camara.jpg`}
+                                    alt="Centro de Camara"
+                                    sx={{ width: "200px", height: "auto",}}
+                                    
+                                    />
+                            </StyledBox>
+                        </StyledList>
+                        <StyledList component='li'>
+                            <ListItemText>There should be a recommended distance of <strong>2-5 meters</strong> from the camera to the player and the basket location for a more optimal analysis. 📐
+                            </ListItemText>
+                            <StyledBox>
+                                <StyledBoxIMG
+                                    src={URL_SERVER+`/utils/uploads/distanciaCamara.png`}
+                                    alt="Distancia de Camara"
+                                    sx={{ width: "500px", height: "auto",}}
+                                    
+                                    />
+                            </StyledBox>
+                        </StyledList>
+                        <StyledList component='li'>
+                            <ListItemText>The height of the chamber should be between <strong>1.50 cm to 2 m</strong> ideally. 🎥
+                            </ListItemText>
+                            <StyledBox>
+                            <StyledBoxIMG
+                                src={URL_SERVER+`/utils/uploads/altura.jpg`}
+                                alt="Altura de Camara"
+                                sx={{ width: "500px", height: "auto",}}
+                                
+                                />
+                            </StyledBox>
+                        </StyledList>
+                        <StyledList component='li'>
+                            <ListItemText>The location must have <strong>good background lighting</strong> for optimal detection of the player, ball and basket.💡
+                            </ListItemText>
+                            <StyledBox>
+                            <StyledBoxIMG
+                                src={URL_SERVER+`/utils/uploads/iluminacion.jpg`}
+                                alt="Iluminacion en cancha"
+                                sx={{ width: "300px", height: "auto",}}
+                                
+                                />
+                            </StyledBox>
+                        </StyledList>
+                        <StyledList component='li'>
+                            <ListItemText>For increased blind spot coverage, adjust the camera focus <strong>laterally</strong> to the field:
+                            </ListItemText>
+                            <StyledBox>
+                            ❌
+                            <StyledBoxIMG
+                                src={URL_SERVER+`/utils/uploads/cancha_frontal.jpg`}
+                                alt="Cancha frontal" sx={{ width: "200px", height: "auto",}} 
+                                />
+                            ✅
+                            <StyledBoxIMG
+                                src={URL_SERVER+`/utils/uploads/cancha_lateral.jpg`}
+                                alt="Cancha lateral" sx={{ width: "230px", height: "auto",}} 
+                                />
+                            </StyledBox>
+                        </StyledList>
+                    </StyledListNumber>
+                    
+                    <Typography sx={{textAlign:'justify'}}>Done! Now you can start testing your skills in the sport of basketball✅.</Typography>
+                    <Divider sx={{my:2}}/>
+                    <Typography sx={{mb:1}}><strong> *AiSport Note:</strong> </Typography>
+                    <Typography sx={{textAlign:'justify'}}>
+                    The statistics analyzed to calculate a player's performance are taken based on metrics used in the NBA (National Basketball Association), however, training time can significantly influence the results, which is not considered an official metric in itself, but is used because time is a key factor in the analysis of a measurable individual training.
+                    </Typography>
+                </Container>
+                }
+                open={showInfoModal}
                 handleClose={() => setShowInfoModal(false)}/>
 
-            <DialogComponent 
-                modalTittle={'Estado de la Cámara'} 
-                modalBody={cameraModalMessage} 
-                open={showPredictionModal} 
+            <DialogComponent
+                modalTittle={'Estado de la Cámara'}
+                modalBody={cameraModalMessage}
+                open={showPredictionModal}
                 handleClose={() => setShowCameraModal(false)}/>
 
         </LayoutLogin>
