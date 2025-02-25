@@ -67,7 +67,7 @@ export const surfacesCustomizations = {
           padding: 16,
           gap: 16,
           transition: 'all 100ms ease',
-          background: 'rgb(54, 54, 54)',
+          background: 'hsl(0, 0.00%, 29.40%)',
           borderRadius: (theme.vars || theme).shape.borderRadius,
           border: `1px solid ${(theme.vars || theme).palette.divider}`,
           boxShadow: 'none',

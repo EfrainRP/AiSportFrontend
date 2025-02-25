@@ -4,6 +4,7 @@ import {
     Skeleton,
     Box,
     CardActions,
+    CardHeader,
     CardContent,
     CardActionArea,
     ToggleButton,
@@ -30,6 +31,7 @@ import {
     ListItemIcon,
     ListItemText,
     Divider,
+    Paper,
 
 } from '@mui/material';
 import MuiCard from '@mui/material/Card';
@@ -49,11 +51,20 @@ import DialogComponent from '../../../components/Login/DialogComponent.jsx';
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 
 const StyledListNumber = styled(List)(({ theme }) => ({
-    listStyleType: "integer", 
-    pl: 2 
+    listStyleType: "decimal", 
+    pl: 2,
+    "& .MuiListItem-root": {
+        display: "list-item",
+    },
 }));
-const StyledList = styled(ListItem)(({ theme }) => ({
-    display: "list-item"  
+
+const StyledList = styled(List)(({ theme }) => ({
+    borderRadius: 0, 
+    padding: 0,
+    "& .MuiListItem-root": {
+        borderBottom: "1px solid #dee2e6", // Línea entre elementos
+        padding: "8px 16px",
+    },
 }));
 
 const StyledBox = styled('div')(({ theme }) => ({
@@ -69,6 +80,13 @@ const StyledBoxIMG = styled('img')(({ theme }) => ({
     "&:hover": {
         filter: "grayscale(50%)", // Quita el efecto al pasar el mouse
     },
+}));
+const myVideo = styled('video')(({ theme }) => ({
+    border: "3px solid",
+    borderColor: theme.palette.primary.main,
+    borderRadius: theme.shape.borderRadius * 2,
+    boxShadow: theme.shadows[3],
+    padding: theme.spacing(1, 3),
 }));
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -106,8 +124,10 @@ export default function ShowAI() {
         setSelectedTime(event.target.value);
     };
 
-    const videoRef = React.useRef(null);
+    const videoRef = React.useRef(null); // Referencia para el elemento <video>
+    const canvasRef = React.useRef(null); // Referencia para el elemento <canvas>
     const websocketRef = React.useRef(null);
+    const mediaStreamRef = React.useRef(null);
 
     // Estados para controlar los modales
     const [showModal, setShowModal] = React.useState(false);
@@ -146,13 +166,13 @@ export default function ShowAI() {
             if (videoRef.current) {
             videoRef.current.srcObject = stream; // Asigna la cámara al video
             }
-            setCameraModalMessage(`Cámara seleccionada: ${devices.find(d => d.deviceId === deviceId)?.label || "Desconocida"}`);
+            setCameraModalMessage(`Selected camera: ${devices.find(d => d.deviceId === deviceId)?.label || "Unknow"}`);
             setShowCameraModal(true);
         })
         .catch((error) => {
-            setCameraModalMessage("No se pudo acceder a la cámara seleccionada.");
+            setCameraModalMessage("The selected camera could not be accessed.");
             setShowCameraModal(true);
-            console.error("Error al acceder a la cámara:", error);
+            console.error("Error accessing camera:", error);
         });
     };
 
@@ -178,15 +198,15 @@ export default function ShowAI() {
                 datos: data,
                 prediccion: prediction
             });
-            console.log(`Datos enviados correctamente a ${url}`);
+            console.log(`Data sent successfully to ${url}`);
         } catch (error) {
-            console.error(`Error al enviar datos a ${url}`, error);
+            console.error(`Error sending data to ${url}`, error);
         }
     };
 
     const startTraining = async () => {
         if (!selectedDeviceId) {
-            setModalMessage("Por favor, selecciona una cámara antes de comenzar el entrenamiento.");
+            setModalMessage("Please select a camera before starting training.");
             setShowModal(true);
             return;
         }
@@ -204,7 +224,7 @@ export default function ShowAI() {
             websocketRef.current = new WebSocket("ws://192.168.100.170:8765");
 
             websocketRef.current.onopen = () => {
-                setModalMessage("AiSport: Conexión de entrenamiento exitosa.");
+                setModalMessage("AiSport: Successful training connection.");
                 setShowModal(true);
                 websocketRef.current.send(JSON.stringify({
                 start: true,
@@ -271,11 +291,11 @@ export default function ShowAI() {
 
             websocketRef.current.onclose = () => {
                 if (isManualClose) {
-                    setModalMessage("El entrenamiento se ha interrumpido debido a un problema inesperado, la conexión ha sido finalizada.");
+                    setModalMessage("Training has been interrupted due to an unexpected problem, the connection has been terminated.");
                 } else if (prediction) {
-                    setModalMessage("AiSport: Conexión finalizada exitosamente.");
+                    setModalMessage("AiSport: Connection completed successfully.");
                 } else {
-                    setModalMessage("El entrenamiento se ha interrumpido debido a un problema inesperado, la conexión ha sido finalizada.");
+                    setModalMessage("Training has been interrupted due to an unexpected problem, the connection has been terminated.");
                 }
                     setShowModal(true);
 
@@ -283,8 +303,8 @@ export default function ShowAI() {
                 resetCameraSelection();
             };
         } catch (error) {
-            console.error("Error al acceder a la cámara:", error);
-            setModalMessage("Error al acceder a la cámara. Asegúrate de permitir el acceso a la cámara.");
+            console.error("Error accessing the camera:", error);
+            setModalMessage("Error accessing the camera. Make sure to allow camera access.");
             setShowModal(true);
             setIsTraining(false);
         }
@@ -297,7 +317,7 @@ export default function ShowAI() {
             websocketRef.current.send(JSON.stringify({ stop: true }));
             setTimeout(() => {
                 websocketRef.current.close();
-                setModalMessage("AiSport: Conexión finalizada exitosamente.");
+                setModalMessage("AiSport: Connection completed successfully.");
                 setShowModal(true);
 
                 // Limpiar el canvas
@@ -305,7 +325,7 @@ export default function ShowAI() {
                 context.clearRect(0, 0, videoRef.current.width, videoRef.current.height);
             }, 1000);
         } else {
-        setModalMessage("La conexión con el servidor se encuentra finalizada.");
+        setModalMessage("The connection to the server is terminated.");
         setShowModal(true);
         }
     };
@@ -313,15 +333,15 @@ export default function ShowAI() {
     // Función para determinar el estilo del modal según el rendimiento
     const getModalStyle = (performance) => {
         switch (performance?.toLowerCase()) {
-        case "deficiente":
+        case "deficient":
             return { backgroundColor: "#dc3545", color: "#fff" }; // Rojo
-        case "mejorable":
+        case "improvable":
             return { backgroundColor: "#ff8000", color: "#000" }; // Naranja
-        case "bueno":
+        case "good":
             return { backgroundColor: "#0d6efd", color: "#fff" }; // Azul
-        case "muy bueno":
+        case "very good":
             return { backgroundColor: "#7be800", color: "#fff" }; // Verde claro
-        case "excepcional":
+        case "exceptional":
             return { backgroundColor: "#198754", color: "#fff" }; // Verde fuerte
         default:
             return { backgroundColor: "#6c757d", color: "#fff" }; // Color por defecto
@@ -344,7 +364,6 @@ export default function ShowAI() {
         return (
         <LoadingView/>);
     }
-    console.log(selectedTime);
     return (
         <LayoutLogin>
             <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AI Trainning`} </Typography>
@@ -353,14 +372,43 @@ export default function ShowAI() {
             </Typography>
 
             {/* Controles de entrenamiento */}
-            <Container sx={{width:"100%", display:"flex", justifyContent:"center", alignContent:"center", mt:4}}>
+            <Container sx={{width:"100%", display:"flex", justifyContent:"center", alignContent:"center", mt:4, flexDirection:'column', gap:2}}>
                 <Card>
-                    <CardContent sx={{display:"flex", justifyContent:"space-around", alignContent:"center"}}>
+                    <CardContent sx={{display:"flex", justifyContent:"justify", alignContent:"center", flexDirection:'column', gap:2, }}>
+                    {/* Selección de cámara */}
+                    <FormControl size="small" >
+                        <FormLabel htmlFor="camaraSelect">📷 Select camera::</FormLabel>
+                            <Select
+                                value={selectedDeviceId}
+                                label="cameraSelect"
+                                id="cameraSelect"
+                                onChange={
+                                    (e) => {
+                                        const selectedId = e.target.value;
+                                        setSelectedDeviceId(selectedId);
+                                        startCamera(selectedId); // Cambiar a la nueva cámara seleccionada
+                                    }
+                                }
+                                displayEmpty
+                            >
+                                {devices.map((device, index) => (
+                                    <MenuItem key={device.deviceId} value={device.deviceId}>
+                                        {device.label || `Cámara ${index + 1}`}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                    </FormControl>
+                    {!isTraining && selectedDeviceId && (
+                        <Container>
+                            <myVideo ref={videoRef} autoPlay playsInline className="border border-3 border-primary rounded shadow"></myVideo>
+                        </Container>
+                    )}
                     <FormControl sx={{width:"30%"}} size="small" >
                         <FormLabel htmlFor="time">Time:</FormLabel>
                             <Select
                                 value={selectedTime}
                                 label="time"
+                                id="time"
                                 onChange={handleChangeSelect}
                                 displayEmpty
                             >
@@ -371,7 +419,8 @@ export default function ShowAI() {
                                 <MenuItem value={"240"}>4 min</MenuItem>
                                 <MenuItem value={"300"}>5 min</MenuItem>
                             </Select>
-                        </FormControl>
+                    </FormControl>
+                    <Container sx={{display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "16px",}}>
                         <Button
                             variant='contained'
                             color="secondary"
@@ -383,29 +432,81 @@ export default function ShowAI() {
                         <Button
                             variant='contained'
                             color="warning"
-                            onClick={stopTraining}
-                            disabled={!isTraining}
                             startIcon={<DoDisturbOnTwoToneIcon/>}
-                            >
+                            onClick={stopTraining}
+                            disabled={!isTraining}>
                                 Stop
                         </Button>
+                    </Container>
                     </CardContent>
                 </Card>
+                <Container sx={{display:"flex", justifyContent:"center", alignContent:"center", flexDirection:'row', gap:2}}>
+                    <Paper 
+                        sx={{display:"flex", justifyContent:"center", alignContent:"center"}}>
+                        <canvas 
+                            ref={canvasRef} 
+                            width="840" 
+                            height="580" 
+                            className="border border-3 border-primary rounded shadow"
+                        ></canvas>
+                    </Paper>
+                    <Card>
+                        <CardHeader
+                            title='Data and Prediction: '/>
+                        <CardContent>
+                            <Typography>Current Stats: </Typography>
+                            {jsonData ? (//className="list-group list-group-flush" TO DO: checar con datos
+                            <StyledList >  
+                                <ListItem>
+                                    <ListItemText>Shots: <strong>{jsonData.shots < 0 ? 0 : jsonData.shots}</strong></ListItemText>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemText>Shooting attempts: <strong>{jsonData.attempted_shot < 0 ? 0 : jsonData.attempted_shot}</strong></ListItemText>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemText>Elapsed time: <strong>{jsonData.time < 0 ? 0 : jsonData.time}s</strong></ListItemText>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemText>Duration with ball held: <strong>{jsonData.ball_held < 0 ? 0 : jsonData.ball_held}s</strong></ListItemText>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemText>Dribbles: <strong>{jsonData.dribbles < 0 ? 0 : jsonData.dribbles}</strong></ListItemText>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemText>Toques: <strong>{jsonData.touches < 0 ? 0 : jsonData.touches}</strong></ListItemText>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemText>Steps: <strong>{jsonData.steps < 0 ? 0 : jsonData.steps}</strong></ListItemText>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemText>Double: <strong>{jsonData.double_dribbles < 0 ? 0 : jsonData.double_dribbles}</strong></ListItemText>
+                                </ListItem>
+                                <ListItem>
+                                    <ListItemText>Travels: <strong>{jsonData.travels < 0 ? 0 : jsonData.travels}</strong></ListItemText>
+                                </ListItem>
+                            </StyledList>
+                            ) : (
+                                <Typography variant='body1' sx={{ml:5}}>No data yet...</Typography>
+                            )}
+                        </CardContent>
+                    </Card>
+                </Container>
             </Container>
 
+            {/*     	Section {Modal / Dialog}         */}
             <DialogComponent modalTittle={'Mensaje del sistema'} modalBody={modalMessage} open={showModal} handleClose={() => setShowModal(false)}/>
 
             <DialogComponent
                 modalTittle={'Predicción del entrenamiento'}
                 modalBody={prediction ? (
-                    <>
-                        <p><strong>Rendimiento:</strong> {prediction.performance}</p>
+                    <Container>
+                        <Typography variant='body1'><strong>Performance:</strong> {prediction.performance}</Typography>
                             {prediction.data[9] && (
-                        <p><strong>Sugerencia:</strong> {prediction.data[9]}</p>
+                        <Typography variant='body1'><strong>Suggestion:</strong> {prediction.data[9]}</Typography>
                         )}
-                    </>
+                    </Container>
                     ) : (
-                        <p>No hay datos de predicción disponibles.</p>
+                        <Typography variant='body1'>No hay datos de predicción disponibles.</Typography>
                     )}
                 open={showPredictionModal}
                 handleClose={() => setShowPredictionModal(false)}/>
@@ -413,6 +514,8 @@ export default function ShowAI() {
             <DialogComponent
                 maxWidth={'md'}// ó lg
                 modalTittle={'💡AiSport Tips'}
+                open={false}///// showInfoModal
+                handleClose={() => setShowInfoModal(false)}
                 modalBody={
                 <Container>
                     <Typography>Make sure you meet the following requirements before beginning your training. ✅</Typography>
@@ -426,7 +529,7 @@ export default function ShowAI() {
                         />
                     </StyledBox>
                     <StyledListNumber component='ol'>
-                        <StyledList component='li'>
+                        <ListItem component='li'>
                             <ListItemText>The player must occupy at least <strong>60% of the frame</strong> or full body view during training. 🤾‍♂️</ListItemText>
                             <StyledBox>
                                 <StyledBoxIMG 
@@ -435,8 +538,8 @@ export default function ShowAI() {
                                     sx={{ width: "650px", height: "auto"}}
                                 />
                             </StyledBox>
-                        </StyledList>
-                        <StyledList component='li'>
+                        </ListItem>
+                        <ListItem component='li'>
                             <ListItemText>The playing area should be as <strong>centered</strong> and focused as possible.📷</ListItemText>
                             <StyledBox>
                                 <StyledBoxIMG
@@ -446,8 +549,8 @@ export default function ShowAI() {
                                     
                                     />
                             </StyledBox>
-                        </StyledList>
-                        <StyledList component='li'>
+                        </ListItem>
+                        <ListItem component='li'>
                             <ListItemText>There should be a recommended distance of <strong>2-5 meters</strong> from the camera to the player and the basket location for a more optimal analysis. 📐
                             </ListItemText>
                             <StyledBox>
@@ -458,8 +561,8 @@ export default function ShowAI() {
                                     
                                     />
                             </StyledBox>
-                        </StyledList>
-                        <StyledList component='li'>
+                        </ListItem>
+                        <ListItem component='li'>
                             <ListItemText>The height of the chamber should be between <strong>1.50 cm to 2 m</strong> ideally. 🎥
                             </ListItemText>
                             <StyledBox>
@@ -470,8 +573,8 @@ export default function ShowAI() {
                                 
                                 />
                             </StyledBox>
-                        </StyledList>
-                        <StyledList component='li'>
+                        </ListItem>
+                        <ListItem component='li'>
                             <ListItemText>The location must have <strong>good background lighting</strong> for optimal detection of the player, ball and basket.💡
                             </ListItemText>
                             <StyledBox>
@@ -482,8 +585,8 @@ export default function ShowAI() {
                                 
                                 />
                             </StyledBox>
-                        </StyledList>
-                        <StyledList component='li'>
+                        </ListItem>
+                        <ListItem component='li'>
                             <ListItemText>For increased blind spot coverage, adjust the camera focus <strong>laterally</strong> to the field:
                             </ListItemText>
                             <StyledBox>
@@ -498,7 +601,7 @@ export default function ShowAI() {
                                 alt="Cancha lateral" sx={{ width: "230px", height: "auto",}} 
                                 />
                             </StyledBox>
-                        </StyledList>
+                        </ListItem>
                     </StyledListNumber>
                     
                     <Typography sx={{textAlign:'justify'}}>Done! Now you can start testing your skills in the sport of basketball✅.</Typography>
@@ -508,9 +611,7 @@ export default function ShowAI() {
                     The statistics analyzed to calculate a player's performance are taken based on metrics used in the NBA (National Basketball Association), however, training time can significantly influence the results, which is not considered an official metric in itself, but is used because time is a key factor in the analysis of a measurable individual training.
                     </Typography>
                 </Container>
-                }
-                open={showInfoModal}
-                handleClose={() => setShowInfoModal(false)}/>
+                }/>
 
             <DialogComponent
                 modalTittle={'Estado de la Cámara'}

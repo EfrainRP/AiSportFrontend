@@ -31,16 +31,16 @@ export const brand = {
 };
 
 export const gray = {
-  50: 'hsl(220, 35%, 97%)',
-  100: 'hsl(220, 30%, 94%)',
-  200: 'hsl(220, 20%, 88%)',
-  300: 'hsl(220, 20%, 80%)',
-  400: 'hsl(220, 20%, 65%)',
-  500: 'hsl(220, 20%, 42%)',
-  600: 'hsl(220, 20%, 35%)',
-  700: 'hsl(220, 20%, 25%)',
-  800: 'hsl(220, 30%, 6%)',
-  900: 'hsl(220, 35%, 3%)',
+  50: 'hsl(0, 0%, 97%)',
+  100: 'hsl(0, 0%, 94%)',
+  200: 'hsl(0, 0%, 88%)',
+  300: 'hsl(0, 0%, 80%)',
+  400: 'hsl(0, 0%, 65%)',
+  500: 'hsl(0, 0%, 42%)',
+  600: 'hsl(0, 0.00%, 34.90%)',
+  700: 'hsl(0, 0.00%, 25.10%)',
+  800: 'hsl(0, 0.00%, 5.90%)',
+  900: 'hsl(0, 0.00%, 3.10%)',
 };
 
 export const green = {
@@ -276,7 +276,7 @@ export const colorSchemes = {
       divider: alpha(gray[800], 0.3),
       background: {
         default: 'rgba(217, 217, 217, 0.95)', //rgba(171, 167, 165, 0.85)
-        paper: 'rgb(168, 166, 166)', //Edited
+        paper: 'rgba(153, 153, 153, 0.96)', //Edited
       },
       text: { //Edited form text
         primary: gray[800],
@@ -333,7 +333,7 @@ export const colorSchemes = {
       divider: alpha(gray[600], 0.6),
       background: {
         default: gray[900],
-        paper: 'hsl(220, 30%, 7%)',
+        paper: 'hsl(219, 77.30%, 8.60%)',
       },
       text: {
         primary: 'hsl(0, 0%, 100%)',

@@ -33,6 +33,13 @@ export const inputsCustomizations = {
         boxShadow: 'none',
         borderRadius: (theme.vars || theme).shape.borderRadius,
         textTransform: 'none',
+        "&.Mui-disabled": { //Edited
+          backgroundColor: "Ivory",
+          color: "rgba(92, 91, 91, 0.5)",
+          ...theme.applyStyles('dark', {
+            backgroundColor: "Linen",
+          }),
+        },
         variants: [
           {
             props: {
