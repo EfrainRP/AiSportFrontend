@@ -16,7 +16,9 @@ const AITraining = () => {
   const canvasRef = useRef(null); // Referencia para el elemento <canvas>
   const websocketRef = useRef(null);
   const mediaStreamRef = useRef(null);
-
+  const [uploadedVideo, setUploadedVideo] = useState(null); // Estado para el archivo de video subido
+  const [videoFile, setVideoFile] = useState(null); // Estado para el archivo de video subido
+  const [videoDuration, setVideoDuration] = useState(0); // Duración del video subido
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [showPredictionModal, setShowPredictionModal] = useState(false);
@@ -24,17 +26,23 @@ const AITraining = () => {
   const [showInfoModal, setShowInfoModal] = useState(true);
   const [showCameraModal, setShowCameraModal] = useState(false);
   const [cameraModalMessage, setCameraModalMessage] = useState("");
+  const [isAnalyzing, setIsAnalyzing] = useState(false); // Estado para controlar el spinner
 
   // Devices
   const [devices, setDevices] = useState([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState(""); 
 
   useEffect(() => {
-    // Obtener todas las cámaras disponibles
-    navigator.mediaDevices.enumerateDevices().then((deviceInfos) => {
-      const videoDevices = deviceInfos.filter(device => device.kind === "videoinput");
-      setDevices(videoDevices);
-    });
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(() => {
+        navigator.mediaDevices.enumerateDevices().then((deviceInfos) => {
+          const videoDevices = deviceInfos.filter(device => device.kind === "videoinput");
+          setDevices(videoDevices);
+        });
+      })
+      .catch((error) => {
+        console.error("Permiso de cámara denegado:", error);
+      });
   }, []);
 
   const startCamera = (deviceId) => {
@@ -55,6 +63,12 @@ const AITraining = () => {
         }
         setCameraModalMessage(`Cámara seleccionada: ${devices.find(d => d.deviceId === deviceId)?.label || "Desconocida"}`);
         setShowCameraModal(true);
+        // Si hay un video subido, descartarlo
+        if (videoFile) {
+          setVideoFile(null);
+          setUploadedVideo(null);
+          setVideoDuration(0);
+        }
       })
       .catch((error) => {
         setCameraModalMessage("No se pudo acceder a la cámara seleccionada.");
@@ -92,8 +106,8 @@ const AITraining = () => {
   };
 
   const startTraining = async () => {
-    if (!selectedDeviceId) {
-      setModalMessage("Por favor, selecciona una cámara antes de comenzar el entrenamiento.");
+    if (!selectedDeviceId && !videoFile) {
+      setModalMessage("Por favor, selecciona una cámara o sube un video antes de comenzar el entrenamiento.");
       setShowModal(true);
       return;
     }
@@ -102,56 +116,129 @@ const AITraining = () => {
     setIsManualClose(false);
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: selectedDeviceId } } });
-      mediaStreamRef.current = stream;
-      const video = document.createElement('video');
-      video.srcObject = stream;
-      video.play();
+      if (videoFile) {
+        // Si se subió un video, usarlo en lugar de la cámara
+        setIsAnalyzing(true); // Mostrar el spinner
+        const video = document.createElement('video');
+        video.src = URL.createObjectURL(videoFile);
+        video.play();
 
-      websocketRef.current = new WebSocket("ws://192.168.100.170:8765");
+        // Esperar a que el video cargue la duración
+        video.onloadedmetadata = () => {
+          setVideoDuration(video.duration); // Guardar la duración del video
+        };
 
-      websocketRef.current.onopen = () => {
-        setModalMessage("SportAI: Conexión de entrenamiento exitosa.");
-        setShowModal(true);
-        websocketRef.current.send(JSON.stringify({
-          start: true,
-          time: parseInt(selectedTime),
-        }));
+        websocketRef.current = new WebSocket("wss://w43sc9hv-8765.usw3.devtunnels.ms");
+        websocketRef.current.onopen = () => {
+          setModalMessage("SportAI: Conexión de entrenamiento exitosa.");
+          setShowModal(true);
+          websocketRef.current.send(JSON.stringify({
+            start: true,
+            time: Math.ceil(videoDuration), // Enviar la duración del video
+          }));
 
-        let lastSendTime = 0;
-        const frameInterval = 1000 / 25;  // 25 FPS a 40 ms por frame
+          let lastSendTime = 0;
+          const frameInterval = 1 / 155;  // 15 FPS
 
-        const sendFrame = () => {
-          if (!websocketRef.current || websocketRef.current.readyState !== WebSocket.OPEN) {
-            return; // No envía si el WebSocket no está abierto
-          }
-          const now = performance.now();
-          if (now - lastSendTime >= frameInterval) {  
-            if (video.readyState === video.HAVE_ENOUGH_DATA) {
-              const canvas = document.createElement('canvas');
-              canvas.width = 640;
-              canvas.height = 480;
-              const context = canvas.getContext('2d');
-              context.drawImage(video, 0, 0, canvas.width, canvas.height);
-              const imageData = canvas.toDataURL('image/jpeg', 0.8);
-              
-              if (imageData.length > 100) {
-                websocketRef.current.send(imageData);
+          const sendFrame = async () => {
+            if (!websocketRef.current || websocketRef.current.readyState !== WebSocket.OPEN) {
+              return; // No envía si el WebSocket no está abierto
+            }
+
+            const now = performance.now();
+            if (now - lastSendTime >= frameInterval) {
+              if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                const canvas = new OffscreenCanvas(640, 480);
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // Convertir el frame a WebP usando convertToBlob()
+                const blob = await canvas.convertToBlob({ type: 'image/webp', quality: 0.7 });
+
+                // Convertir Blob a Base64 para enviarlo por WebSocket
+                const reader = new FileReader();
+                reader.readAsDataURL(blob);
+                reader.onloadend = () => {
+                  const imageData = reader.result;
+                  if (imageData.length > 100) {
+                    websocketRef.current.send(imageData);
+                  }
+                };
+
+                lastSendTime = now; // Actualiza el tiempo del último envío
               }
             }
-            lastSendTime = now;
-          }
-          requestAnimationFrame(sendFrame);
+
+            if (!video.ended) {
+              requestAnimationFrame(sendFrame);
+            }
+          };
+
+          sendFrame();
         };
-          
-        sendFrame();
-      };
+      } else {
+        // Si no se subió un video, usar la cámara
+        setIsAnalyzing(false); // No mostrar el spinner
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: selectedDeviceId } } });
+        mediaStreamRef.current = stream;
+        const video = document.createElement('video');
+        video.srcObject = stream;
+        video.play();
+
+        websocketRef.current = new WebSocket("wss://w43sc9hv-8765.usw3.devtunnels.ms"); 
+        websocketRef.current.onopen = () => {
+          setModalMessage("SportAI: Conexión de entrenamiento exitosa.");
+          setShowModal(true);
+          websocketRef.current.send(JSON.stringify({
+            start: true,
+            time: parseInt(selectedTime), // Enviar el tiempo seleccionado
+          }));
+
+          let lastSendTime = 0;
+          const frameInterval = 1 / 155;  // 15 FPS
+
+          const sendFrame = async () => {
+            if (!websocketRef.current || websocketRef.current.readyState !== WebSocket.OPEN) {
+              return; // No envía si el WebSocket no está abierto
+            }
+
+            const now = performance.now();
+            if (now - lastSendTime >= frameInterval) {
+              if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                const canvas = new OffscreenCanvas(640, 480);
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // Convertir el frame a WebP usando convertToBlob()
+                const blob = await canvas.convertToBlob({ type: 'image/webp', quality: 0.7 });
+
+                // Convertir Blob a Base64 para enviarlo por WebSocket
+                const reader = new FileReader();
+                reader.readAsDataURL(blob);
+                reader.onloadend = () => {
+                  const imageData = reader.result;
+                  if (imageData.length > 100) {
+                    websocketRef.current.send(imageData);
+                  }
+                };
+
+                lastSendTime = now; // Actualiza el tiempo del último envío
+              }
+            }
+
+            requestAnimationFrame(sendFrame);
+          };
+
+          sendFrame();
+        };
+      }
 
       websocketRef.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
 
         if (data.prediction) {
           setPrediction(data.prediction);
+          setIsAnalyzing(false); // Ocultar el spinner cuando se recibe la predicción
         } else {
           setJsonData(data);
         }
@@ -174,6 +261,7 @@ const AITraining = () => {
       websocketRef.current.onerror = (error) => {
         setModalMessage(`SportAI: WebSocket error: ${error.message}`);
         setShowModal(true);
+        setIsAnalyzing(false); // Ocultar el spinner en caso de error
       };
 
       websocketRef.current.onclose = () => {
@@ -185,7 +273,7 @@ const AITraining = () => {
           setModalMessage("El entrenamiento se ha interrumpido debido a un problema inesperado, la conexión ha sido finalizada.");
         }
         setShowModal(true);
-
+        setIsAnalyzing(false); // Ocultar el spinner en caso de error
         // Reiniciar la selección de la cámara
         resetCameraSelection();
       };
@@ -194,12 +282,14 @@ const AITraining = () => {
       setModalMessage("Error al acceder a la cámara. Asegúrate de permitir el acceso a la cámara.");
       setShowModal(true);
       setIsTraining(false);
+      setIsAnalyzing(false); // Ocultar el spinner en caso de error
     }
   };
 
   const stopTraining = () => {
     setIsTraining(false);
     setIsManualClose(true);
+    setIsAnalyzing(false); // Ocultar el spinner en caso de error
     if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
       websocketRef.current.send(JSON.stringify({ stop: true }));
       setTimeout(() => {
@@ -242,6 +332,26 @@ const AITraining = () => {
         return { backgroundColor: "#6c757d", color: "#fff" };
     }
   };
+  const handleVideoUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setVideoFile(file);
+      setUploadedVideo(URL.createObjectURL(file));
+
+      // Obtener la duración del video
+      const video = document.createElement('video');
+      video.src = URL.createObjectURL(file);
+      video.onloadedmetadata = () => {
+        setVideoDuration(video.duration); // Guardar la duración del video
+      };
+
+      // Si hay una cámara seleccionada, restablecerla
+      if (selectedDeviceId) {
+        resetCameraSelection();
+        setSelectedDeviceId("");
+      }
+    }
+  };
 
   useEffect(() => {
     if (prediction?.performance) {
@@ -257,7 +367,56 @@ const AITraining = () => {
   return (
     <div className="container-fluid vh-100 d-flex flex-column p-4" style={{ backgroundColor: "#f8f9fa" }}>
       <h1 className="text-center mb-4 text-primary">Entrenamiento con IA - {equipoName}</h1>
-
+      {/* Overlay y spinner */}
+{isAnalyzing && (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      backgroundColor: "rgba(0, 0, 0, 0.7)", // Fondo oscuro semitransparente
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 1000, // Pone por encima del background el spinner
+    }}
+  >
+    <style>
+      {`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        @keyframes colorChange {
+          0% { color: #fff; } // Blanco
+          50% { color:rgb(2, 214, 252); } // Verde
+          100% { color: #fff; } // Blanco
+        }
+      `}
+    </style>
+    <div
+      style={{
+        border: "8px solid #f3f3f3", // Color del borde del spinner
+        borderTop: "8px solid #3498db", // Color de la parte superior del spinner
+        borderRadius: "50%",
+        width: "80px",
+        height: "80px",
+        animation: "spin 1s linear infinite", // Animación de giro
+      }}
+    ></div>
+    <span
+      style={{
+        marginLeft: "20px",
+        fontSize: "24px",
+        animation: "colorChange 2s linear infinite", // Animación de cambio de color
+      }}
+    >
+      Analizando... Por favor, espere.
+    </span>
+  </div>
+)}
       <div className="d-flex justify-content-center align-items-center mb-4">
         {/* Selección de cámara */}
         <div className="d-flex flex-column align-items-center me-3">
@@ -291,12 +450,29 @@ const AITraining = () => {
             <video ref={videoRef} autoPlay playsInline className="border border-3 border-primary rounded shadow"></video>
           )}
         </div>
-
+        {/* Subir archivo de video */}
+        <div className="d-flex flex-column align-items-center me-3">
+                <label htmlFor="videoUpload" className="form-label fw-bold text-primary mb-2">
+                  🎥 Subir Video:
+                </label>
+                <input
+                  id="videoUpload"
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoUpload}
+                  className="form-control"
+                  disabled={isTraining}
+                />
+                {uploadedVideo && (
+                  <video src={uploadedVideo} controls className="border border-3 border-primary rounded shadow mt-3" style={{ maxWidth: '300px' }} />
+                )}
+        </div>
+        {/* Selección de tiempo de entrenamiento */}
         <select
           className="form-select me-2"
           value={selectedTime}
           onChange={(e) => setSelectedTime(e.target.value)}
-          disabled={isTraining}
+          disabled={isTraining || !!videoFile} // Deshabilitar si se subió un video
           style={{ width: "auto" }}
         >
           <option value="30">30 seg</option>
@@ -309,7 +485,7 @@ const AITraining = () => {
         <button 
           className="btn btn-success me-2" 
           onClick={startTraining} 
-          disabled={isTraining || !selectedDeviceId}
+          disabled={isTraining || (!selectedDeviceId && !videoFile)}
         >
           Comenzar Entrenamiento
         </button>

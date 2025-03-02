@@ -18,7 +18,8 @@ const AIEquipo = () => {
         const response = await axios.get(
           `http://localhost:5000/sporthub/api/estadisticas/${user.userId}`
         );
-        setEstadisticas(response.data.data); // Guarda los datos obtenidos
+        setEstadisticas(response.data.data || []);
+        console.log('Estadisticas: ',estadisticas);
       } catch (err) {
         setError('Error al obtener las estadísticas');
         console.error(err);
@@ -41,7 +42,7 @@ const AIEquipo = () => {
     <div className="container mt-5">
       <h1 className="text-center mb-4">Analizador de Rendimiento Individual AiSport</h1>
       
-      {estadisticas.length === 0 ? (
+      {Array.isArray(estadisticas) && estadisticas.length === 0 ? (
         <div className="card text-center">
           <div className="card-body">
             <h5>No hay equipos disponibles con un partido mínimo jugado que contengan estadísticas para un entrenamiento.</h5>
