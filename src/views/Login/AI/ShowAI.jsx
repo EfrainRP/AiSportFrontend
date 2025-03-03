@@ -440,57 +440,59 @@ export default function ShowAI() {
                     </Container>
                     </CardContent>
                 </Card>
-                <Container sx={{display:"flex", justifyContent:"center", alignContent:"center", flexDirection:'row', gap:2}}>
-                    <Paper 
-                        sx={{display:"flex", justifyContent:"center", alignContent:"center"}}>
-                        <canvas 
-                            ref={canvasRef} 
-                            width="840" 
-                            height="580" 
-                            className="border border-3 border-primary rounded shadow"
-                        ></canvas>
-                    </Paper>
-                    <Card>
-                        <CardHeader
-                            title='Data and Prediction: '/>
-                        <CardContent>
-                            <Typography>Current Stats: </Typography>
-                            {jsonData ? (//className="list-group list-group-flush" TO DO: checar con datos
-                            <StyledList >  
-                                <ListItem>
-                                    <ListItemText>Shots: <strong>{jsonData.shots < 0 ? 0 : jsonData.shots}</strong></ListItemText>
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText>Shooting attempts: <strong>{jsonData.attempted_shot < 0 ? 0 : jsonData.attempted_shot}</strong></ListItemText>
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText>Elapsed time: <strong>{jsonData.time < 0 ? 0 : jsonData.time}s</strong></ListItemText>
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText>Duration with ball held: <strong>{jsonData.ball_held < 0 ? 0 : jsonData.ball_held}s</strong></ListItemText>
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText>Dribbles: <strong>{jsonData.dribbles < 0 ? 0 : jsonData.dribbles}</strong></ListItemText>
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText>Toques: <strong>{jsonData.touches < 0 ? 0 : jsonData.touches}</strong></ListItemText>
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText>Steps: <strong>{jsonData.steps < 0 ? 0 : jsonData.steps}</strong></ListItemText>
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText>Double: <strong>{jsonData.double_dribbles < 0 ? 0 : jsonData.double_dribbles}</strong></ListItemText>
-                                </ListItem>
-                                <ListItem>
-                                    <ListItemText>Travels: <strong>{jsonData.travels < 0 ? 0 : jsonData.travels}</strong></ListItemText>
-                                </ListItem>
-                            </StyledList>
-                            ) : (
-                                <Typography variant='body1' sx={{ml:5}}>No data yet...</Typography>
-                            )}
-                        </CardContent>
-                    </Card>
-                </Container>
+                {jsonData && //TO DO: checar con datos
+                    <Container sx={{display:"flex", justifyContent:"center", alignContent:"center", flexDirection:'row', gap:2}}>
+                        <Paper 
+                            sx={{display:"flex", justifyContent:"center", alignContent:"center"}}>
+                            <canvas 
+                                ref={canvasRef} 
+                                width="840" 
+                                height="580" 
+                                className="border border-3 border-primary rounded shadow"
+                            ></canvas>
+                        </Paper>
+                        <Card>
+                            <CardHeader
+                                title='Data and Prediction: '/>
+                            <CardContent>
+                                <Typography>Current Stats: </Typography>
+                                {jsonData ? (//className="list-group list-group-flush" TO DO: checar con datos
+                                <StyledList >  
+                                    <ListItem>
+                                        <ListItemText>Shots: <strong>{jsonData.shots < 0 ? 0 : jsonData.shots}</strong></ListItemText>
+                                    </ListItem>
+                                    <ListItem>
+                                        <ListItemText>Shooting attempts: <strong>{jsonData.attempted_shot < 0 ? 0 : jsonData.attempted_shot}</strong></ListItemText>
+                                    </ListItem>
+                                    <ListItem>
+                                        <ListItemText>Elapsed time: <strong>{jsonData.time < 0 ? 0 : jsonData.time}s</strong></ListItemText>
+                                    </ListItem>
+                                    <ListItem>
+                                        <ListItemText>Duration with ball held: <strong>{jsonData.ball_held < 0 ? 0 : jsonData.ball_held}s</strong></ListItemText>
+                                    </ListItem>
+                                    <ListItem>
+                                        <ListItemText>Dribbles: <strong>{jsonData.dribbles < 0 ? 0 : jsonData.dribbles}</strong></ListItemText>
+                                    </ListItem>
+                                    <ListItem>
+                                        <ListItemText>Toques: <strong>{jsonData.touches < 0 ? 0 : jsonData.touches}</strong></ListItemText>
+                                    </ListItem>
+                                    <ListItem>
+                                        <ListItemText>Steps: <strong>{jsonData.steps < 0 ? 0 : jsonData.steps}</strong></ListItemText>
+                                    </ListItem>
+                                    <ListItem>
+                                        <ListItemText>Double: <strong>{jsonData.double_dribbles < 0 ? 0 : jsonData.double_dribbles}</strong></ListItemText>
+                                    </ListItem>
+                                    <ListItem>
+                                        <ListItemText>Travels: <strong>{jsonData.travels < 0 ? 0 : jsonData.travels}</strong></ListItemText>
+                                    </ListItem>
+                                </StyledList>
+                                ) : (
+                                    <Typography variant='body1' sx={{ml:5}}>No data yet...</Typography>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </Container>
+                }
             </Container>
 
             {/*     	Section {Modal / Dialog}         */}

@@ -180,7 +180,7 @@ export default function EditProfile() {
         gender: '',
         birthdate: '',
         nickname: '',
-        image: '',
+        image: null,
         currentPassword: '', // Nueva propiedad para la contraseña actual
         newPassword: '',     // Nueva propiedad para la nueva contraseña
         confirmPassword: ''  // Nueva propiedad para la confirmación de la nueva contraseña
@@ -219,17 +219,12 @@ export default function EditProfile() {
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
-        if (files && files[0]) {
-            setProfile((prevState) => ({
-                ...prevState,
-                [name]: files[0] // Guarda el archivo en el estado
-            }));
-        } else {
-            setProfile((prevState) => ({
-                ...prevState,
-                [name]: value
-            }));
-        }
+        console.log(`Campo cambiado: ${name}, Valor:`, files ? files[0] : value); // 🔍 Verifica valores
+
+        setProfile((prevState) => ({
+            ...prevState,
+            [name]: files ? files[0] : value || "", // Guarda el archivo si es una imagen, de lo contrario, guarda el valor
+        }));
     };
 
     const handleSubmit = async (e) => {
@@ -292,12 +287,11 @@ export default function EditProfile() {
         setOpenSnackBar(false);
     };
 
-    if(loading){ // En caso de que este vacio
+    if(loading || !profile){ // En caso de que este vacio
         return (
         <LoadingView/>);
     }
 
-    console.log(profile);
     return (
         <LayoutLogin>
             <FormContainerEdit>
@@ -333,6 +327,42 @@ export default function EditProfile() {
                             gap: 2,
                         }}
                     >
+                        {/* TO DO: Checar el mecanismo de imagen */}
+                        <ImageButton
+                            component="label"
+                            focusRipple
+                            key={profile.image}
+                            style={{
+                                width: '40%',
+                            }}
+                        >
+                            <ImageSrc style={{ backgroundImage: `url(${URL_SERVER}/utils/uploads/${profile.image !== 'logoPerfil.jpg' ? profile.image : 'logoPerfil.jpg'})` }} />
+                            <ImageBackdrop className="MuiImageBackdrop-root" />
+                            <Image>
+                                <Typography
+                                    component="span"
+                                    variant="subtitle2"
+                                    color="inherit"
+                                    sx={(theme) => ({
+                                        position: 'relative',
+                                        p: 4,
+                                        pt: 2,
+                                        pb: `calc(${theme.spacing(1)} + 6px)`,
+                                    })}
+                                >
+                                    Edit image
+                                    <ImageMarked className="MuiImageMarked-root" />
+                                </Typography>
+                            </Image>
+                            {/*component input */}
+                            <VisuallyHiddenInput 
+                                type="file"
+                                name="image"
+                                onChange={handleChange}
+                                accept="image/*"
+                            />
+                        </ImageButton>
+                        
                         <FormControl>
                             <FormLabel htmlFor="name">Name: </FormLabel>
                             <TextField
@@ -446,40 +476,6 @@ export default function EditProfile() {
                                 color={!!errors.nickname ? 'error' : 'primary'}
                             />
                         </FormControl>
-                        {/* TO DO: Checar el mecanismo de imagen */}
-                        <ImageButton
-                            component="label"
-                            focusRipple
-                            key={profile.image}
-                            style={{
-                                width: '40%',
-                            }}
-                        >
-                            <ImageSrc style={{ backgroundImage: `url(${URL_SERVER}/utils/uploads/${profile.image !== 'logoPerfil.jpg' ? profile.image : 'logoPerfil.jpg'})` }} />
-                            <ImageBackdrop className="MuiImageBackdrop-root" />
-                            <Image>
-                                <Typography
-                                    component="span"
-                                    variant="subtitle2"
-                                    color="inherit"
-                                    sx={(theme) => ({
-                                        position: 'relative',
-                                        p: 4,
-                                        pt: 2,
-                                        pb: `calc(${theme.spacing(1)} + 6px)`,
-                                    })}
-                                >
-                                    Edit image
-                                    <ImageMarked className="MuiImageMarked-root" />
-                                </Typography>
-                            </Image>
-                            {/*component input */}
-                            <VisuallyHiddenInput 
-                                type="file"
-                                onChange={(e) => handleChange({ target: { name: 'image', value: e.target.files[0] } })}
-                                accept="image/*"
-                            />
-                        </ImageButton>
                         <FormControl>
                             <FormLabel htmlFor="currentPassword">Current Password: </FormLabel>
                             <TextField
@@ -489,8 +485,7 @@ export default function EditProfile() {
                                 fullWidth
                                 required
                                 variant="outlined"
-                                value={profile.currentPassword}
-                                placeholder={profile.currentPassword}
+                                placeholder='Current Password'
                                 onChange={handleChange}
                                 error={!!errors.currentPassword} //detecta si tiene algo contenido
                                 helperText={errors.currentPassword}
@@ -506,8 +501,7 @@ export default function EditProfile() {
                                 fullWidth
                                 required
                                 variant="outlined"
-                                value={profile.newPassword}
-                                placeholder={profile.newPassword}
+                                placeholder='New Password'
                                 onChange={handleChange}
                                 error={!!errors.newPassword} //detecta si tiene algo contenido
                                 helperText={errors.newPassword}
@@ -523,8 +517,7 @@ export default function EditProfile() {
                                 fullWidth
                                 required
                                 variant="outlined"
-                                value={profile.confirmPassword}
-                                placeholder={profile.confirmPassword}
+                                placeholder='Confirm Password'
                                 onChange={handleChange}
                                 error={!!errors.confirmPassword} //detecta si tiene algo contenido
                                 helperText={errors.confirmPassword}

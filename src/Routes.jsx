@@ -246,7 +246,7 @@ export default function MyRoute(){
             path="/dashboard/trainning/IA/:teamId/:teamName" // Ruta SHOW <- (Confirmación del Server <-)
             element={ //  Entrenamiento de IA Estadisticas personalizado por equipo <- 
               <AuthRoute > 
-                <ShowAI />
+                <ShowAI />{/* Checar con datos en la grafica */}
               </AuthRoute>
             }
           />
