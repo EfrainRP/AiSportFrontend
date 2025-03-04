@@ -436,7 +436,7 @@ export default function EditProfile() {
                                 fullWidth
                                 required
                                 variant="outlined"
-                                value={profile.gender}
+                                // value={profile.gender}
                                 placeholder={profile.gender}
                                 onChange={handleChange}
                                 error={!!errors.gender} //detecta si tiene algo contenido
@@ -449,11 +449,12 @@ export default function EditProfile() {
                             <TextField
                                 name="birthdate"
                                 id="birthdate"
+                                type="date"
                                 fullWidth
                                 required
                                 variant="outlined"
-                                value={profile.birthdate}
-                                placeholder={profile.birthdate}
+                                // value={profile.birthdate}
+                                // placeholder={profile.birthdate}
                                 onChange={handleChange}
                                 error={!!errors.birthdate} //detecta si tiene algo contenido
                                 helperText={errors.birthdate}
@@ -468,7 +469,7 @@ export default function EditProfile() {
                                 fullWidth
                                 required
                                 variant="outlined"
-                                value={profile.nickname}
+                                // value={profile.nickname}
                                 placeholder={profile.nickname}
                                 onChange={handleChange}
                                 error={!!errors.nickname} //detecta si tiene algo contenido
