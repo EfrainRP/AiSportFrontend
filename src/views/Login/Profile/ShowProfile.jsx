@@ -73,11 +73,10 @@ export default function ShowProfile() {
                         <Divider variant="middle" sx={{my:2}}/>
                         <CardMedia
                             component="img"
-                            height={120}
                             // image={`http://localhost:3000/ai/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
                             image={URL_SERVER+`/utils/uploads/${profile.image !== 'logoPerfil.jpg' ? profile.image : 'logoPerfil.jpg'}`} 
                             alt={"Profile"}
-                            sx={{height:'15rem'}}
+                            sx={{width:'70%', height:'15rem', borderRadius: '50%', backgroundPosition: "center",}}
                         />
                         <Divider variant="middle" sx={{my:2}}/>
                         <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>

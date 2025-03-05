@@ -172,12 +172,14 @@ const Card = styled(MuiCard)(({ theme }) => ({
 export default function CreateTeam() {
     const navigate = useNavigate();
     const { loading, setLoading, user } = useAuth();
-    const [file, setFile] = React.useState(null);
+    const [file, setFile] = React.useState([]);
     const [team, setTeam] = React.useState({
         name: '',
         user_id: user?.userId || '',
+        image:null,
         miembros: ['', ''],// Inicializa miembros como un arreglo vacío
     });
+    const [previewImage, setPreviewImage] = React.useState(null);
     const [fieldErrors, setFieldErrors] = React.useState({}); // Almacena errores específicos por campo desde el backend
 
     const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
@@ -200,13 +202,20 @@ export default function CreateTeam() {
 
     const handleImageChange = (e) => {
         const selectedFile = e.target.files[0];
-        setFile(selectedFile);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setPreviewImage(reader.result);
+            setTeam((prevState) => ({
+                ...prevState,
+                image: selectedFile,
+            }));
+        };
+        reader.readAsDataURL(selectedFile);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFieldErrors({});
-console.log(team.miembros);
         // Filtra los miembros vacíos antes de enviar el formulario
         const memberValidate = team.miembros.filter(member => member.trim() !== '');
         const teamsWithMembers = { ...team, miembros: memberValidate };
@@ -243,7 +252,7 @@ console.log(team.miembros);
         }
         setOpenSnackBar(false);
     };
-
+    console.log(team);
     return (
         <LayoutLogin>
             <FormContainerEdit>
@@ -280,16 +289,18 @@ console.log(team.miembros);
                         }}
                     >
                         {/* TO DO: Checar el mecanismo de imagen */}
-                        {/* <ImageButton
+                        <ImageButton
                             component="label"
-                            href={'#'}
                             focusRipple
-                            key={team.name}
                             style={{
                                 width: '40%',
                             }}
                         >
-                            <ImageSrc style={{ backgroundImage: `url(${URL_SERVER}/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'})` }} />
+                            <ImageSrc style={{ 
+                                backgroundImage: 
+                                previewImage? 
+                                `url(${previewImage})` :
+                                `url(${URL_SERVER}/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'})` }} />
                             <ImageBackdrop className="MuiImageBackdrop-root" />
                             <Image>
                                 <Typography
@@ -313,7 +324,7 @@ console.log(team.miembros);
                                 onChange={handleImageChange}
                                 accept="image/*"
                             />
-                        </ImageButton> */}
+                        </ImageButton>
                         
                         <FormControl>
                             <FormLabel htmlFor="name">Name Team: </FormLabel>
@@ -356,16 +367,6 @@ console.log(team.miembros);
                             ))
                             }
                         </FormControl>
-                        <Input
-                            type="file"
-                            onChange={handleImageChange}
-                            inputProps={{ accept: 'image/*' }} // Puedes especificar tipos de archivos si lo necesitas
-                            // error={!!fieldErrors.image}
-                            // helperText={fieldErrors.image}
-                            // color={!!fieldErrors.image ? 'error' : 'primary'}
-                            sx={{ display: 'none' }}
-                            id="file-input"
-                        />
                         <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                             <Button
                                 type="submit"

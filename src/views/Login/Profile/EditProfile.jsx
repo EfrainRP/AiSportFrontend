@@ -185,6 +185,7 @@ export default function EditProfile() {
         newPassword: '',     // Nueva propiedad para la nueva contraseña
         confirmPassword: ''  // Nueva propiedad para la confirmación de la nueva contraseña
     });
+    const [previewImage, setPreviewImage] = React.useState(null);
     const [errors, setErrors] = React.useState({}); // Almacena errores específicos por campo desde el backend
 
     const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
@@ -217,14 +218,40 @@ export default function EditProfile() {
         }
     }, [user.userId]);
 
+    // const handleImageChange = (e) => {
+    //     const selectedFile = e.target.files[0];
+    //     const reader = new FileReader();
+    //     reader.onloadend = () => {
+    //         setFile((prevState) => ({
+    //             ...prevState,
+    //             image: selectedFile, 
+    //             previewImage: reader.result, 
+    //         }));
+    //     };
+    //     reader.readAsDataURL(selectedFile);
+    // };
+
     const handleChange = (e) => {
         const { name, value, files } = e.target;
-        console.log(`Campo cambiado: ${name}, Valor:`, files ? files[0] : value); // 🔍 Verifica valores
 
         setProfile((prevState) => ({
             ...prevState,
-            [name]: files ? files[0] : value || "", // Guarda el archivo si es una imagen, de lo contrario, guarda el valor
+            [name]: value || "",
         }));
+
+        if(files && files[0]){
+            const reader = new FileReader(); // Crear una vista previa de la imagen
+            reader.onloadend = () => {
+                setProfile((prevState) => ({
+                    ...prevState,
+                    [name]: files[0], // Guarda el archivo si es una imagen, de lo contrario, guarda el valor
+                    
+                }));
+                setPreviewImage(reader.result);
+            };
+            reader.readAsDataURL(files[0]);
+        }
+        
     };
 
     const handleSubmit = async (e) => {
@@ -336,7 +363,11 @@ export default function EditProfile() {
                                 width: '40%',
                             }}
                         >
-                            <ImageSrc style={{ backgroundImage: `url(${URL_SERVER}/utils/uploads/${profile.image !== 'logoPerfil.jpg' ? profile.image : 'logoPerfil.jpg'})` }} />
+                            <ImageSrc style={{ 
+                                backgroundImage: 
+                                previewImage?
+                                `url(${previewImage})` :
+                                `url(${URL_SERVER}/utils/uploads/${profile.image !== 'logoPerfil.jpg' ? profile.image : 'logoPerfil.jpg'})` }} />
                             <ImageBackdrop className="MuiImageBackdrop-root" />
                             <Image>
                                 <Typography

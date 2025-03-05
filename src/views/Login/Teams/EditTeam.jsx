@@ -173,7 +173,7 @@ export default function EditTeam() {
     const navigate = useNavigate();
     const { loading, setLoading, user } = useAuth();
     const { teamName, teamId } = useParams();
-    const [file, setFile] = React.useState(null);
+    const [file, setFile] = React.useState([]);
     const [team, setTeam] = React.useState({
         name: '',
         user_id: user?.userId || '',
@@ -225,7 +225,15 @@ export default function EditTeam() {
 
     const handleImageChange = (e) => {
         const selectedFile = e.target.files[0];
-        setFile(selectedFile);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setFile((prevState) => ({
+                ...prevState,
+                image: selectedFile, 
+                previewImage: reader.result, 
+            }));
+        };
+        reader.readAsDataURL(selectedFile);
     };
 
     const handleAddMember = () => {
@@ -258,8 +266,8 @@ export default function EditTeam() {
         });
 
         // Agrega la imagen si se cargo
-        if (file) {
-            formData.append('image', file);
+        if (file.image) {
+            formData.append('image', file.image);
         }
 
         // Realizar la solicitud PUT con FormData <-
@@ -323,6 +331,7 @@ export default function EditTeam() {
         setConfirm(false);
     };
     console.log(team);
+    console.log(file);
     return (
         <LayoutLogin>
             <FormContainerEdit>
@@ -368,7 +377,11 @@ export default function EditTeam() {
                                 width: '40%',
                             }}
                         >
-                            <ImageSrc style={{ backgroundImage: `url(${URL_SERVER}/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'})` }} />
+                            <ImageSrc style={{ 
+                                backgroundImage: 
+                                file.previewImage? 
+                                `url(${file.previewImage})` :
+                                `url(${URL_SERVER}/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'})` }} />
                             <ImageBackdrop className="MuiImageBackdrop-root" />
                             <Image>
                                 <Typography
@@ -393,15 +406,6 @@ export default function EditTeam() {
                                 accept="image/*"
                             />
                         </ImageButton>
-                        {/* <CardActionArea sx={{ width: 200, position: "relative" }}>
-                        <CardMedia
-                            component="img"
-                            height={120}
-                            // image={`http://localhost:3000/ai/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
-                            image={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
-                            alt={team.name}
-                        />
-                        </CardActionArea> */}
                         <FormControl>
                             <FormLabel htmlFor="name">Name Team: </FormLabel>
                             <TextField
