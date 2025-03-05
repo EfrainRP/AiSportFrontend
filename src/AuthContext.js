@@ -1,24 +1,27 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import Cookies from 'js-cookie'; // Importar js-cookie
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem('user');
-    const storedToken = localStorage.getItem('token');  // Recuperar el token
+    // Recupera el usuario y token desde las cookies
+    const storedUser = Cookies.get('user');
+    const storedToken = Cookies.get('token');
     return storedUser ? { ...JSON.parse(storedUser), token: storedToken } : null;
   });
 
   const login = (userData, token) => {
+    // Establecer las cookies para el usuario y el token (cookies de sesión)
     setUser({ ...userData, token });
-    localStorage.setItem('user', JSON.stringify(userData)); // Guarda el nombre de usuario para mantener su referencia 
-    localStorage.setItem('token', token); // Guarda el token
+    Cookies.set('user', JSON.stringify(userData)); // Guarda el usuario en una cookie de sesión
+    Cookies.set('token', token); // Guarda el token en una cookie de sesión
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    Cookies.remove('user'); // Eliminar la cookie del usuario
+    Cookies.remove('token'); // Eliminar la cookie del token
   };
 
   const isAuthenticated = () => {
