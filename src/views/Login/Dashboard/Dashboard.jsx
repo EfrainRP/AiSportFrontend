@@ -298,6 +298,8 @@ export default function Dashboard() {
                           height={120}
                           image={URL_SERVER+`/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
                           alt={equipo.name}
+                          // crossOrigin="anonymous" // tambien se puede usar este
+                          crossOrigin="use-credentials"
                       />
                       <CardContent>
                       

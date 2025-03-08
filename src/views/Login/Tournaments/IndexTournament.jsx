@@ -142,7 +142,7 @@ export default function IndexTournaments() {
                         {tournaments.length > 0 ? (
                             tournaments.map((tournament) => {
                                 return (
-                                <Card variant="outlined" key={tournament.id} sx={{p:0, width:'23%'}}>
+                                <Card variant="outlined" key={tournament.id} sx={{p:0}}>
                                     <CardActionArea href={`/tournament/${tournament.name}/${tournament.id}`} sx={{p:2}}>
                                         <Typography gutterBottom variant="h5" component="div" color='secondary' sx={{display: 'flex', justifyContent:'center'}}>
                                             <strong>{tournament.name}</strong>

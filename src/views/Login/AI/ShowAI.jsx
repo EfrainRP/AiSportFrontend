@@ -440,7 +440,7 @@ export default function ShowAI() {
                     </Container>
                     </CardContent>
                 </Card>
-                {jsonData && //TO DO: checar con datos
+                {/* {jsonData && //TO DO: checar con datos */}
                     <Container sx={{display:"flex", justifyContent:"center", alignContent:"center", flexDirection:'row', gap:2}}>
                         <Paper 
                             sx={{display:"flex", justifyContent:"center", alignContent:"center"}}>
@@ -492,7 +492,7 @@ export default function ShowAI() {
                             </CardContent>
                         </Card>
                     </Container>
-                }
+                {/* } */}
             </Container>
 
             {/*     	Section {Modal / Dialog}         */}
@@ -516,7 +516,7 @@ export default function ShowAI() {
             <DialogComponent
                 maxWidth={'md'}// ó lg
                 modalTittle={'💡AiSport Tips'}
-                open={false}///// showInfoModal
+                open={showInfoModal}///// showInfoModal
                 handleClose={() => setShowInfoModal(false)}
                 modalBody={
                 <Container>

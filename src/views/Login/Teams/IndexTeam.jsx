@@ -99,6 +99,7 @@ export default function IndexTeam() {
                                     <CardActionArea href={`/team/${team.name}/${team.id}`} sx={{p:2}}>
                                         <CardMedia
                                             component="img"
+                                            crossOrigin="use-credentials"
                                             height={120}
                                             // image={`http://localhost:3000/aiSport/api/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
                                             image={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 

@@ -317,12 +317,14 @@ export default function ShowTournament() {
                                                     src={URL_SERVER+`/utils/uploads/${match.equipoLocal.image !== 'logoEquipo.jpg' ? match.equipoLocal.image : 'logoEquipo.jpg'}`}
                                                     alt="Perfil"
                                                     style={{ width: '120px', height: '50px' }} // Size IMG
+                                                    crossOrigin="use-credentials"
                                                 />
                                                 <Typography variant='body1'><strong>Home Team:</strong> {match.equipoLocal.name}</Typography>
                                                 <CardMedia
                                                     src={URL_SERVER+`/utils/uploads/${match.equipoVisitante.image !== 'logoEquipo.jpg' ? match.equipoVisitante.image : 'logoEquipo.jpg'}`}
                                                     alt="Perfil"
                                                     style={{ width: '120px', height: '50px' }} // Size IMG
+                                                    crossOrigin="use-credentials"
                                                 />
                                                 <Typography variant='body1'><strong>Vist Team:</strong> {match.equipoVisitante.name}</Typography>
 

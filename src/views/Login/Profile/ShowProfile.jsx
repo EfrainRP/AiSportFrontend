@@ -77,6 +77,7 @@ export default function ShowProfile() {
                             image={URL_SERVER+`/utils/uploads/${profile.image !== 'logoPerfil.jpg' ? profile.image : 'logoPerfil.jpg'}`} 
                             alt={"Profile"}
                             sx={{width:'70%', height:'15rem', borderRadius: '50%', backgroundPosition: "center",}}
+                            crossOrigin="use-credentials"
                         />
                         <Divider variant="middle" sx={{my:2}}/>
                         <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>

@@ -118,6 +118,7 @@ export default function TeamDashboard () {
               alt={`Team ${team.name}`} 
               height="295"
               image={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
+              crossOrigin="use-credentials"
             />
             <Divider sx={{my:2}}/>
             
