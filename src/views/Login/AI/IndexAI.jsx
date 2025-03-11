@@ -119,7 +119,7 @@ export default function IndexAI() {
             </LayoutLogin>
         );
     }
-    console.log(selectedTeam);
+    console.log(user);
     return (
         <LayoutLogin>
             <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AiSport Individual Performance Analyzer`} </Typography>
@@ -127,6 +127,13 @@ export default function IndexAI() {
                 Here you can consult the general analyzer.
             </Typography>
             <Container sx={{display:'flex', alignContent:'center', justifyContent:'center', mt:4}}>
+                <Button 
+                                color='success' 
+                                variant="contained"
+                                startIcon={<FitnessCenterIcon/>}
+                                href={`/dashboard/trainning/personal/IA/${user.userName}`}>
+                                Personal Trainning
+                            </Button>
                 <Card variant='outlined'>
                     <Typography variant='h6'>
                         Choose your team to upgrade or add their stats:
@@ -159,6 +166,7 @@ export default function IndexAI() {
                     {selectedTeam && 
                         <CardActions sx={{display:'flex', justifyContent:'flex-end'}}>
                             {/* Pasa el ID y el nombre del equipo */}
+                            
                             <Button 
                                 color='success' 
                                 variant="contained"

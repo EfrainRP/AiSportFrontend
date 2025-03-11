@@ -43,6 +43,7 @@ import EditProfile from './views/Login/Profile/EditProfile.jsx';
 //  CRUD IA 
 import ShowAI from './views/Login/AI/ShowAI.jsx'; 
 import IndexAI from './views/Login/AI/IndexAI.jsx'; 
+import StatsAI from './views/Login/AI/StatsAI.jsx'; 
 
 export default function MyRoute(){
     return (
@@ -247,6 +248,14 @@ export default function MyRoute(){
             element={ //  Entrenamiento de IA Estadisticas personalizado por equipo <- 
               <AuthRoute > 
                 <ShowAI />{/* Checar con datos en la grafica */}
+              </AuthRoute>
+            }
+          />
+          <Route 
+            path="/dashboard/trainning/personal/IA/:userName" // Ruta SHOWUser <- (Estadisticas de entrenamiento individual <-)
+            element={ //  Entrenamiento de IA Estadisticas personalizado por usuario <- 
+              <AuthRoute > 
+                <StatsAI />
               </AuthRoute>
             }
           />
