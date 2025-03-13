@@ -30,6 +30,7 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useParams, useNavigate } from 'react-router-dom';
@@ -37,7 +38,6 @@ import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx';
-import ConfirmDialog from '../../../components/Login/ConfirmDialog.jsx';
 
 // const CustomAutocomplete = styled(Autocomplete)({
 //     "& .MuiAutocomplete-popupIndicator": {
@@ -122,18 +122,11 @@ export default function IndexAI() {
     console.log(user);
     return (
         <LayoutLogin>
-            <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AiSport Individual Performance Analyzer`} </Typography>
-            <Typography variant='subtitle2' sx={{ mt:3 }}>
+            <Typography variant='h2' sx={{ml:7}}> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AiSport Performance Analyzer`} </Typography>
+            <Typography variant='subtitle2' sx={{ mt:3, ml:7 }}>
                 Here you can consult the general analyzer.
             </Typography>
-            <Container sx={{display:'flex', alignContent:'center', justifyContent:'center', mt:4}}>
-                <Button 
-                                color='success' 
-                                variant="contained"
-                                startIcon={<FitnessCenterIcon/>}
-                                href={`/dashboard/trainning/personal/IA/${user.userName}`}>
-                                Personal Trainning
-                            </Button>
+            <Container sx={{display:'flex', alignItems:'center', justifyItems:'center', mt:4, flexDirection:'column', gap:2}}>
                 <Card variant='outlined'>
                     <Typography variant='h6'>
                         Choose your team to upgrade or add their stats:
@@ -177,6 +170,14 @@ export default function IndexAI() {
                         </CardActions>
                     }
                 </Card>
+                <Button 
+                    color='secondary' 
+                    variant="contained"
+                    sx={{width:'40%'}}
+                    startIcon={<TrendingUpIcon/>}
+                    href={`/dashboard/trainning/personal/IA/${user.userName}`}>
+                    Personal Stats
+                </Button>
             </Container>
         </LayoutLogin>
     );

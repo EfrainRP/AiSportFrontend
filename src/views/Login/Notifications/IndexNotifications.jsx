@@ -11,6 +11,8 @@ import {
     ListItemIcon,
     ListItemText,
     Divider,
+    Snackbar,
+    Alert,
     Card,
     CardActions,
     CardContent,
@@ -43,6 +45,15 @@ export default function IndexNotifications() {
     const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado 
     const [check, setCheck] = React.useState(false);
     const [checkDelete, setCheckDelete] = React.useState(false);
+    const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
+    const [openSnackBar, setOpenSnackBar] = React.useState(false); // Mecanismo snackbar
+
+    const handleCloseSnackBar = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnackBar(false);
+    };
 
     React.useEffect(() => {
         const fetchData = async () => {
@@ -72,15 +83,21 @@ export default function IndexNotifications() {
         await axiosInstance.put(`/notificaciones/${notificacionId}`, {status: "rejected"})
         .then((response)=>{
             console.log(response.data);
-            alert('Notificación denegada con éxito.');
+            // alert('Notificación denegada con éxito.');
+            setOpenSnackBar(true);
+            setDataAlert({ severity: "warning", message: 'Notificación denegada con éxito.' });
         }).catch((err)=>{
             console.error(err);
             setCheckDelete(false);
             // Verifica si hay una respuesta del servidor con un mensaje de error
             if (err.response && err.response.data && err.response.data.message) {
-                alert(err.response.data.message); // Muestra el mensaje del backend
+                // alert(err.response.data.message); // Muestra el mensaje del backend
+                setOpenSnackBar(true);
+                setDataAlert({ severity: "error", message: err.response.data.message });
             } else {
-                alert('Ocurrió un error al denegar la notificación.'); // Error genérico
+                // alert('Ocurrió un error al denegar la notificación.'); // Error genérico
+                setOpenSnackBar(true);
+                setDataAlert({ severity: "error", message: 'Ocurrió un error al denegar la notificación.' });
             }
         });
     };
@@ -92,22 +109,37 @@ export default function IndexNotifications() {
         .then((response)=>{
             // Eliminar la notificación aceptada del estado
             setNotifications((prev) => prev.filter((n) => n.id !== notificacionId));
-            
-            alert('Notificación aceptada con éxito.');
+            setOpenSnackBar(true);
+            setDataAlert({ severity: "success", message: 'Notificación aceptada con éxito.' });
+            // alert('Notificación aceptada con éxito.');
         }).catch((err)=>{
             console.error('Error al aceptar la notificación:', err);
             setCheck(false);
             // Verifica si hay una respuesta del servidor con un mensaje de error
             if (err.response && err.response.data && err.response.data.message) {
-                alert(err.response.data.message); // Muestra el mensaje del backend
+                // alert(err.response.data.message); // Muestra el mensaje del backend
+                setOpenSnackBar(true);
+                setDataAlert({ severity: "error", message: err.response.data.message });
             } else {
-                alert('Ocurrió un error al aceptar la notificación.'); // Error genérico
+                // alert('Ocurrió un error al aceptar la notificación.'); // Error genérico
+                setOpenSnackBar(true);
+                setDataAlert({ severity: "error", message: 'Ocurrió un error al aceptar la notificación.'});
             }
         });
     };
 
     return (
         <LayoutLogin>
+            <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+                <Alert
+                    severity={dataAlert.severity}
+                    variant='filled'
+                    sx={{ width: '100%' }}
+                    onClose={handleCloseSnackBar}
+                >
+                    {dataAlert.message}
+                </Alert>
+            </Snackbar>
             <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'30%'} /> : `Welcome ${user.userName.toUpperCase() || 'invitado'}`} </Typography>
             <Typography variant='h3' sx={{ mb: 2, ml:10 }}> {loading ? <Skeleton variant="rounded" width={'20%'} sx={{my: 2}}/> : 'to your notifications !'} </Typography>
             <Typography variant='subtitle2' sx={{ mt:3 }}>

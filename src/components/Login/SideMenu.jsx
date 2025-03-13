@@ -30,6 +30,7 @@ import { AiSportIcon } from '../CustomIcons.jsx';
 import { useAuth } from '../../services/AuthContext.jsx'; // Importa el AuthContext
 import { useNavigate, useLocation } from 'react-router-dom'; // Importa useNavigate
 import axiosInstance from '../../services/axiosConfig.js';
+const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 
 import ColorModeSelect from '../shared-theme/ColorModeSelect.jsx';
 
@@ -114,21 +115,21 @@ function stringToColor(string) {
   return color;
 }
 
-function stringAvatar(name, sx) { // Funcion segun el nombre del usuario para el color del avatar
-  return {
-    sx: {
-      bgcolor: stringToColor(name),
-      ml:0.6,
-      ...sx,
-    },
-    children: `${name[0]}`,
-  };
-}
+// function stringAvatar(name, sx) { // Funcion segun el nombre del usuario para el color del avatar
+//   return {
+//     sx: {
+//       bgcolor: stringToColor(name),
+//       ml:0.6,
+//       ...sx,
+//     },
+//     children: `${name[0]}`,
+//   };
+// }
 
 export default function SideMenu(props) {  
   const { user = { userId: 0, userName: 'UserUnknow' }, logout, loading, setLoading } = useAuth(); // Accede al usuario autenticado, de la funcion obtenemos su valor especifico, validado si esta vacio el valory Accede al usuario autenticado y al método logout
   const userName = user.userName;
-  
+
   const navigate = useNavigate();
   const location = useLocation(); // Hook para obtener la ubicación actual
 
@@ -139,8 +140,20 @@ export default function SideMenu(props) {
   const openMenu = Boolean(anchorEl);
   
   const [countNotification, setCountNotificactions] = React.useState(0); // Estado para las notificaciones
+  const [profile, setProfile] = React.useState('');
 
   React.useEffect(() => {
+    const fetchProfile = async () => {
+      await axiosInstance.get(`perfil/${user.userId}`) //obtener datos de perfil
+      .then((response) => {
+          setProfile(response.data);
+          console.log(profile);
+      })
+      .catch((error) => {
+          console.error("Error al obtener los datos del usuario:", error);
+      });
+    };
+
     const fetchData = async () => {
       // Obtener notificaciones
       await axiosInstance.get(`/notificaciones/${user.userId}`)
@@ -158,8 +171,9 @@ export default function SideMenu(props) {
 
     if (user) {
       fetchData(); // Llamar a la función solo si el usuario está definido
+      fetchProfile();
     }
-  }, [user]);
+  }, [user.userId, user.userName]);
   
   const handleLogout = () => {
     logout(); // Llama a la función logout del contexto
@@ -180,6 +194,8 @@ export default function SideMenu(props) {
   const handleClickMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
+  console.log(`${URL_SERVER}/utils/uploads/logoPerfil.jpg`);
 
   return (
       <Drawer variant="permanent" open={openList} sx={{display: 'block '}} {...props}>
@@ -336,7 +352,8 @@ export default function SideMenu(props) {
                 {loading?
                   <CircularProgress size={20} sx={{ml:1}}/>
                 :
-                  <Avatar {...stringAvatar(userName, {width: 30, height: 30, fontSize:15,})} />
+                // {...stringAvatar(userName, {width: 30, height: 30, fontSize:15,})}
+                  <Avatar src={`${URL_SERVER}/utils/uploads/logoPerfil.jpg`} crossOrigin="anonymous"/>
                 }
               </ListItemIcon>
               <ListItemText

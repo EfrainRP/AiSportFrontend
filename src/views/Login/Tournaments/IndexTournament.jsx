@@ -96,7 +96,7 @@ export default function IndexTournaments() {
                         }}
                         isOptionEqualToValue = {(option, value) => option.name === value.name}
                         myLabel={'Search Tournament'}
-                        toUrl={'tournament'}/>
+                        urlOnwer={'tournament'}/>
                 </Container>
             }   
                 {/* <Stack direction={'row'} sx={{my:2}}> */}

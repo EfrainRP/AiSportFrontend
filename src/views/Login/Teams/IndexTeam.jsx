@@ -78,7 +78,7 @@ export default function IndexTeam() {
                         }}
                         isOptionEqualToValue = {(option, value) => option.name === value.name}
                         myLabel={'Search Team'}
-                        toUrl={'team'}/>
+                        urlOnwer={'team'}/>
                 </Container>
             }  
             

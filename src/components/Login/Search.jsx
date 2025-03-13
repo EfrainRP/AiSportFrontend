@@ -21,7 +21,7 @@ import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import SearchIcon from '@mui/icons-material/Search';
 import SavedSearchIcon from '@mui/icons-material/SavedSearch';
 
-export default function Search({myOptions, myValue, onChange, isOptionEqualToValue, myLabel='Search', toUrl=null}) {
+export default function Search({myOptions, myValue, onChange, isOptionEqualToValue, myLabel='Search', toUrl=null, urlOnwer=null}) {
     const [open, setOpen] = React.useState(false);
     const [inputValue, setInputValue] = React.useState('');
     const navigate = useNavigate();
@@ -36,6 +36,12 @@ export default function Search({myOptions, myValue, onChange, isOptionEqualToVal
                 navigate(`/dashboard/${toUrl}/${resultInputValue?.name}/${resultInputValue?.id}`); // Redirigir si es válido
             }else if(myValue){
                 navigate(`/dashboard/${toUrl}/${myValue?.name}/${myValue?.id}`);
+            }
+        }else if(urlOnwer){
+            if (resultInputValue){ 
+                navigate(`/${urlOnwer}/${resultInputValue?.name}/${resultInputValue?.id}`); // Redirigir si es válido
+            }else if(myValue){
+                navigate(`/${urlOnwer}/${myValue?.name}/${myValue?.id}`);
             }
         }
         return;

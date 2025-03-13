@@ -47,6 +47,7 @@ import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx';
 import DialogComponent from '../../../components/Login/DialogComponent.jsx';
+import BackButton from '../../../components/Login/BackButton.jsx';
 
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 
@@ -366,8 +367,11 @@ export default function ShowAI() {
     }
     return (
         <LayoutLogin>
-            <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AI Trainning`} </Typography>
-            <Typography variant='subtitle2' sx={{ mt:3 }}>
+            <Container sx={{display: 'center',m:1, gap:'5%'}}>
+                <BackButton url={`/dashboard/trainning/IA`}/>
+                <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AI Trainning`} </Typography>
+            </Container>
+            <Typography variant='subtitle2' sx={{ mt:3, ml:20 }}>
                 Here you can consult the general analyzer.
             </Typography>
 
