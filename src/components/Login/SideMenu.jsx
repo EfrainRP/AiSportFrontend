@@ -353,7 +353,7 @@ export default function SideMenu(props) {
                   <CircularProgress size={20} sx={{ml:1}}/>
                 :
                 // {...stringAvatar(userName, {width: 30, height: 30, fontSize:15,})}
-                  <Avatar src={`${URL_SERVER}/utils/uploads/logoPerfil.jpg`} crossOrigin="anonymous"/>
+                  <Avatar src={`${URL_SERVER}/utils/uploads/${profile.image !== 'logoEquipo.jpg' ? profile.image : 'logoEquipo.jpg'}`} crossOrigin="use-credentials"/>
                 }
               </ListItemIcon>
               <ListItemText
