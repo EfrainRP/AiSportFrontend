@@ -28,7 +28,7 @@ const ProfileShow = () => {
             <h1>Profile</h1>
             <div>
                 <img 
-                    src={`http://localhost:5000/sporthub/api/utils/uploads/${profile.image !== 'logoPerfil.jpg' ? profile.image : 'logoPerfil.jpg'}`} 
+                    src={`/sporthub/api/utils/uploads/${profile.image !== 'logoPerfil.jpg' ? profile.image : 'logoPerfil.jpg'}`} 
                     alt="Perfil" 
                 />
                 <p><strong>Name:</strong> {profile.name} {profile.fsurname} {profile.msurname}</p>

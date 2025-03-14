@@ -148,8 +148,8 @@ const EditEquipo = () => {
       {generalError && <p className="error">{generalError}</p>}
       {successMessage && <p className="success">{successMessage}</p>}
       <img 
-          src={`http://localhost:5000/sporthub/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
-          alt="Perfil" 
+          src={`/sporthub/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
+          alt="Equipo" 
       />
       <form onSubmit={handleSubmit}>
         <div>

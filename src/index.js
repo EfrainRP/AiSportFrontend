@@ -45,6 +45,8 @@ import EstadisticasTorneo from './views/Estadisticas/torneo'; // Estadisticas Sh
 import AI from './views/AI/index'; // AI Index <-
 import AIShow from './views/AI/show'; // AI Show <-
 import AIShowUser from './views/AI/user'; // AI AIShowUser <-
+// VIEW Email 
+import EmailPassword from './views/Email/reset-password'; 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -69,6 +71,15 @@ root.render(
             element={
               <AuthRoute restricted={true}>
                 <Register />
+              </AuthRoute>
+            }
+          />
+          {/* Ruta para restablecer contraseña */}
+          <Route
+            path="/reset-password"
+            element={
+              <AuthRoute restricted={true}> {/* No restringida, puede ingresar cualquier usuario con token */}
+                <EmailPassword />
               </AuthRoute>
             }
           />
