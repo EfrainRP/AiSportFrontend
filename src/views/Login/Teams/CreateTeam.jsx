@@ -300,7 +300,7 @@ export default function CreateTeam() {
                                 backgroundImage: 
                                 previewImage? 
                                 `url(${previewImage})` :
-                                `url(${URL_SERVER}/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'})` }} />
+                                `url(${URL_SERVER}/utils/uploads/${team && team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'})` }} />
                             <ImageBackdrop className="MuiImageBackdrop-root" />
                             <Image>
                                 <Typography

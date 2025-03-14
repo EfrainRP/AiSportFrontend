@@ -74,10 +74,18 @@ export default function ShowProfile() {
                         <CardMedia
                             component="img"
                             // image={`http://localhost:3000/ai/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
-                            image={URL_SERVER+`/utils/uploads/${profile.image !== 'logoPerfil.jpg' ? profile.image : 'logoPerfil.jpg'}`} 
+                            image={`${URL_SERVER}/utils/uploads/${profile && profile.image !== 'logoPerfil.jpg' ? profile.image : 'logoPerfil.jpg'}`} 
                             alt={"Profile"}
-                            sx={{width:'70%', height:'15rem', borderRadius: '50%', backgroundPosition: "center",}}
                             crossOrigin="use-credentials"
+                            sx={{
+                                height: '15rem',
+                                width: '15rem', 
+                                borderRadius: '50%', // Para hacer la imagen circular
+                                objectFit: 'cover', // Asegura que la imagen se ajuste sin distorsión
+                                objectPosition: 'center', // Centra la imagen dentro del contenedor
+                                display: 'block', // Evita espacios debajo de la imagen
+                                margin: '0 auto', // Centra la imagen dentro del contenedor 
+                            }}
                         />
                         <Divider variant="middle" sx={{my:2}}/>
                         <Container sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:2}}>
@@ -145,7 +153,7 @@ export default function ShowProfile() {
                             <ListItem key={i}>
                                 <ListItemButton href={`/team/${team.name}/${team.id}`}>
                                     <ListItemAvatar>
-                                        <Avatar src={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`}/>
+                                        <Avatar src={`${URL_SERVER}/utils/uploads/${team && team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`}/>
                                     </ListItemAvatar>
                                     <ListItemText primary={team.name}/>
                                 </ListItemButton>

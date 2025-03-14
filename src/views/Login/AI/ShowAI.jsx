@@ -529,7 +529,7 @@ export default function ShowAI() {
                     <Typography>Camera placement recommendations for optimal analysis:</Typography>
                     <StyledBox>
                         <StyledBoxIMG
-                        src={URL_SERVER+`/utils/uploads/tripie.jpg`}
+                        src={`${URL_SERVER}/utils/uploads/tripie.jpg`}
                         alt="Cámara en trípode tomando una foto"
                         sx={{ width: "250px", height: "auto"}}
                         />
@@ -539,7 +539,7 @@ export default function ShowAI() {
                             <ListItemText>The player must occupy at least <strong>60% of the frame</strong> or full body view during training. 🤾‍♂️</ListItemText>
                             <StyledBox>
                                 <StyledBoxIMG 
-                                    src={URL_SERVER+`/utils/uploads/60camara.png`}
+                                    src={`${URL_SERVER}/utils/uploads/60camara.png`}
                                     alt="60 de Camara"
                                     sx={{ width: "650px", height: "auto"}}
                                 />
@@ -549,7 +549,7 @@ export default function ShowAI() {
                             <ListItemText>The playing area should be as <strong>centered</strong> and focused as possible.📷</ListItemText>
                             <StyledBox>
                                 <StyledBoxIMG
-                                    src={URL_SERVER+`/utils/uploads/centro_camara.jpg`}
+                                    src={`${URL_SERVER}/utils/uploads/centro_camara.jpg`}
                                     alt="Centro de Camara"
                                     sx={{ width: "200px", height: "auto",}}
                                     
@@ -561,7 +561,7 @@ export default function ShowAI() {
                             </ListItemText>
                             <StyledBox>
                                 <StyledBoxIMG
-                                    src={URL_SERVER+`/utils/uploads/distanciaCamara.png`}
+                                    src={`${URL_SERVER}/utils/uploads/distanciaCamara.png`}
                                     alt="Distancia de Camara"
                                     sx={{ width: "500px", height: "auto",}}
                                     
@@ -573,7 +573,7 @@ export default function ShowAI() {
                             </ListItemText>
                             <StyledBox>
                             <StyledBoxIMG
-                                src={URL_SERVER+`/utils/uploads/altura.jpg`}
+                                src={`${URL_SERVER}/utils/uploads/altura.jpg`}
                                 alt="Altura de Camara"
                                 sx={{ width: "500px", height: "auto",}}
                                 
@@ -585,7 +585,7 @@ export default function ShowAI() {
                             </ListItemText>
                             <StyledBox>
                             <StyledBoxIMG
-                                src={URL_SERVER+`/utils/uploads/iluminacion.jpg`}
+                                src={`${URL_SERVER}/utils/uploads/iluminacion.jpg`}
                                 alt="Iluminacion en cancha"
                                 sx={{ width: "300px", height: "auto",}}
                                 
@@ -598,12 +598,12 @@ export default function ShowAI() {
                             <StyledBox>
                             ❌
                             <StyledBoxIMG
-                                src={URL_SERVER+`/utils/uploads/cancha_frontal.jpg`}
+                                src={`${URL_SERVER}/utils/uploads/cancha_frontal.jpg`}
                                 alt="Cancha frontal" sx={{ width: "200px", height: "auto",}} 
                                 />
                             ✅
                             <StyledBoxIMG
-                                src={URL_SERVER+`/utils/uploads/cancha_lateral.jpg`}
+                                src={`${URL_SERVER}/utils/uploads/cancha_lateral.jpg`}
                                 alt="Cancha lateral" sx={{ width: "230px", height: "auto",}} 
                                 />
                             </StyledBox>

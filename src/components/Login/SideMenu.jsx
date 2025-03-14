@@ -140,14 +140,13 @@ export default function SideMenu(props) {
   const openMenu = Boolean(anchorEl);
   
   const [countNotification, setCountNotificactions] = React.useState(0); // Estado para las notificaciones
-  const [profile, setProfile] = React.useState('');
+  const [profile, setProfile] = React.useState(null);
 
   React.useEffect(() => {
     const fetchProfile = async () => {
       await axiosInstance.get(`perfil/${user.userId}`) //obtener datos de perfil
       .then((response) => {
           setProfile(response.data);
-          console.log(profile);
       })
       .catch((error) => {
           console.error("Error al obtener los datos del usuario:", error);
@@ -164,7 +163,7 @@ export default function SideMenu(props) {
         }, 1500); // Simula tiempo de carga
       })
       .catch ((error) => {
-        console.error('Error al obtener las notificaciones:', error);
+        // console.error('Error al obtener las notificaciones:', error);
         setLoading(false); // Cambiar el estado de carga incluso en caso de error
       });
     };
@@ -195,7 +194,7 @@ export default function SideMenu(props) {
     setAnchorEl(event.currentTarget);
   };
 
-  console.log(`${URL_SERVER}/utils/uploads/logoPerfil.jpg`);
+  // console.log(`${URL_SERVER}/utils/uploads/logoPerfil.jpg`);
 
   return (
       <Drawer variant="permanent" open={openList} sx={{display: 'block '}} {...props}>
@@ -353,7 +352,7 @@ export default function SideMenu(props) {
                   <CircularProgress size={20} sx={{ml:1}}/>
                 :
                 // {...stringAvatar(userName, {width: 30, height: 30, fontSize:15,})}
-                  <Avatar src={`${URL_SERVER}/utils/uploads/${profile.image !== 'logoEquipo.jpg' ? profile.image : 'logoEquipo.jpg'}`} crossOrigin="use-credentials"/>
+                  <Avatar src={`${URL_SERVER}/utils/uploads/${(profile && profile.image !== 'logoPerfil.jpg') ? profile.image : 'logoPerfil.jpg'}`} crossOrigin="use-credentials"/>
                 }
               </ListItemIcon>
               <ListItemText

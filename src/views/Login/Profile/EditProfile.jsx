@@ -360,15 +360,22 @@ export default function EditProfile() {
                             focusRipple
                             key={profile.image}
                             style={{
-                                width: '40%',
+                                height: '15rem',
+                                width: '15rem', 
                             }}
                         >
                             <ImageSrc style={{ 
                                 backgroundImage: 
-                                previewImage?
-                                `url(${previewImage})` :
-                                `url(${URL_SERVER}/utils/uploads/${profile.image !== 'logoPerfil.jpg' ? profile.image : 'logoPerfil.jpg'})` }} />
-                            <ImageBackdrop className="MuiImageBackdrop-root" />
+                                    previewImage?
+                                    `url(${previewImage})` :
+                                    `url(${URL_SERVER}/utils/uploads/${profile.image!=null && profile.image !== 'logoPerfil.jpg' ? profile.image : 'logoPerfil.jpg'})`,
+                                borderRadius: '50%', // Para hacer la imagen circular
+                                objectFit: 'cover', // Asegura que la imagen se ajuste sin distorsión
+                                objectPosition: 'center', // Centra la imagen dentro del contenedor
+                                display: 'block', // Evita espacios debajo de la imagen
+                                margin: '0 auto', // Centra la imagen dentro del contenedor 
+                            }} />
+                            <ImageBackdrop className="MuiImageBackdrop-root"/>
                             <Image>
                                 <Typography
                                     component="span"

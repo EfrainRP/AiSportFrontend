@@ -173,7 +173,7 @@ export default function IndexNotifications() {
                                     } 
                                 >
                                     <ListItemAvatar>
-                                        <Avatar src={URL_SERVER+`/utils/uploads/${note.equipos.image !== 'logoEquipo.jpg' ? note.equipos.image : 'logoEquipo.jpg'}`}/>
+                                        <Avatar src={`${URL_SERVER}/utils/uploads/${note.equipos && note.equipos.image !== 'logoEquipo.jpg' ? note.equipos.image : 'logoEquipo.jpg'}`}/>
                                     </ListItemAvatar>
                                     <ListItemText
                                         primary={<Typography>Your request for <Typography component={'strong'} color={'primary'}>team {note.equipos?.name}</Typography> was <Typography component={'strong'} color={colorStatus}>{note.status}</Typography> for <Typography component={'strong'} color={'primary.light'}>tournament {note.torneos?.name}.</Typography></Typography>}

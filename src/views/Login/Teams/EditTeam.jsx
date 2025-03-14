@@ -178,6 +178,7 @@ export default function EditTeam() {
         name: '',
         user_id: user?.userId || '',
         miembros: [], // Inicializa miembros como un arreglo vacío
+        image: null,
     });
     const [fieldErrors, setFieldErrors] = React.useState({}); // Almacena errores específicos por campo desde el backend
 
@@ -330,8 +331,8 @@ export default function EditTeam() {
             });
         setConfirm(false);
     };
-    console.log(team);
-    console.log(file);
+    // console.log(team);
+    // console.log(file);
     return (
         <LayoutLogin>
             <FormContainerEdit>
@@ -379,9 +380,9 @@ export default function EditTeam() {
                         >
                             <ImageSrc style={{ 
                                 backgroundImage: 
-                                file.previewImage? 
+                                file && file.previewImage? 
                                 `url(${file.previewImage})` :
-                                `url(${URL_SERVER}/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'})` }} />
+                                `url(${URL_SERVER}/utils/uploads/${(team.image!=null && team.image !== 'logoEquipo.jpg') ? team.image : 'logoEquipo.jpg'})` }} />
                             <ImageBackdrop className="MuiImageBackdrop-root" />
                             <Image>
                                 <Typography

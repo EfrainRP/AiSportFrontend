@@ -79,7 +79,7 @@ export default function ShowTeam() {
                             crossOrigin="use-credentials"
                             height={120}
                             // image={`http://localhost:3000/ai/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
-                            image={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
+                            image={`${URL_SERVER}/utils/uploads/${team && team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
                             alt={team.name}
                             sx={{height:'15rem'}}
                         />

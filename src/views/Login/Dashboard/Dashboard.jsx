@@ -160,7 +160,6 @@ export default function Dashboard() {
       fetchData(); // Llamar a la función solo si el usuario está definido
     }
   }, [[user]]);
-  console.log(data.torneos);
   return (
     <LayoutLogin>
       {/* Tiene el skeleton para dar una animacion de carga al cargar los datos */}
@@ -296,7 +295,7 @@ export default function Dashboard() {
                       <CardMedia
                           component="img"
                           height={120}
-                          image={URL_SERVER+`/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
+                          image={`${URL_SERVER}/utils/uploads/${equipo && equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
                           alt={equipo.name}
                           // crossOrigin="anonymous" // tambien se puede usar este
                           crossOrigin="use-credentials"

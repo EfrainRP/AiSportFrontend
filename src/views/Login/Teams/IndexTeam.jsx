@@ -102,7 +102,7 @@ export default function IndexTeam() {
                                             crossOrigin="use-credentials"
                                             height={120}
                                             // image={`http://localhost:3000/aiSport/api/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
-                                            image={URL_SERVER+`/utils/uploads/${team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
+                                            image={`${URL_SERVER}/utils/uploads/${team && team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} 
                                             alt={team.name}
                                         />
                                         <CardContent>
