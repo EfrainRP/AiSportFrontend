@@ -14,6 +14,10 @@ import { Box,
   Typography,
   Stack,
   FormHelperText,
+  OutlinedInput ,
+  InputLabel,
+  InputAdornment,
+  IconButton,
   } from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
@@ -21,6 +25,8 @@ import { styled } from '@mui/material/styles';
 import { GoogleIcon, FacebookIcon, AiSportIcon } from '../../../components/CustomIcons.jsx';
 import LayoutBasic from '../../LayoutBasic.jsx'
 
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -173,6 +179,15 @@ export default function SignUp(props) {
     }
   }
 
+  const [showPassword, setShowPassword] = React.useState(false);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+  const handleMouseUpPassword = (event) => {
+    event.preventDefault();
+  };
+
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const validatePass = ()=>{
@@ -232,7 +247,7 @@ export default function SignUp(props) {
         <Typography
             component="h1"
             variant="h4"
-            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)',textAlign:'center'}}
           >
             Sign up
           </Typography>
@@ -352,7 +367,36 @@ export default function SignUp(props) {
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="password">Password</FormLabel>
-              <TextField
+              <OutlinedInput
+                id="password"
+                name="password"
+                placeholder="••••••"
+                type={showPassword ? 'text' : 'password'}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={
+                        showPassword ? 'hide the password' : 'display the password'
+                      }
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      onMouseUp={handleMouseUpPassword}
+                      edge="end"
+                      sx={{
+                        backgroundColor: 'transparent', // Hace el fondo transparente
+                        border: 'none',
+                        outline: 'none', // Evita el contorno al hacer focus
+                        boxShadow: 'none', // Elimina sombras
+                      }}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="password"
+              />
+              {passwordError && <FormHelperText sx={{color:'error.main'}} >{passwordErrorMessage}</FormHelperText>}
+              {/* <TextField
                 required
                 fullWidth
                 name="password"
@@ -365,7 +409,7 @@ export default function SignUp(props) {
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 color={passwordError ? 'error' : 'primary'}
-              />
+              /> */}
             </FormControl>
             <FormControlLabel
               control={<Checkbox value="allowExtraEmails" color="primary" />}
@@ -376,6 +420,7 @@ export default function SignUp(props) {
               fullWidth
               variant="contained"
               onClick={validateInputs}
+              color="warning"
             >
               Sign up
             </Button>

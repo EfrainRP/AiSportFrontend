@@ -15,7 +15,12 @@ import {
   Typography,
   Stack,
   useTheme, 
-  Container
+  Container,
+  OutlinedInput ,
+  InputLabel,
+  InputAdornment,
+  IconButton,
+  FormHelperText
 } from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
@@ -25,6 +30,9 @@ import axiosInstance from "../../../services/axiosConfig.js";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext.jsx'; // Importa el contexto
 import LayoutBasic from '../../LayoutBasic.jsx';
+
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
   // height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
@@ -88,6 +96,18 @@ export default function SignIn(props) {
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
   const [validateInputs, setValidateInputs] = React.useState(true);
 
+  const [showPassword, setShowPassword] = React.useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handleMouseUpPassword = (event) => {
+    event.preventDefault();
+  };
+
   // Component SnackBar State
   const handleClickSnackBar = () => {
     setOpenSnackBar(true);
@@ -122,7 +142,7 @@ export default function SignIn(props) {
     }
     const data = new FormData(event.currentTarget);
     // console.log(data.get("email"));
-
+    console.log(data.get('password'));
     await axiosInstance.post('/login',{ // Conection to backend
       email: data.get('email'), 
       password: data.get('password')
@@ -199,7 +219,7 @@ export default function SignIn(props) {
           <Typography
             component="h1"
             variant="h4"
-            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)', textAlign:'center'}}
           >
             Sign in
           </Typography>
@@ -242,12 +262,12 @@ export default function SignIn(props) {
                   onClick={handleClickOpen}
                   onChange={passwordValidate}
                   variant="body2"
-                  sx={{ alignSelf: 'baseline' }}
+                  sx={{ alignSelf: 'baseline', color:'white'}}
                 >
                   Forgot your password?
                 </Link>
               </Box>
-              <TextField
+              {/* <TextField
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 name="password"
@@ -260,7 +280,36 @@ export default function SignIn(props) {
                 fullWidth
                 variant="outlined"
                 color={passwordError ? 'error' : 'primary'}
-              />
+              /> */}
+          <OutlinedInput
+            id="password"
+            name="password"
+            placeholder="••••••"
+            type={showPassword ? 'text' : 'password'}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label={
+                    showPassword ? 'hide the password' : 'display the password'
+                  }
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                  onMouseUp={handleMouseUpPassword}
+                  edge="end"
+                  sx={{
+                    backgroundColor: 'transparent', // Hace el fondo transparente
+                    border: 'none',
+                    outline: 'none', // Evita el contorno al hacer focus
+                    boxShadow: 'none', // Elimina sombras
+                  }}
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+            label="password"
+          />
+          {passwordError && <FormHelperText sx={{color:'error.main'}} >{passwordErrorMessage}</FormHelperText>}
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
@@ -270,6 +319,7 @@ export default function SignIn(props) {
               type="submit"
               fullWidth
               variant="contained"
+              color="warning"
             >
               Sign in
             </Button>
@@ -315,6 +365,8 @@ export default function SignIn(props) {
               </span>
             </Typography>
           </Box>
+          {/* 
+          TO DO: EXTRA SIGN
           <Divider>or</Divider>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Button
@@ -333,7 +385,7 @@ export default function SignIn(props) {
             >
               Sign in with Facebook
             </Button>
-          </Box>
+          </Box> */}
         </Card>
       </SignInContainer>
       </LayoutBasic>

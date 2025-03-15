@@ -26,7 +26,10 @@ import {
     Input,
     Container,
     CardMedia,
-    ButtonBase
+    ButtonBase,
+    FormHelperText,
+    OutlinedInput ,
+    InputAdornment,
 } from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
@@ -40,6 +43,8 @@ import LoadingView from '../../../components/Login/LoadingView.jsx';
 import ConfirmDialog from '../../../components/Login/ConfirmDialog.jsx';
 import BackButton from '../../../components/Login/BackButton.jsx';
 
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 
@@ -190,6 +195,21 @@ export default function EditProfile() {
 
     const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
     const [openSnackBar, setOpenSnackBar] = React.useState(false); // Mecanismo snackbar
+
+    const [showPassword0, setShowPassword0] = React.useState(false);
+    const handleClickShowPassword0 = () => setShowPassword0((show) => !show);
+
+    const [showPassword1, setShowPassword1] = React.useState(false);
+    const handleClickShowPassword1 = () => setShowPassword1((show) => !show);
+
+    const [showPassword2, setShowPassword2] = React.useState(false);
+    const handleClickShowPassword2 = () => setShowPassword2((show) => !show);
+    const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+    };
+    const handleMouseUpPassword = (event) => {
+    event.preventDefault();
+    };
 
     React.useEffect(() => {
         const fetchUser = async () => {
@@ -517,7 +537,36 @@ export default function EditProfile() {
                         </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="currentPassword">Current Password: </FormLabel>
-                            <TextField
+                            <OutlinedInput
+                                id="currentPassword"
+                                name="currentPassword"
+                                placeholder="••••••"
+                                type={showPassword0 ? 'text' : 'password'}
+                                endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                    aria-label={
+                                        showPassword0 ? 'hide the password' : 'display the password'
+                                    }
+                                    onClick={handleClickShowPassword0}
+                                    onMouseDown={handleMouseDownPassword}
+                                    onMouseUp={handleMouseUpPassword}
+                                    edge="end"
+                                    sx={{
+                                        backgroundColor: 'transparent', // Hace el fondo transparente
+                                        border: 'none',
+                                        outline: 'none', // Evita el contorno al hacer focus
+                                        boxShadow: 'none', // Elimina sombras
+                                    }}
+                                    >
+                                    {showPassword0 ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                                }
+                                label="currentPassword"
+                            />
+                            {errors.currentPassword && <FormHelperText sx={{color:'error.main'}} >{errors.currentPassword}</FormHelperText>}
+                            {/* <TextField
                                 name="currentPassword"
                                 id="currentPassword"
                                 type="password"
@@ -529,11 +578,11 @@ export default function EditProfile() {
                                 error={!!errors.currentPassword} //detecta si tiene algo contenido
                                 helperText={errors.currentPassword}
                                 color={!!errors.currentPassword ? 'error' : 'primary'}
-                            />
+                            /> */}
                         </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="newPassword">New Password: </FormLabel>
-                            <TextField
+                            {/* <TextField
                                 name="newPassword"
                                 id="newPassword"
                                 type="password"
@@ -545,11 +594,40 @@ export default function EditProfile() {
                                 error={!!errors.newPassword} //detecta si tiene algo contenido
                                 helperText={errors.newPassword}
                                 color={!!errors.newPassword ? 'error' : 'primary'}
+                            /> */}
+                            <OutlinedInput
+                                id="newPassword"
+                                name="newPassword"
+                                placeholder="••••••"
+                                type={showPassword1 ? 'text' : 'password'}
+                                endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                    aria-label={
+                                        showPassword1 ? 'hide the password' : 'display the password'
+                                    }
+                                    onClick={handleClickShowPassword1}
+                                    onMouseDown={handleMouseDownPassword}
+                                    onMouseUp={handleMouseUpPassword}
+                                    edge="end"
+                                    sx={{
+                                        backgroundColor: 'transparent', // Hace el fondo transparente
+                                        border: 'none',
+                                        outline: 'none', // Evita el contorno al hacer focus
+                                        boxShadow: 'none', // Elimina sombras
+                                    }}
+                                    >
+                                    {showPassword1 ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                                }
+                                label="currentPassword"
                             />
+                            {errors.newPassword && <FormHelperText sx={{color:'error.main'}} >{errors.newPassword}</FormHelperText>}
                         </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="confirmPassword">Confirm New Password: </FormLabel>
-                            <TextField
+                            {/* <TextField
                                 name="confirmPassword"
                                 id="confirmPassword"
                                 type="password"
@@ -561,7 +639,36 @@ export default function EditProfile() {
                                 error={!!errors.confirmPassword} //detecta si tiene algo contenido
                                 helperText={errors.confirmPassword}
                                 color={!!errors.confirmPassword ? 'error' : 'primary'}
+                            /> */}
+                            <OutlinedInput
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                placeholder="••••••"
+                                type={showPassword2 ? 'text' : 'password'}
+                                endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                    aria-label={
+                                        showPassword2 ? 'hide the password' : 'display the password'
+                                    }
+                                    onClick={handleClickShowPassword2}
+                                    onMouseDown={handleMouseDownPassword}
+                                    onMouseUp={handleMouseUpPassword}
+                                    edge="end"
+                                    sx={{
+                                        backgroundColor: 'transparent', // Hace el fondo transparente
+                                        border: 'none',
+                                        outline: 'none', // Evita el contorno al hacer focus
+                                        boxShadow: 'none', // Elimina sombras
+                                    }}
+                                    >
+                                    {showPassword2 ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                                }
+                                label="currentPassword"
                             />
+                            {errors.confirmPassword  && <FormHelperText sx={{color:'error.main'}} >{errors.confirmPassword }</FormHelperText>}
                         </FormControl>
                         <Button
                             type="submit"
