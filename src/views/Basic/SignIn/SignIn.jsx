@@ -90,7 +90,7 @@ export default function SignIn(props) {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
 
-  const [open, setOpen] = React.useState(false); //State forgot password
+  const [openForgotPass, setOpenForgotPass] = React.useState(false); //State forgot password
   
   const [messageSignIn, setMessage] = React.useState('');
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
@@ -123,12 +123,12 @@ export default function SignIn(props) {
   const { login } = useAuth(); // Accede a la función de login
   const navigate = useNavigate();
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleClickOpenForgotPass = () => {
+    setOpenForgotPass(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseForgotPass = () => {
+    setOpenForgotPass(false);
   };
 
   const handleSubmit = async (event) => { // Function to access AiSport
@@ -259,8 +259,8 @@ export default function SignIn(props) {
                 <Link
                   component="button"
                   type="button"
-                  onClick={handleClickOpen}
-                  onChange={passwordValidate}
+                  onClick={handleClickOpenForgotPass}
+                 // onChange={passwordValidate}
                   variant="body2"
                   sx={{ alignSelf: 'baseline', color:'white'}}
                 >
@@ -284,7 +284,7 @@ export default function SignIn(props) {
           <OutlinedInput
             id="password"
             name="password"
-            placeholder="••••••"
+            placeholder="••••••••"
             type={showPassword ? 'text' : 'password'}
             endAdornment={
               <InputAdornment position="end">
@@ -301,9 +301,11 @@ export default function SignIn(props) {
                     border: 'none',
                     outline: 'none', // Evita el contorno al hacer focus
                     boxShadow: 'none', // Elimina sombras
+                    height:0,
+                    width:1
                   }}
                 >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                  {showPassword ? <VisibilityOff fontSize="small"/> : <Visibility fontSize="small"/>}
                 </IconButton>
               </InputAdornment>
             }
@@ -314,7 +316,7 @@ export default function SignIn(props) {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-            <ForgotPassword open={open} handleClose={handleClose} />
+            
             <Button
               type="submit"
               fullWidth
@@ -324,6 +326,7 @@ export default function SignIn(props) {
               Sign in
             </Button>
             </FormControl>
+            
             <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar}
             anchorOrigin={{ vertical:'top', horizontal:'center' }} key={ {vertical:'top'} + {horizontal:'center'} }>
                 <Alert
@@ -365,8 +368,10 @@ export default function SignIn(props) {
               </span>
             </Typography>
           </Box>
+          <ForgotPassword open={openForgotPass} handleClose={handleCloseForgotPass} />
+
           {/* 
-          TO DO: EXTRA SIGN
+          TO DO: EXTRA SIGN with GOOGLE or FACEBOOK
           <Divider>or</Divider>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Button

@@ -7,8 +7,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import {useNavigate } from 'react-router-dom';
 
 function ForgotPassword({ open, handleClose }) {
+  const navigate = useNavigate();
   return (
     <Dialog
       open={open}
@@ -18,6 +20,8 @@ function ForgotPassword({ open, handleClose }) {
         onSubmit: (event) => {
           event.preventDefault();
           handleClose();
+          // console.log('correo enviado');
+          navigate(`/recoverPass`)
         },
         sx: { backgroundImage: 'none' },
       }}

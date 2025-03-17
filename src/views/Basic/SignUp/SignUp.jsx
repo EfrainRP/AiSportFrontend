@@ -387,9 +387,11 @@ export default function SignUp(props) {
                         border: 'none',
                         outline: 'none', // Evita el contorno al hacer focus
                         boxShadow: 'none', // Elimina sombras
+                        height:0,
+                        width:1
                       }}
                     >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                      {showPassword ? <VisibilityOff fontSize="small"/> : <Visibility fontSize="small"/>}
                     </IconButton>
                   </InputAdornment>
                 }
@@ -437,6 +439,9 @@ export default function SignUp(props) {
               </span>
             </Typography>
           </Box>
+
+          {/* 
+          TO DO: EXTRA SIGN with GOOGLE or FACEBOOK
           <Divider>
             <Typography sx={{ color: 'text.secondary' }}>or</Typography>
           </Divider>
@@ -457,7 +462,7 @@ export default function SignUp(props) {
             >
               Sign up with Facebook
             </Button>
-          </Box>
+          </Box> */}
         </Card>
       </SignUpContainer>
     </LayoutBasic>

@@ -557,9 +557,11 @@ export default function EditProfile() {
                                         border: 'none',
                                         outline: 'none', // Evita el contorno al hacer focus
                                         boxShadow: 'none', // Elimina sombras
-                                    }}
+                                        height:0,
+                                        width:1
+                                      }}
                                     >
-                                    {showPassword0 ? <VisibilityOff /> : <Visibility />}
+                                      {showPassword0 ? <VisibilityOff fontSize="small"/> : <Visibility fontSize="small"/>}
                                     </IconButton>
                                 </InputAdornment>
                                 }
@@ -615,9 +617,11 @@ export default function EditProfile() {
                                         border: 'none',
                                         outline: 'none', // Evita el contorno al hacer focus
                                         boxShadow: 'none', // Elimina sombras
+                                        height:0,
+                                        width:1
                                     }}
                                     >
-                                    {showPassword1 ? <VisibilityOff /> : <Visibility />}
+                                        {showPassword1 ? <VisibilityOff fontSize="small"/> : <Visibility fontSize="small"/>}
                                     </IconButton>
                                 </InputAdornment>
                                 }
@@ -660,9 +664,11 @@ export default function EditProfile() {
                                         border: 'none',
                                         outline: 'none', // Evita el contorno al hacer focus
                                         boxShadow: 'none', // Elimina sombras
+                                        height:0,
+                                        width:1
                                     }}
                                     >
-                                    {showPassword2 ? <VisibilityOff /> : <Visibility />}
+                                    {showPassword2 ? <VisibilityOff fontSize="small"/> : <Visibility fontSize="small"/>}
                                     </IconButton>
                                 </InputAdornment>
                                 }
