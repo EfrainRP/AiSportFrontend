@@ -191,7 +191,7 @@ export default function StatsAI() {
 
     return (
         <LayoutLogin>
-            <Container sx={{display: 'center',m:1, gap:'5%'}}>
+            <Container sx={{display:'flex', textAlign:'justify',m:1, gap:'5%'}}>
                 <BackButton url={`/dashboard`}/>
                 <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `Stats AI Trainning`} </Typography>
             </Container>

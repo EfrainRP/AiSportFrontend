@@ -367,7 +367,7 @@ export default function ShowAI() {
     }
     return (
         <LayoutLogin>
-            <Container sx={{display: 'center',m:1, gap:'5%'}}>
+            <Container sx={{display:'flex', textAlign:'justify',m:1, gap:'5%'}}>
                 <BackButton url={`/dashboard/trainning/IA`}/>
                 <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AI Trainning`} </Typography>
             </Container>

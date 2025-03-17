@@ -127,7 +127,7 @@ export default function StatsTeam() {
                 })
         };
         fetchStadistics();
-    }, [equipoId]);
+    }, [teamId]);
     
     if(error){ // En caso de que este vacio
         return (
@@ -197,7 +197,7 @@ export default function StatsTeam() {
         },
         ],
     };
-
+    
     return (
         <LayoutLogin>
             <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `Statistics of the ${teamName} Team`} </Typography>
@@ -212,7 +212,7 @@ export default function StatsTeam() {
             </Box>
             <CustomTabPanel value={valueTab} index={0}> {/* Details */}
                 <Container sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', mt:2}}>
-                    <TableContainer component={Paper} sx={{maxHeight:{xs:650, sm:'100%'}}}>
+                    <TableContainer component={Paper} sx={{maxHeight:{xs:650, sm:'80%'}}}>
                         <Table stickyHeader>
                         <TableHead>
                             <TableRow sx={{color:'secondary.main'}}>
@@ -224,10 +224,10 @@ export default function StatsTeam() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {stadistics.map((row,i) => {
+                            {stadistics.estadisticas.map((row,i) => {
                                 return (
                                 <StyledTableRow key={i}>
-                                    <StyledTableCell align="center">{new Date(registro.created_at).toLocaleDateString()}</StyledTableCell>
+                                    <StyledTableCell align="center">{new Date(row.created_at).toLocaleDateString()}</StyledTableCell>
                                     <StyledTableCell align="center">{row.PT}</StyledTableCell>
                                     <StyledTableCell align="center">{row.CA}</StyledTableCell>
                                     <StyledTableCell align="center">{row.DC}</StyledTableCell>
