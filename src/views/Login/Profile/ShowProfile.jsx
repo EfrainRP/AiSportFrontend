@@ -75,7 +75,7 @@ export default function ShowProfile() {
                             component="img"
                             // image={`http://localhost:3000/ai/api/utils/uploads/${equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
                             image={`${URL_SERVER}/utils/uploads/${profile && profile.image !== 'logoPerfil.jpg' ? profile.image : 'logoPerfil.jpg'}`} 
-                            alt={"Profile"}
+                            alt="Profile"
                             crossOrigin="use-credentials"
                             sx={{
                                 height: '15rem',
@@ -153,7 +153,7 @@ export default function ShowProfile() {
                             <ListItem key={i}>
                                 <ListItemButton href={`/team/${team.name}/${team.id}`}>
                                     <ListItemAvatar>
-                                        <Avatar src={`${URL_SERVER}/utils/uploads/${team && team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`}/>
+                                        <Avatar src={`${URL_SERVER}/utils/uploads/${team && team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`} alt={`${team.name} team`}/>
                                     </ListItemAvatar>
                                     <ListItemText primary={team.name}/>
                                 </ListItemButton>

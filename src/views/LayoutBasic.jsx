@@ -12,7 +12,7 @@ export default function LayoutBasic(props) {
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
         <Box sx={(theme) => ({
-            width: '100%',
+            width: '100',
             minHeight: '89.5vh',
             backgroundRepeat: 'no-repeat',
             backgroundImage:

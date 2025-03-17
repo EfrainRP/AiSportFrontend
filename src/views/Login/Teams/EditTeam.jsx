@@ -382,7 +382,7 @@ export default function EditTeam() {
                                 backgroundImage: 
                                 file && file.previewImage? 
                                 `url(${file.previewImage})` :
-                                `url(${URL_SERVER}/utils/uploads/${(team.image!=null && team.image !== 'logoEquipo.jpg') ? team.image : 'logoEquipo.jpg'})` }} />
+                                `url(${URL_SERVER}/utils/uploads/${(team.image!=null && team.image !== 'logoEquipo.jpg') ? team.image : 'logoEquipo.jpg'})` }} alt={'Team image'}/>
                             <ImageBackdrop className="MuiImageBackdrop-root" />
                             <Image>
                                 <Typography

@@ -216,34 +216,41 @@ export default function CreateTeam() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFieldErrors({});
-        // Filtra los miembros vacíos antes de enviar el formulario
-        const memberValidate = team.miembros.filter(member => member.trim() !== '');
-        const teamsWithMembers = { ...team, miembros: memberValidate };
+        
+        const formData = new FormData();
+        formData.append('name', equipo.name);
+        formData.append('user_id', equipo.user_id);
+        miembrosValidos.forEach((member, index) => formData.append(`miembros[${index}]`, member));
 
+        if (equipo.image) {
+            formData.append('image', equipo.image);
+        }
         // Realizar la solicitud
         await axiosInstance.post(
             `/equipo/create`,
-            teamsWithMembers,
+            formData,{
+                headers: { 'Content-Type': 'multipart/form-data' }
+              }
         )
-            .then((response) => {
-                setOpenSnackBar(true);
-                setDataAlert({ severity: "success", message: 'Success create team!' });
-                setTimeout(() => navigate(`/teams`), 2000);
-            })
-            .catch((err) => {
-                if (err.response && err.response.status === 400) {
-                    const { field, message } = err.response.data;
-                    if (field) {
-                        setFieldErrors((prev) => ({ ...prev, [field]: message }));
-                    } else {
-                        setOpenSnackBar(true);
-                        setDataAlert({ severity: "error", message: message });
-                    }
+        .then((response) => {
+            setOpenSnackBar(true);
+            setDataAlert({ severity: "success", message: 'Success create team!' });
+            setTimeout(() => navigate(`/teams`), 2000);
+        })
+        .catch((err) => {
+            if (err.response && err.response.status === 400) {
+                const { field, message } = err.response.data;
+                if (field) {
+                    setFieldErrors((prev) => ({ ...prev, [field]: message }));
                 } else {
                     setOpenSnackBar(true);
-                    setDataAlert({ severity: "error", message: 'Error create team.' });
+                    setDataAlert({ severity: "error", message: message });
                 }
-            })
+            } else {
+                setOpenSnackBar(true);
+                setDataAlert({ severity: "error", message: 'Error create team.' });
+            }
+        })
     };
 
     const handleCloseSnackBar = (event, reason) => {
@@ -280,6 +287,7 @@ export default function CreateTeam() {
                     <Box
                         component="form"
                         onSubmit={handleSubmit}
+                        encType="multipart/form-data"
                         noValidate
                         sx={{
                             display: 'flex',
@@ -288,7 +296,6 @@ export default function CreateTeam() {
                             gap: 2,
                         }}
                     >
-                        {/* TO DO: Checar el mecanismo de imagen */}
                         <ImageButton
                             component="label"
                             focusRipple

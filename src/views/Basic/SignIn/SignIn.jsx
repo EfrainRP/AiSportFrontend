@@ -35,7 +35,8 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
-  // height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
+  height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
+  // height: '100vh',
   justifyContent:"space-between",
   margin: theme.spacing(6),
   [theme.breakpoints.up('sm')]: {
@@ -54,9 +55,9 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
       backgroundImage:
         'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
     }),
-    height: 'calc((1 - var(--template-frame-height, 0)) * 155vh)',
+    height: 'calc((1 - var(--template-frame-height, 0)) * 100vh)',
     [theme.breakpoints.up('sm')]: {
-      height: 'calc((1 - var(--template-frame-height, 0)) * 105vh)',
+      height: 'calc((1 - var(--template-frame-height, 0)) * 100vh)',
     },
   },
 }));

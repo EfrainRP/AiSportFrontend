@@ -12,7 +12,7 @@ import Privacy from './views/Basic/Privacy.jsx';
 
 import SignUp from './views/Basic/SignUp/SignUp.jsx';
 import SignIn from "./views/Basic/SignIn/SignIn.jsx";
-import RecoverPassword from "./views/Basic/SignIn/RecoverPassword.jsx";
+import ResetPassword from "./views/Basic/SignIn/ResetPassword.jsx";
 
 import Dashboard from "./views/Login/Dashboard/Dashboard.jsx";
 import TournamentDashboard from "./views/Login/Dashboard/TournamentDashboard.jsx";
@@ -59,10 +59,10 @@ export default function MyRoute(){
 
           {/* Rutas que no deben ser accesibles para usuarios autenticados */}
           <Route
-            path="/recoverPass"
+            path="/restore-password"
             element={
               <AuthRoute restricted={true}>
-                <RecoverPassword/>
+                <ResetPassword/>
               </AuthRoute>
             }
           />

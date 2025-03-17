@@ -73,9 +73,11 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
       backgroundImage:
         'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
     }),
-    height: 'calc((1 - var(--template-frame-height, 0)) * 218vh)',
+    height: 'calc((1 - var(--template-frame-height, 0)) * 100vh)',
+    // height: 'calc((1 - var(--template-frame-height, 0)) * 218vh)',
     [theme.breakpoints.up('sm')]: {
-      height: 'calc((1 - var(--template-frame-height, 0)) * 157vh)',
+      height: 'calc((1 - var(--template-frame-height, 0)) * 100vh)',
+      // height: 'calc((1 - var(--template-frame-height, 0)) * 157vh)',
     },
   },
 }));

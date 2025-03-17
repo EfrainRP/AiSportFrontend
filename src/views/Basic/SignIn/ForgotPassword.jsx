@@ -21,7 +21,7 @@ function ForgotPassword({ open, handleClose }) {
           event.preventDefault();
           handleClose();
           // console.log('correo enviado');
-          navigate(`/recoverPass`)
+          navigate(`/restore-password`)
         },
         sx: { backgroundImage: 'none' },
       }}

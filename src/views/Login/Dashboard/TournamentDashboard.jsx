@@ -195,7 +195,7 @@ export default function TournamentDashboard () {
       />);
   }
   // console.log(matches.length);
-  const brackets = generateBracket(matches);
+  const brackets = generateBracket(Array.isArray(matches)? matches : []);
 
   return (
     <LayoutLogin>
@@ -325,8 +325,8 @@ export default function TournamentDashboard () {
                 includeInputInList
                 selectOnFocus
                 options={teams}
-                getOptionLabel={(option)=>option.name} // Muestra el nombre como etiqueta
-                isOptionEqualToValue={(option, value) => option.id === value.id} // Compara por `id`
+                getOptionLabel={(option)=>option?.name} // Muestra el nombre como etiqueta
+                isOptionEqualToValue={(option, value) => option?.id === value?.id} // Compara por `id`
                 value={valueAutoComplete}
                 onChange={(event, newValue) => setValueAutoComplete(newValue)}
                 size="medium"

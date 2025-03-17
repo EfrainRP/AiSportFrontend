@@ -394,7 +394,7 @@ export default function EditProfile() {
                                 objectPosition: 'center', // Centra la imagen dentro del contenedor
                                 display: 'block', // Evita espacios debajo de la imagen
                                 margin: '0 auto', // Centra la imagen dentro del contenedor 
-                            }} />
+                            }} alt={'Profile image'}/>
                             <ImageBackdrop className="MuiImageBackdrop-root"/>
                             <Image>
                                 <Typography
