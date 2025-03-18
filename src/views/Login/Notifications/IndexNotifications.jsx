@@ -37,6 +37,7 @@ import DoDisturbAltOutlinedIcon from '@mui/icons-material/DoDisturbAltOutlined';
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 import LayoutLogin from '../../LayoutLogin.jsx';
+import LoadingCard from '../../../components/Login/LodingCard.jsx';
 
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 
@@ -67,7 +68,7 @@ export default function IndexNotifications() {
                 }, 1500); // Simula tiempo de carga
             })
             .catch((error) => {
-                console.error('Error al obtener las notificaciones:', error);
+                console.error('Error loading notifications:', error);
                 //setLoading(false); // Cambiar el estado de carga incluso en caso de error
             });
         };
@@ -183,13 +184,8 @@ export default function IndexNotifications() {
                                 })}
                             </List>)
                             :
-                            (<Card variant="outlined" sx={{display:'flex', justifyContent:'center'}}>
-                                <CardContent>
-                                    <Typography gutterBottom variant="subtitle2" component="div" sx={{textAlign: 'center' }}>
-                                        You don't have any notifications registered yet.
-                                    </Typography>
-                                </CardContent>
-                            </Card>
+                            (
+                                <LoadingCard message={"Maybe you don't have any notifications registered yet."}/>
                             )
                         )
                     }

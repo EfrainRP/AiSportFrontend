@@ -7,10 +7,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import {useNavigate } from 'react-router-dom';
+
+import axiosInstance from "../../../services/axiosConfig.js";
 
 function ForgotPassword({ open, handleClose }) {
-  const navigate = useNavigate();
   return (
     <Dialog
       open={open}
@@ -19,9 +19,20 @@ function ForgotPassword({ open, handleClose }) {
         component: 'form',
         onSubmit: (event) => {
           event.preventDefault();
-          handleClose();
-          // console.log('correo enviado');
-          navigate(`/restore-password`)
+          const data = new FormData(event.currentTarget);
+
+          console.log(data.get('emailReset'));
+
+          axiosInstance.post(`/send-email`, 
+            { email: data.get('emailReset') }
+          )
+          .then((response)=>{
+            handleClose();
+          })
+          .catch((error)=>{
+            console.log(error);
+          })
+          
         },
         sx: { backgroundImage: 'none' },
       }}
@@ -38,8 +49,8 @@ function ForgotPassword({ open, handleClose }) {
           autoFocus
           required
           margin="dense"
-          id="email"
-          name="email"
+          id="emailReset"
+          name="emailReset"
           label="Email address"
           placeholder="Email address"
           type="email"

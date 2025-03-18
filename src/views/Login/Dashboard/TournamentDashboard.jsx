@@ -208,11 +208,7 @@ export default function TournamentDashboard () {
       <Box sx={{ borderBottom: 3, borderColor: 'divider' }}>
         <Tabs centered value={valueTab} onChange={handleChange} >
           <Tab icon={<FolderIcon />} label="Details" {...a11yProps(0)} />
-          {matches.length>0?
-            <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)}/>
-            :
-            <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)} disabled />
-          }
+          <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)} disabled={!matches?.length}/>
           <Tab  icon={<NotificationAddIcon />} label="Send Notifications" {...a11yProps(2)} />
         </Tabs>
       </Box>
@@ -291,11 +287,11 @@ export default function TournamentDashboard () {
                     key={i}
                   >
                     <CardContent>
-                      <Typography><strong>Fecha del Partido:</strong> {new Date(match.fechaPartido).toISOString().split('T')[0]}</Typography>
-                      <Typography><strong>Hora:</strong> {new Date(match.horaPartido).toLocaleTimeString()}</Typography>
-                      <Typography><strong>Equipo Local:</strong> {match.equipos_partidos_equipoLocal_idToequipos.name}</Typography>
-                      <Typography><strong>Equipo Visitante:</strong> {match.equipos_partidos_equipoVisitante_idToequipos.name}</Typography>
-                      <Typography><strong>Resultado:</strong> {match.resLocal} - {match.resVisitante}</Typography>
+                      <Typography><strong>Date Match:</strong> {new Date(match.fechaPartido).toISOString().split('T')[0]}</Typography>
+                      <Typography><strong>Time:</strong> {new Date(match.horaPartido).toLocaleTimeString()}</Typography>
+                      <Typography><strong>Home team:</strong> {match.equipos_partidos_equipoLocal_idToequipos.name}</Typography>
+                      <Typography><strong>Guest team:</strong> {match.equipos_partidos_equipoVisitante_idToequipos.name}</Typography>
+                      <Typography><strong>Result:</strong> {match.resLocal} - {match.resVisitante}</Typography>
                     </CardContent>
                   </Card>
                 ))}

@@ -16,7 +16,7 @@ import AddIcon from '@mui/icons-material/Add';
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 import LayoutLogin from '../../LayoutLogin.jsx';
-
+import LoadingCard from '../../../components/Login/LodingCard.jsx';
 import Search from '../../../components/Login/Search.jsx';
 
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
@@ -115,13 +115,7 @@ export default function IndexTeam() {
                                 );
                             }))
                             : (
-                                <Card variant="outlined">
-                                    <CardContent>
-                                        <Typography gutterBottom variant="subtitle2" component="div">
-                                            You don't have any tournaments registered yet.
-                                        </Typography>
-                                    </CardContent>
-                                </Card>
+                                <LoadingCard message={"Maybe you don't have any tournaments registered yet."}/>
                             )}
                     </Stack>
                 }

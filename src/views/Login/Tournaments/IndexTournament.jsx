@@ -30,6 +30,7 @@ import { Link } from 'react-router-dom';
 
 import LayoutLogin from '../../LayoutLogin.jsx';
 import Search from '../../../components/Login/Search.jsx';
+import LoadingCard from '../../../components/Login/LodingCard.jsx';
 
 const centerJustify = {display:'flex', alignContent:'center', textAlign:'justify', justifyContent:'space-evenly'};
 
@@ -190,13 +191,7 @@ export default function IndexTournaments() {
                                 );
                             }))
                             : (
-                                <Card variant="outlined">
-                                    <CardContent>
-                                        <Typography gutterBottom variant="subtitle2" component="div">
-                                            You don't have any tournaments registered yet.
-                                        </Typography>
-                                    </CardContent>
-                                </Card>
+                                <LoadingCard message={"Maybe you don't have any tournaments registered yet."}/>
                             )}
                     </Stack>
                 }

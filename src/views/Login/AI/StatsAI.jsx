@@ -74,18 +74,18 @@ export default function StatsAI() {
                 setLoading(false); // Desactiva el indicador de carga
             }).catch ((err) => {
                 console.log(err);
-                setError('Error loading User stats.');
+                setError('Error loading user stats.');
                 setLoading(false);
             })};
         fetchEstadisticas();
         
     }, [user.userId]);
 
-    if(loading || !stats){
-        return (<LoadingView/>);
-    }
     if(error){
         return (<LoadingView message={error}/>);
+    }
+    if(loading || !stats){
+        return (<LoadingView/>);
     }
 
     // Datos para el gráfico de líneas (Tiempo de entrenamiento por fecha)

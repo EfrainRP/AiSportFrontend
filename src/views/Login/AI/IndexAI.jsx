@@ -38,6 +38,7 @@ import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx';
+import LoadingCard from '../../../components/Login/LodingCard.jsx';
 
 // const CustomAutocomplete = styled(Autocomplete)({
 //     "& .MuiAutocomplete-popupIndicator": {
@@ -98,12 +99,7 @@ export default function IndexAI() {
         };
         fetchStats();
     }, [user.userId]);
-
-    if(loading){ 
-        return (
-        <LoadingView/>);
-    }
-    if(error){ 
+    if(error || loading){ 
         return (
         <LoadingView 
             message={error}
@@ -112,14 +108,13 @@ export default function IndexAI() {
     if(stats.length === 0){
         return (
             <LayoutLogin>
-                <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AiSport Individual Performance Analyzer`} </Typography>
-                <Typography variant='h5' sx={{ m:4, display:'flex', alignContent:'center', justifyContent: 'center'}}>
-                    There are no available teams with a minimum match played that contain statistics for a training session.
-                </Typography>
+                <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AiSport Performance Analyzer`} </Typography>
+                <Container sx={{ display:'flex', alignContent:'center', justifyContent: 'center', width:'45%', mt:10}} >
+                    <LoadingCard sx={{textAlign:'center'}} message={"Maybe teams with a minimum match played may not be available that contain statistics for a training session."}/>
+                </Container>
             </LayoutLogin>
         );
     }
-    console.log(user);
     return (
         <LayoutLogin>
             <Typography variant='h2' sx={{ml:7}}> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AiSport Performance Analyzer`} </Typography>

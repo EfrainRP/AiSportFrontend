@@ -7,7 +7,8 @@ import {
 } from '@mui/material';
 
 
-export default function LoadingCard({ message = null, CircularSize = '5%'}) {
+export default function LoadingCard(props) {
+    const {message = null, CircularSize = '5%', sx = null} = props;
     return (
         <Card variant="outlined">
             <CardContent>
@@ -15,7 +16,7 @@ export default function LoadingCard({ message = null, CircularSize = '5%'}) {
                 <CircularProgress size={CircularSize} color="inherit" sx={{mr:1}}/> Loading
             </Typography>
             {message && 
-                <Typography gutterBottom variant="body2" component="div" sx={{display: 'flex', justifyContent:'center'}}>
+                <Typography gutterBottom variant="body2" component="div" sx={{...sx, display: 'flex', justifyContent:'center'}}>
                     {message} 
                 </Typography>}
             </CardContent>

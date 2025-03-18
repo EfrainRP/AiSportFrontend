@@ -36,6 +36,7 @@ import { useAuth } from '../../../services/AuthContext'; //  AuthContext
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx'
 import BackButton from '../../../components/Login/BackButton.jsx'
+import LoadingCard from '../../../components/Login/LodingCard.jsx';
 
 import FolderIcon from '@mui/icons-material/Folder';
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -95,7 +96,7 @@ export default function ShowTournament() {
     
     const [valueTab, setValueTab] = React.useState(0); // Mecanismo del Tab
     const handleChange = (event, newValue) => {
-    setValueTab(newValue);
+        setValueTab(newValue);
     };
     // useEffect para hacer petición automática de los datos del torneo, partidos y notificaciones
     React.useEffect(() => {
@@ -149,17 +150,17 @@ export default function ShowTournament() {
     };
 
     // Validar si la cantidad de equipos del torneo es del rango válido (Front)
-    const isValidTeamCount = [4, 8, 16, 32].includes(tournament?.countTeam);
+    const isValidTeamCount = [4, 8, 16, 32].includes(tournament?.cantEquipo);
 
+    console.log(matches, tournament?.cantEquipo - 1)
+    console.log(matches === tournament?.cantEquipo - 1)
     // Validar la cantidad de partidos (Front) (debe ser torneo.countTeam - 1)
-    const isValidMatchesCount = matches.length === tournament?.countTeam - 1;
-
-    console.log(matches);
+    const isValidMatchesCount = matches.length === tournament?.cantEquipo - 1;
 
     // Organizar los partidos en brackets (Front)
     const generateBracket = (matches) => {
         let rounds = [];
-        let roundSize = tournament.countTeam / 2;
+        let roundSize = tournament.cantEquipo / 2;
         let roundMatches = [...matches];
 
         while (roundSize >= 1) {
@@ -187,7 +188,8 @@ export default function ShowTournament() {
     const getWinner = (match) => {
         const localPts = match.resLocal;
         const visitantePts = match.resVisitante;
-        return localPts > visitantePts ? match.equipoLocal.name : partido.equipoVisitante.name;
+        return localPts > visitantePts ? match.equipos_partidos_equipoLocal_idToequipos
+        .name : match.equipos_partidos_equipoVisitante_idToequipos.name;
     };
 
     const handleEliminar = async (matchId) => { // Peticion DELETE Partido
@@ -202,17 +204,18 @@ export default function ShowTournament() {
                 console.error('Error al eliminar el partido:', err);
             });
         } else {
-            console.log("Eliminación cancelada");
+            console.log("Canceled delete");
         }
     };
 
     const handleEdit = (matchId) => { // Cambio de vista a Edit form
         navigate(`/partido/${tournamentName}/${tournamentId}/${matchId}/edit`);
     };
-
+    console.log(tournament);
+    // console.log(brackets);
+    // console.log(isValidTeamCount);
     return (
         <LayoutLogin>
-            
             <Container sx={{...centerJustify}}>
                 <BackButton url={`/tournaments`}/>
                 <Typography gutterBottom variant="h2" component="div" sx={{ml:2}}>
@@ -289,7 +292,7 @@ export default function ShowTournament() {
             <CustomTabPanel value={valueTab} index={1}> {/*Tab Matches */}
                 <Typography variant='h4' sx={{textAlign:'center', mb:3}}>Tournament matches</Typography>
                 <Container>
-                    {isValidTeamCount ? ( // Si es un torneo valido (4,8,16,32) genera los brackets <-
+                    {isValidTeamCount && matches?.length ? ( // Si es un torneo valido (4,8,16,32) genera los brackets <-
                         // Brakets contiene los partidos como: brackets = [
                         // [{ partido1, partido2 }, { partido3, partido4 }],  // Ronda 1
                         //[{ partido5, partido6 }],  // Ronda 2
@@ -314,19 +317,22 @@ export default function ShowTournament() {
                                                 <Typography variant='body1'><strong>Match Date:</strong> {new Date(match.fechaPartido).toISOString().split('T')[0]}</Typography>
                                                 <Typography variant='body1'><strong>Time:</strong> {new Date(match.horaPartido).toLocaleTimeString()}</Typography>
                                                 <CardMedia
-                                                    src={`${URL_SERVER}/utils/uploads/${match.equipo && match.equipoLocal.image !== 'logoEquipo.jpg' ? match.equipoLocal.image : 'logoEquipo.jpg'}`}
+                                                    src={`${URL_SERVER}/utils/uploads/${match.equipo && match.equipos_partidos_equipoLocal_idToequipos
+.image !== 'logoEquipo.jpg' ? match.equipos_partidos_equipoLocal_idToequipos
+.image : 'logoEquipo.jpg'}`}
                                                     alt="Perfil"
                                                     style={{ width: '120px', height: '50px' }} // Size IMG
                                                     crossOrigin="use-credentials"
                                                 />
-                                                <Typography variant='body1'><strong>Home Team:</strong> {match.equipoLocal.name}</Typography>
+                                                <Typography variant='body1'><strong>Home Team:</strong> {match.equipos_partidos_equipoLocal_idToequipos
+.name}</Typography>
                                                 <CardMedia
-                                                    src={`${URL_SERVER}/utils/uploads/${match.equipoVisitante && match.equipoVisitante.image !== 'logoEquipo.jpg' ? match.equipoVisitante.image : 'logoEquipo.jpg'}`}
+                                                    src={`${URL_SERVER}/utils/uploads/${match.equipos_partidos_equipoVisitante_idToequipos && match.equipos_partidos_equipoVisitante_idToequipos.image !== 'logoEquipo.jpg' ? match.equipos_partidos_equipoVisitante_idToequipos.image : 'logoEquipo.jpg'}`}
                                                     alt="Perfil"
                                                     style={{ width: '120px', height: '50px' }} // Size IMG
                                                     crossOrigin="use-credentials"
                                                 />
-                                                <Typography variant='body1'><strong>Vist Team:</strong> {match.equipoVisitante.name}</Typography>
+                                                <Typography variant='body1'><strong>Vist Team:</strong> {match.equipos_partidos_equipoVisitante_idToequipos.name}</Typography>
 
                                                 <Typography variant='body1'><strong>Result:</strong> {match.resLocal} - {match.resVisitante}</Typography>
                                                 {/* Botones de Editar y Eliminar */}
@@ -341,16 +347,11 @@ export default function ShowTournament() {
                             </Card>
                         ))
                     ) : (
-                        <Card variant="outlined">
-                            <CardContent>
-                            <Typography variant='subtitle2' sx={{textAlign: 'center'}}>There are no matches scheduled for this tournament or the number of teams is invalid.</Typography>
-                            </CardContent>
-                        </Card>
-                        
+                        <LoadingCard CircularSize={'2%'} message={"Maybe no matches are scheduled for this tournament or the number of teams is invalid."}/>
                     )}
 
                     {/* Mostrar ganador final solo si todos los partidos están completos, (se llego a countTeam-1)*/}
-                    {isValidMatchesCount && matches.length > 0 && (
+                    {isValidMatchesCount && matches.length && (
                         <Card variant="outlined">
                             <CardContent sx={{textAlign:'center'}}>
                                 <Typography variant='h4'>Final Tournament Winner</Typography>
@@ -383,7 +384,7 @@ export default function ShowTournament() {
                                 </ListItem>
                             ))
                         ) : (
-                            <ListItemText variant='body1' sx={{textAlign: 'center'}}>There are no pending notifications for this tournament.</ListItemText>
+                            <LoadingCard CircularSize={'2%'} message={"Maybe there are no pending notifications for this tournament."}/>
                         )}
                     </List>
                 </Container>

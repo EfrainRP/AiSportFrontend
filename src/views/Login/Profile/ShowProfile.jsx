@@ -182,21 +182,29 @@ export default function ShowProfile() {
                         </List>
                     </AccordionDetails>
                 </Accordion>
-                <Accordion disabled={profile.notifications_notifications_user_idTousers?.length<0?false:true}>
+                <Accordion disabled={profile.notifications_notifications_user_idTousers?.length > 0?false:true}>
                     <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="yourNotifications"
                     id="yourNotifications"
                     >
-                        <Typography component="span"> {profile.notifications_notifications_user_idTousers?.length<0?"Your Notifications: ":<strong>You don´t have notifications </strong>}</Typography>
+                        <Typography component="span"> {profile.notifications_notifications_user_idTousers?.length > 0?"Your Notifications: ":<strong>You don´t have notifications </strong>}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <List sx={{m:0,p:0}}> {/*TODO: checar notificaciones con datos */}
-                            {profile.notifications_notifications_user_idTousers?.map((notification,i) => (
+                            {profile.notifications_notifications_user_idTousers?.map((note,i) => {
+                                const colorStatus = note.status == 'rejected'? 'error' : 'success';
+
+                                return (
                                 <ListItem key={i}>
-                                    <ListItemText primary={notification.message}/>
-                                </ListItem>
-                            ))}
+                                    <ListItemAvatar>
+                                        <Avatar src={`${URL_SERVER}/utils/uploads/${note.equipo && note.equipo.image !== 'logoEquipo.jpg' ? note.equipo.image : 'logoEquipo.jpg'}`}/>
+                                    </ListItemAvatar>
+                                    <ListItemText primary={
+                                        <Typography>Your request for <Typography component={'strong'} color={'primary'}>team {note.equipo.name}</Typography> was <Typography component={'strong'} color={colorStatus}>{note.status}</Typography> for <Typography component={'strong'} color={'primary.light'}>tournament {note.torneo_name}.</Typography></Typography>} secondary= {<Typography>For more information, please contact the admin <Typography component={'strong'} color={'secondary.main'}>{note.user2?.name} ({note.user2?.email})</Typography></Typography>
+                                    }/>
+                                </ListItem>);}
+                            )}
                         </List>
                     </AccordionDetails>
                 </Accordion>
