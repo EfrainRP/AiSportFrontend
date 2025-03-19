@@ -8,9 +8,9 @@ import {
 
 
 export default function LoadingCard(props) {
-    const {message = null, CircularSize = '5%', sx = null} = props;
+    const {message = null, CircularSize = '5%', sx = null, variant="outlined"} = props;
     return (
-        <Card variant="outlined">
+        <Card variant={variant}>
             <CardContent>
             <Typography gutterBottom variant="body1" component="div" sx={{display: 'flex', justifyContent:'center'}}>
                 <CircularProgress size={CircularSize} color="inherit" sx={{mr:1}}/> Loading

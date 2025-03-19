@@ -193,7 +193,7 @@ export default function ShowProfile() {
                     <AccordionDetails>
                         <List sx={{m:0,p:0}}> {/*TODO: checar notificaciones con datos */}
                             {profile.notifications_notifications_user_idTousers?.map((note,i) => {
-                                const colorStatus = note.status == 'rejected'? 'error' : 'success';
+                                const colorStatus = note.status == 'accepted'? 'success' : 'error';
 
                                 return (
                                 <ListItem key={i}>

@@ -77,7 +77,7 @@ const AuthRoute = ({ children, restricted = false, requireTorneoOwnership = fals
 
   // Si no está autenticado y se intenta acceder a una ruta restringida, redirigir al login
   if (!isAuthenticated() && !restricted) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/signin" replace />;
   }
 
   // Si el usuario no es dueño del torneo, redirigir al dashboard

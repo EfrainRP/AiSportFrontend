@@ -13,6 +13,7 @@ import {
   Alert,
   Snackbar, 
   Divider,
+  Stack
 } from '@mui/material';
 import PropTypes from 'prop-types';
 
@@ -278,23 +279,60 @@ export default function TournamentDashboard () {
 
           {brackets.map((round, index) => (
             <Card key={index}>
-              <CardContent style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <CardContent>
                 <Typography variant='h6' gutterBottom > 
                   Round: {index + 1}
                 </Typography>
-                {round.map((match, i) => ( //TO DO: check format HTML
-                  <Card
-                    key={i}
-                  >
-                    <CardContent>
-                      <Typography><strong>Date Match:</strong> {new Date(match.fechaPartido).toISOString().split('T')[0]}</Typography>
-                      <Typography><strong>Time:</strong> {new Date(match.horaPartido).toLocaleTimeString()}</Typography>
-                      <Typography><strong>Home team:</strong> {match.equipos_partidos_equipoLocal_idToequipos.name}</Typography>
-                      <Typography><strong>Guest team:</strong> {match.equipos_partidos_equipoVisitante_idToequipos.name}</Typography>
-                      <Typography><strong>Result:</strong> {match.resLocal} - {match.resVisitante}</Typography>
-                    </CardContent>
-                  </Card>
-                ))}
+                <Stack sx={{display:'flex', justifyContent: 'space-around', flexDirection:'row', my:1.5}} useFlexGap spacing={{ xs: 1, sm: 1.5 }}>
+                  {round.map((match, i) => ( //TO DO: check format HTML
+                    <Card
+                      key={i}
+                    >
+                      <CardContent>
+                        <Container sx={{...centerJustify, gap:2}}>
+                            <Typography variant='subtitle2' color='primary'> 
+                              <strong>Date Match: </strong>
+                            </Typography>
+                            <Typography sx={{color: 'text.data'}}> 
+                              {new Date(match.fechaPartido).toISOString().split('T')[0]}
+                            </Typography>
+                        </Container>
+                        <Container sx={{...centerJustify, gap:2}}>
+                            <Typography variant='subtitle2' color='primary'> 
+                              <strong>Time: </strong>
+                            </Typography>
+                            <Typography sx={{color: 'text.data'}}> 
+                              {new Date(match.horaPartido).toLocaleTimeString()}
+                            </Typography>
+                        </Container>
+                        <Container sx={{...centerJustify, gap:2}}>
+                            <Typography variant='subtitle2' color='primary'> 
+                              <strong>Home team: </strong>
+                            </Typography>
+                            <Typography sx={{color: 'text.data'}}> 
+                            {match.equipos_partidos_equipoLocal_idToequipos.name}
+                            </Typography>
+                        </Container>
+                        <Container sx={{...centerJustify, gap:2}}>
+                            <Typography variant='subtitle2' color='primary'> 
+                              <strong>Guest team: </strong>
+                            </Typography>
+                            <Typography sx={{color: 'text.data'}}> 
+                            {match.equipos_partidos_equipoVisitante_idToequipos.name}
+                            </Typography>
+                        </Container>
+                        <Container sx={{...centerJustify, gap:2}}>
+                            <Typography variant='subtitle2' color='primary'> 
+                              <strong>Result: </strong>
+                            </Typography>
+                            <Typography sx={{color: 'text.data'}}> 
+                            {match.resLocal} - {match.resVisitante}
+                            </Typography>
+                        </Container>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </Stack>
               </CardContent>
             </Card>
           ))}

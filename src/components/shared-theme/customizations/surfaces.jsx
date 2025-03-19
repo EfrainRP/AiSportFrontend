@@ -101,6 +101,17 @@ export const surfacesCustomizations = {
                 }),
               },
             },
+            {
+              props: {
+                variant: 'info',
+              },
+              style: {
+                border: 'none',
+                boxShadow: 'none',
+                background: 'transparent',
+              },
+            },
+            
           ],
         };
       },
