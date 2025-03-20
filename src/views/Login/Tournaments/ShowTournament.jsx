@@ -20,7 +20,7 @@ import {
     Tabs,
     Container,
     Alert,
-    Snackbar, 
+    Snackbar,
     Divider,
     CardMedia,
     List,
@@ -108,15 +108,16 @@ export default function ShowTournament() {
         setSelectedMatch(null);
         setConfirm(false);
     };
-    
+
     const [valueTab, setValueTab] = React.useState(() => {
         return Number(localStorage.getItem("activeTabShowTournament")) || 0;
     }); // Mecanismo del Tab
+    
     const handleChange = (event, newValue) => {
         setValueTab(newValue);
         localStorage.setItem("activeTabShowTournament", newValue); // Guardar la pestaña activa
     };
-
+    
     const [check, setCheck] = React.useState(false);
     const [checkDelete, setCheckDelete] = React.useState(false);
     // useEffect para hacer petición automática de los datos del torneo, partidos y notificaciones
@@ -128,7 +129,7 @@ export default function ShowTournament() {
                 setNotificaciones(response.data.notifications); // Establecer notificaciones del torneo
             })
             .catch ((err) =>{
-                console.error('Error al cargar el torneo:', err);
+                // console.error('Error al cargar el torneo:', err);
                 setLoading(true);
             })
         };
@@ -140,7 +141,7 @@ export default function ShowTournament() {
                 setLoading(false);
             })
             .catch ((err)=>{
-                console.error('Error al cargar los partidos del torneo:', err);
+                // console.error('Error al cargar los partidos del torneo:', err);
                 setLoading(true);
             })
         };
@@ -165,15 +166,13 @@ export default function ShowTournament() {
             );
         })
         .catch ((err) => {
-            console.error('Error al responder la notificación:', err);
+            console.error('Error responding to notification:', err);
         })
     };
 
     // Validar si la cantidad de equipos del torneo es del rango válido (Front)
     const isValidTeamCount = [4, 8, 16, 32].includes(tournament?.cantEquipo);
 
-    console.log(matches, tournament?.cantEquipo - 1)
-    console.log(matches === tournament?.cantEquipo - 1)
     // Validar la cantidad de partidos (Front) (debe ser torneo.countTeam - 1)
     const isValidMatchesCount = matches.length === tournament?.cantEquipo - 1;
 
@@ -196,7 +195,7 @@ export default function ShowTournament() {
 
     if(!tournament){ // En caso de que este vacio el torneo
         return (
-        <LoadingView 
+        <LoadingView
             message={`The tournament you are trying to access may not exist.`}
         />);
     }
@@ -222,26 +221,24 @@ export default function ShowTournament() {
             setMatches(matches.filter(match => match.id !== selectedMatch)); // Eliminar partido de la lista y actualizar el front <-
         })
         .catch ((err) => {
-            console.error('Error al eliminar el partido:', err);
+            // console.error('Error deleting the match:', err);
             setOpenSnackBar(true);
             setDataAlert({severity:"error", message:'Error delete match.'});
-        });     
-        setConfirm(false);   
+        });
+        setConfirm(false);
     };
 
     const handleEdit = (matchId) => { // Cambio de vista a Edit form
         navigate(`/match/${tournamentName}/${tournamentId}/${matchId}/edit`);
     };
-    console.log(tournament);
-    console.log(brackets);
-    // console.log(isValidTeamCount);
+
     return (
         <LayoutLogin>
             <Container sx={{...centerJustify}}>
                 <BackButton url={`/tournaments`}/>
                 <Typography gutterBottom variant="h2" component="div" sx={{ml:2}}>
                     {loading?
-                        <Skeleton variant="rounded" width={'30%'} /> 
+                        <Skeleton variant="rounded" width={'30%'} />
                         : tournament.name}
                 </Typography>
             </Container>
@@ -268,46 +265,46 @@ export default function ShowTournament() {
                     <Card variant="outlined">
                         <CardContent>
                             <Container sx={{...centerJustify, gap:2}}>
-                                <Typography variant='h5' color='primary'> 
+                                <Typography variant='h5' color='primary'>
                                     <strong>Location:</strong>
                                 </Typography>
-                                <Typography variant='h6'> 
+                                <Typography variant='h6'>
                                     {tournament.ubicacion}
                                 </Typography>
                             </Container>
                             <Divider variant="middle" sx={{my:2}}/>
                             <Container sx={{...centerJustify, gap:2}}>
-                                <Typography variant='h5' color='primary'> 
+                                <Typography variant='h5' color='primary'>
                                     <strong>Description:</strong>
                                 </Typography>
-                                <Typography variant='h6'> 
+                                <Typography variant='h6'>
                                     {tournament.descripcion}
                                 </Typography>
                             </Container>
                             <Divider variant="middle" sx={{my:2}}/>
                             <Container sx={{...centerJustify, gap:2}}>
-                                <Typography variant='h5' color='primary'> 
+                                <Typography variant='h5' color='primary'>
                                     <strong>Start Date:</strong>
                                 </Typography>
-                                <Typography variant='h6'> 
+                                <Typography variant='h6'>
                                     {new Date(tournament.fechaInicio).toLocaleDateString()}
                                 </Typography>
                             </Container>
                             <Divider variant="middle" sx={{my:2}}/>
                             <Container sx={{...centerJustify, gap:2}}>
-                                <Typography variant='h5' color='primary'> 
+                                <Typography variant='h5' color='primary'>
                                     <strong>End Date:</strong>
                                 </Typography>
-                                <Typography variant='h6'> 
+                                <Typography variant='h6'>
                                     {new Date(tournament.fechaFin).toLocaleDateString()}
                                 </Typography>
                             </Container>
                             <Divider variant="middle" sx={{my:2}}/>
                             <Container sx={{...centerJustify, gap:2}}>
-                                <Typography variant='h5' color='primary'> 
+                                <Typography variant='h5' color='primary'>
                                     <strong>Total Teams:</strong>
                                 </Typography>
-                                <Typography variant='h6'> 
+                                <Typography variant='h6'>
                                     {tournament.cantEquipo}
                                 </Typography>
                             </Container>
@@ -329,38 +326,37 @@ export default function ShowTournament() {
                         // [{ partido1, partido2 }, { partido3, partido4 }],  // Ronda 1
                         //[{ partido5, partido6 }],  // Ronda 2
                         //[{ partido7 }]  // Ronda 3
-                        // TODO: checar la vista de round con datos 
                         brackets.map((round, index) => ( // "Map" itera en el array, y "Round" es un array de "partidos" por ronda
                             <Card key={index} variant="outlined">     {/* Index indica la Ronda actual <- donde "key" actualiza el DOM (Interfaz de programacion) dinamicamente */}
                                 <CardContent>
                                     <Typography variant='h5'>Round {index + 1}</Typography>
                                     <Stack sx={{display:'flex', justifyContent: 'space-around', flexDirection:'row', my:1.5}} useFlexGap spacing={{ xs: 1, sm: 1.5 }}>
                                         {round.map((match, matchIndex) => {
-                                            console.log(match.equipos_partidos_equipoLocal_idToequipos.image);
+                                            // console.log(match.equipos_partidos_equipoLocal_idToequipos.image);
                                             return (
                                             <Card key={matchIndex}>
                                                 <CardContent sx={{textAlign: 'center'}}>
                                                     <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
-                                                        <Typography variant='subtitle2' color='primary'> 
+                                                        <Typography variant='subtitle2' color='primary'>
                                                             <strong>Date Match: </strong>
                                                         </Typography>
-                                                        <Typography sx={{color: 'text.data'}}> 
+                                                        <Typography >
                                                             {new Date(match.fechaPartido).toISOString().split('T')[0]}
                                                         </Typography>
                                                     </Container>
                                                     <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
-                                                        <Typography variant='subtitle2' color='primary'> 
+                                                        <Typography variant='subtitle2' color='primary'>
                                                             <strong>Time: </strong>
                                                         </Typography>
-                                                        <Typography sx={{color: 'text.data'}}> 
+                                                        <Typography>
                                                             {new Date(match.horaPartido).toLocaleTimeString()}
                                                         </Typography>
                                                     </Container>
                                                     <Container sx={{...centerJustify, justifyContent:'center', gap:2}}>
-                                                        <Typography variant='subtitle2' color='primary'> 
+                                                        <Typography variant='subtitle2' color='warning'>
                                                             <strong>Result: </strong>
                                                         </Typography>
-                                                        <Typography sx={{color: 'text.data'}}> 
+                                                        <Typography>
                                                             {match.resLocal} - {match.resVisitante}
                                                         </Typography>
                                                     </Container>
@@ -373,10 +369,10 @@ export default function ShowTournament() {
                                                                 crossOrigin="use-credentials"
                                                             />
                                                         <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
-                                                            <Typography variant='subtitle2' color='primary'> 
+                                                            <Typography variant='subtitle2' color='success'>
                                                                 <strong>Home Team: </strong>
                                                             </Typography>
-                                                            <Typography sx={{color: 'text.data'}}> 
+                                                            <Typography >
                                                                 {match.equipos_partidos_equipoLocal_idToequipos.name}
                                                             </Typography>
                                                         </Container>
@@ -384,10 +380,10 @@ export default function ShowTournament() {
 
                                                     <Container sx={{...centerJustify, justifyContent: 'center', alignItems: 'center', my:1}}>
                                                         <Container sx={{...centerJustify, gap:2}}>
-                                                            <Typography variant='subtitle2' color='primary'> 
+                                                            <Typography variant='subtitle2' color='error'>
                                                                 <strong>Guest Team: </strong>
                                                             </Typography>
-                                                            <Typography sx={{color: 'text.data'}}> 
+                                                            <Typography >
                                                                 {match.equipos_partidos_equipoVisitante_idToequipos.name}
                                                             </Typography>
                                                         </Container>
@@ -401,14 +397,14 @@ export default function ShowTournament() {
                                                 </CardContent>
 
                                                 {/* Botones de Editar y Eliminar */}
-                                                <CardActions sx={{ display: 'flex', justifyContent: 'space-around' }}>
+                                                <CardActions sx={{ display: 'flex', justifyContent: 'space-around', mt:2}}>
                                                     <Fab variant="extended" size="small" color="primary" onClick={() => handleEdit(match.id)}>Edit</Fab>
                                                     <Fab variant="extended" size="small" color="error" onClick={() => handleOpenDialog(match.id)}>Delete</Fab>
-                                                    
+
                                                     <ConfirmDialog open={openConfirm} handleClose={handleCloseConfirm} handleConfirm={handleDelete} messageTitle={'Delete match'} message={'Are you sure to delete this match?'}/>
                                                 </CardActions>
                                             </Card>
-                                            
+
                                         )})}
                                     </Stack>
                                 </CardContent>
@@ -428,7 +424,7 @@ export default function ShowTournament() {
                         </Card>
                     )}
                 </Container>
-                    
+
             </CustomTabPanel>
             <CustomTabPanel value={valueTab} index={2}> {/*Tab Matches */}
                 <Container>
@@ -438,13 +434,13 @@ export default function ShowTournament() {
                             notificaciones.map((notificacion,i) => {
                                 const colorStatus = notificacion.status == 'accepted'? 'success' : 'warning';
                                 return (
-                                <ListItem key={i} 
+                                <ListItem key={i}
                                     sx={{display: "flex", padding: 2, }}
                                     alignItems="flex-start"
                                     disablePadding
                                     secondaryAction={
                                         notificacion.status === 'pending' && (
-                                        //  Botones para aceptar o denegar la notificación 
+                                        //  Botones para aceptar o denegar la notificación
                                         <ButtonGroup edge="end" variant="contained">
                                             <Button color="success" alt='accepted' startIcon={ check? <CheckCircleRoundedIcon/> : <RadioButtonUncheckedIcon/> } onClick={() => handleNotificationResponse(notificacion.id, 'accepted')}>
                                                 Accept
@@ -453,17 +449,17 @@ export default function ShowTournament() {
                                                 Deny
                                             </Button>
                                         </ButtonGroup>)
-                                    } 
+                                    }
                                 >
-                                    <ListItemText 
+                                    <ListItemText
                                         sx={{maxWidth: '50%'}}
                                         primary={
                                             <Typography variant='body1' component="div">
                                                 Player <Typography component={'strong'} color={'primary'}>{notificacion.users_notifications_user_idTousers.name}</Typography> sent you a notification from team <Typography component={'strong'} color={'secondary'}>{notificacion.equipos.name}</Typography>
                                             </Typography>}
-                                        
+
                                         secondary={
-                                            <Typography 
+                                            <Typography
                                                 sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:1}}
                                                 component={'div'}
                                             >
@@ -472,17 +468,17 @@ export default function ShowTournament() {
                                             </Typography>
                                     }
                                     />
-                                    <ListItemText 
+                                    <ListItemText
                                         sx={{maxWidth: '40%'}}
                                         primary={
-                                            <Typography 
+                                            <Typography
                                                 sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:1}}
                                                 component={'div'}
                                             >
                                                 <Typography component={'strong'} color={'pink'}>Email:</Typography>
                                                 <Typography>{notificacion.users_notifications_user_idTousers.email}</Typography>
                                             </Typography>}/>
-                                    
+
                                     {/* {notificacion.status === 'pending' && (
                                         <Container sx={{display: "flex", justifyContent: "center", gap: 1, width: "20%" }}>
                                             <ListItemButton alt='accepted' onClick={() => handleNotificationResponse(notificacion.id, 'accepted')}>Accept</ListItemButton>
@@ -499,7 +495,7 @@ export default function ShowTournament() {
                         )}
                     </List>
                 </Container>
-            </CustomTabPanel>  
+            </CustomTabPanel>
         </LayoutLogin>
     );
 };

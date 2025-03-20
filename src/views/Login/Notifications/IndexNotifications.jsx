@@ -86,7 +86,7 @@ export default function IndexNotifications() {
             console.log(response.data);
             // alert('Notificación denegada con éxito.');
             setOpenSnackBar(true);
-            setDataAlert({ severity: "warning", message: 'Notificación denegada con éxito.' });
+            setDataAlert({ severity: "warning", message: 'Notification successfully denied.' });
         }).catch((err)=>{
             console.error(err);
             setCheckDelete(false);
@@ -98,7 +98,7 @@ export default function IndexNotifications() {
             } else {
                 // alert('Ocurrió un error al denegar la notificación.'); // Error genérico
                 setOpenSnackBar(true);
-                setDataAlert({ severity: "error", message: 'Ocurrió un error al denegar la notificación.' });
+                setDataAlert({ severity: "error", message: 'An error occurred while denying the notification.' });
             }
         });
     };

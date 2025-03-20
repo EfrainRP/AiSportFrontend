@@ -59,7 +59,7 @@ export default function MyRoute(){
 
           {/* Rutas que no deben ser accesibles para usuarios autenticados */}
           <Route
-            path="/restore-password"
+            path="/reset-password"
             element={
               <AuthRoute restricted={true}>
                 <ResetPassword/>

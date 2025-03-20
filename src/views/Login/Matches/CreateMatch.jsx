@@ -101,8 +101,10 @@ export default function CreateMatch() {
         resLocal: 0,
         resVisitante: 0,
     });
-    // const [homeTeam, setHomeTeam] = React.useState(''); //Autocomplete home team
-    // const [guestTeam, setGuestTeam] = React.useState(''); //Autocomplete guest team
+    const [formTeam, setFormTeam] = React.useState({ //Autocomplete teams names
+        equipoLocal:null,
+        equipoVisitante: null,
+    }); 
 
     const [fieldErrors, setFieldErrors] = React.useState({}); // Almacena errores específicos por campo desde el backend
     const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
@@ -119,7 +121,6 @@ export default function CreateMatch() {
             await axiosInstance.get(`equipos/torneo/${tournamentId}`)
                 .then((response) => {
                     setLoading(false);
-                    console.log(response.data);
                     setAllTeams(response.data);
                     setDataAlert({message:null});
                 }).catch((err) => {
@@ -145,25 +146,29 @@ export default function CreateMatch() {
         e.preventDefault();
         await axiosInstance.post(`/partido/create/${tournamentId}`, formData)
             .then((response) => {
-                setSuccessMessage('Success create match!');
-                setTimeout(() => navigate(`/tournament/${tournamentName}/${tournamentId}}`), 2000);
+                setOpenSnackBar(true);
+                setDataAlert({ severity: "success", message: 'Success create match!' });
+                setTimeout(() => navigate(`/tournament/${tournamentName}/${tournamentId}`), 2000);
             })
             .catch((err) => {
                 if (err.response && err.response.data && err.response.data.field) {
                     const { field, message } = err.response.data;
-                    setFieldErrors({ [field]: message });
+                    if (field) {
+                        setFieldErrors((prev) => ({ ...prev, [field]: message }));
+                    } else {
+                        setOpenSnackBar(true);
+                        setDataAlert({severity:"error", message:message});
+                    }
                 } else {
                     setOpenSnackBar(true);
                     setDataAlert({severity:"error", message:'Error create team.'});
-                }       
+                }  
             })
     };
 
-    console.log(formData);
-
     if(fieldErrors.cantPartidos){
         setOpenSnackBar(true);
-        setDataAlert({severity:"error", message: fieldErrors.cantPartidos});
+        setDataAlert({severity:"warning", message: fieldErrors.cantPartidos});
     }
 
     return (
@@ -212,9 +217,12 @@ export default function CreateMatch() {
                                 // inputValue={homeTeam}
                                 // onInputChange={(event, newInputValue) => {
                                 //     setHomeTeam(newInputValue)}}
-                                // value={homeTeam}
+                                value={formTeam.equipoLocal || null}
                                 onChange={(e, newValue) => {
-                                    // setHomeTeam(newValue);
+                                    setFormTeam({
+                                        ...formTeam,
+                                        equipoLocal: newValue,
+                                    });
                                     setFormData({
                                         ...formData,
                                         equipoLocalId: newValue?.id,
@@ -243,8 +251,12 @@ export default function CreateMatch() {
                                 // inputValue={guestTeam}
                                 // onInputChange={(event, newInputValue) => {
                                 //     setGuestTeam(newInputValue)}}
-                                // value={formData.equipoVisitanteId}
+                                value={formTeam.equipoVisitante || null}
                                 onChange={(e, newValue) => {
+                                    setFormTeam({
+                                        ...formTeam,
+                                        equipoVisitante: newValue,
+                                    });
                                     setFormData({
                                         ...formData,
                                         equipoVisitanteId: newValue?.id,

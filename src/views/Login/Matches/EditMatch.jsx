@@ -100,9 +100,9 @@ export default function EditMatch() {
         resLocal: 0,
         resVisitante: 0,
     });
-    const [formTeam, setFormTeam] = React.useState({ //Autocomplete teams
-        equipoLocal:'',
-        equipoVisitante: '',
+    const [formTeam, setFormTeam] = React.useState({ //Autocomplete teams names
+        equipoLocal:null,
+        equipoVisitante: null,
     }); 
 
     const [fieldErrors, setFieldErrors] = React.useState({}); // Almacena errores específicos por campo desde el backend
@@ -122,7 +122,7 @@ export default function EditMatch() {
                     setAllTeams(response.data);
                     setFieldErrors(null);
                 }).catch((err) => {
-                    console.error('Error loading teams:', err);
+                    // console.error('Error loading teams:', err);
                     setLoading(true);
                     setFieldErrors("Error loading teams");
                 })
@@ -132,12 +132,10 @@ export default function EditMatch() {
             await axiosInstance.get(`/partido/${tournamentId}/${matchId}`)
                 .then((response) => {
                     const match = response.data;
-                    console.log("EQUIPOS", match.equipos_partidos_equipoLocal_idToequipos.name);
-                    setNames({
-                        homeTeam: match.equipos_partidos_equipoLocal_idToequipos.name,
-                        guestTeam: match.equipos_partidos_equipoVisitante_idToequipos.name,
+                    setFormTeam({
+                        equipoVisitante: match.equipos_partidos_equipoVisitante_idToequipos,
+                        equipoLocal: match.equipos_partidos_equipoLocal_idToequipos
                     });
-
                     // Formatear hora
                     const timeMatch = match.horaPartido ? match.horaPartido.slice(11, 16) : ''; // HH:mm
 
@@ -147,17 +145,17 @@ export default function EditMatch() {
                     const session = match.jornada ? match.jornada.slice(0, 10) : ''; // YYYY-MM-DD
                     // Toma los datos obtenidos y los reformatea para poderlos mostrar en la vista <-
                     setFormData({
-                        homeTeamId: match.equipoLocal_id,
-                        guestTeamId: match.equipoVisitante_id,
-                        timeMatch: match.horaPartido, // Hora en formato HH:mm
-                        dateMatch: match.fechaPartido, // Fecha en formato YYYY-MM-DD
-                        session: match.jornada, // Jornada cargada
-                        resHome: match.resLocal || 0,
-                        resGuest: match.resVisitante || 0,
+                        equipoLocalId: match.equipoLocal_id || '',
+                        equipoVisitanteId: match.equipoVisitante_id || '',
+                        horaPartido: match.horaPartido ? match.horaPartido.slice(11, 16) : '', // HH:mm
+                        fechaPartido: match.fechaPartido ? match.fechaPartido.slice(0, 10) : '',
+                        jornada: match.jornada ? match.jornada.slice(0, 10) : '',
+                        resLocal: match.resLocal ?? 0,
+                        resVisitante: match.resVisitante ?? 0,
                     });
                     setFieldErrors(null);
                 }).catch((err) => {
-                    console.error('Error loading data matches:', err);
+                    // console.error('Error loading data matches:', err);
                     setLoading(true);
                     setFieldErrors("Error loading data matches");
                 })
@@ -178,23 +176,30 @@ export default function EditMatch() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await axiosInstance.put(`/partido/${tournamentId}}/${matchId}`, formData)
+        await axiosInstance.put(`/partido/${tournamentId}/${matchId}`, formData)
             .then((response) => {
-                setSuccessMessage('Success update Match!');
-                setTimeout(() => navigate(`/tournament/${tournamentName}/${tournamentId}}`), 2000);
+                setOpenSnackBar(true);
+                setDataAlert({ severity: "success", message: 'Success update Match!' });
+                setTimeout(() => navigate(`/tournament/${tournamentName}/${tournamentId}`), 2000);
             })
             .catch((err) => {
-                if (err.response && err.response.data && err.response.data.field) {
+                if (err.response && err.response.status === 400) {
                     const { field, message } = err.response.data;
-                    setErrors({ [field]: message });
-                    console.log("Error in: ", field, message);
+                    if (field) {
+                        setFieldErrors((prev) => ({ ...prev, [field]: message }));
+                    } else {
+                        setOpenSnackBar(true);
+                        setDataAlert({severity:"error", message:message});
+                    }
                 } else {
-                    setGeneralError('Error update the match.', err);
+                    setOpenSnackBar(true);
+                    setDataAlert({ severity: "error", message: 'Error update the match.' });
                 }
+                console.log(err);
             })
     };
+    console.log(formData);
 
-    console.log(allTeams);
     return (
         <LayoutLogin>
             <FormContainerEdit>
@@ -241,9 +246,12 @@ export default function EditMatch() {
                                 // inputValue={homeTeam}
                                 // onInputChange={(event, newInputValue) => {
                                 //     setHomeTeam(newInputValue)}}
-                                // value={homeTeam}
+                                value={formTeam.equipoLocal || null}
                                 onChange={(e, newValue) => {
-                                    // setHomeTeam(newValue);
+                                    setFormTeam({
+                                        ...formTeam,
+                                        equipoLocal: newValue,
+                                    });
                                     setFormData({
                                         ...formData,
                                         equipoLocalId: newValue?.id,
@@ -255,10 +263,10 @@ export default function EditMatch() {
                                 renderInput={(params) => 
                                     <TextField {...params}
                                     placeholder='MyHomeTeam name'
-                                    error={!!fieldErrors.equipo}
-                                    helperText={fieldErrors.equipo}
+                                    error={!!fieldErrors?.equipo}
+                                    helperText={fieldErrors?.equipo}
                                     variant="outlined"
-                                    color={!!fieldErrors.equipo ? 'error' : 'primary'}
+                                    color={!!fieldErrors?.equipo ? 'error' : 'primary'}
                                     />}
                             />
                         </FormControl>
@@ -272,8 +280,12 @@ export default function EditMatch() {
                                 // inputValue={guestTeam}
                                 // onInputChange={(event, newInputValue) => {
                                 //     setGuestTeam(newInputValue)}}
-                                // value={formData.equipoVisitanteId}
+                                value={formTeam.equipoVisitante || null}
                                 onChange={(e, newValue) => {
+                                    setFormTeam({
+                                        ...formTeam,
+                                        equipoVisitante: newValue,
+                                    });
                                     setFormData({
                                         ...formData,
                                         equipoVisitanteId: newValue?.id,
@@ -285,90 +297,90 @@ export default function EditMatch() {
                                 renderInput={(params) => 
                                     <TextField {...params}
                                     placeholder='MyGuestTeam name'
-                                    error={!!fieldErrors.equipo}
-                                    helperText={fieldErrors.equipo}
+                                    error={!!fieldErrors?.equipo}
+                                    helperText={fieldErrors?.equipo}
                                     variant="outlined"
-                                    color={!!fieldErrors.equipo ? 'error' : 'primary'}
+                                    color={!!fieldErrors?.equipo ? 'error' : 'primary'}
                                     />}
                             />
                         </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="horaPartido">Match time: </FormLabel>
                             <TextField
-                                error={!!fieldErrors.horaPartido}
-                                helperText={fieldErrors.horaPartido}
-                                color={!!fieldErrors.horaPartido ? 'error' : 'primary'}
+                                error={!!fieldErrors?.horaPartido}
+                                helperText={fieldErrors?.horaPartido}
+                                color={!!fieldErrors?.horaPartido ? 'error' : 'primary'}
                                 name="horaPartido"
                                 id="horaPartido"
                                 type="time"
                                 fullWidth
                                 required
                                 variant="outlined"
-                                value={formData.horaPartido}
+                                value={formData.horaPartido || ''}
                                 onChange={handleInputChange}
                             />
                         </FormControl>
                         <FormControl>
-                            <FormLabel htmlFor="fechaPartido">Match time: </FormLabel>
+                            <FormLabel htmlFor="fechaPartido">Match day: </FormLabel>
                             <TextField
-                                error={!!fieldErrors.fechaPartido}
-                                helperText={fieldErrors.fechaPartido}
-                                color={!!fieldErrors.fechaPartido ? 'error' : 'primary'}
+                                error={!!fieldErrors?.fechaPartido}
+                                helperText={fieldErrors?.fechaPartido}
+                                color={!!fieldErrors?.fechaPartido ? 'error' : 'primary'}
                                 name="fechaPartido"
                                 id="fechaPartido"
                                 type="date"
                                 fullWidth
                                 required
                                 variant="outlined"
-                                value={formData.fechaPartido}
+                                value={formData.fechaPartido || ''}
                                 onChange={handleInputChange}
                             />
                         </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="jornada">Match day: </FormLabel>
                             <TextField
-                                error={!!fieldErrors.jornada}
-                                helperText={fieldErrors.jornada}
-                                color={!!fieldErrors.jornada ? 'error' : 'primary'}
+                                error={!!fieldErrors?.jornada}
+                                helperText={fieldErrors?.jornada}
+                                color={!!fieldErrors?.jornada ? 'error' : 'primary'}
                                 name="jornada"
                                 id="jornada"
                                 type="date"
                                 fullWidth
                                 required
                                 variant="outlined"
-                                value={formData.jornada}
+                                value={formData.jornada || ''}
                                 onChange={handleInputChange}
                             />
                         </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="resLocal">Home result: </FormLabel>
                             <TextField
-                                error={!!fieldErrors.resLocal}
-                                helperText={fieldErrors.resLocal}
-                                color={!!fieldErrors.resLocal ? 'error' : 'primary'}
+                                error={!!fieldErrors?.resLocal}
+                                helperText={fieldErrors?.resLocal}
+                                color={!!fieldErrors?.resLocal ? 'error' : 'primary'}
                                 name="resLocal"
                                 id="resLocal"
                                 type="number"
                                 fullWidth
                                 required
                                 variant="outlined"
-                                value={formData.resLocal}
+                                value={formData.resLocal>=0? formData.resLocal : ''}
                                 onChange={handleInputChange}
                             />
                         </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="resVisitante">Guest result: </FormLabel>
                             <TextField
-                                error={!!fieldErrors.resVisitante}
-                                helperText={fieldErrors.resVisitante}
-                                color={!!fieldErrors.resVisitante ? 'error' : 'primary'}
+                                error={!!fieldErrors?.resVisitante}
+                                helperText={fieldErrors?.resVisitante}
+                                color={!!fieldErrors?.resVisitante ? 'error' : 'primary'}
                                 name="resVisitante"
                                 id="resVisitante"
                                 type="number"
                                 fullWidth
                                 required
                                 variant="outlined"
-                                value={formData.resVisitante}
+                                value={formData.resVisitante>=0? formData.resVisitante : ''}
                                 onChange={handleInputChange}
                             />
                         </FormControl>

@@ -13,7 +13,8 @@ import {
   Alert,
   Snackbar, 
   Divider,
-  Stack
+  Stack,
+  Avatar,
 } from '@mui/material';
 import PropTypes from 'prop-types';
 
@@ -31,7 +32,9 @@ import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
 
+const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 const centerJustify = {display:'flex', flexDirection: 'row', textAlign:'justify'}; //estilos guardados
+
 function CustomTabPanel(props) { 
   const { children, value, index, ...other } = props;
 
@@ -79,11 +82,16 @@ export default function TournamentDashboard () {
     setOpenSnackBar(false);
   };
   
-  const location = useLocation();
-  const stateTab = location.state || 0;
-  const [valueTab, setValueTab] = React.useState(0); // Mecanismo del Tab
+  const location = useLocation();//TODO: CHECK MECANISMO DE GUARDADO 
+  const stateTab = location.state || valueTab;
+  const [valueTab, setValueTab] = React.useState((valueTab) => {
+    return Number(localStorage.getItem("activeTabShowTournament")) || 0;
+  }); // Mecanismo del Tab
+  console.log((valueTab==1 && !matches?.length));
+  console.log(valueTab);
   const handleChange = (event, newValue) => {
-    setValueTab(newValue);
+      setValueTab(newValue);
+      localStorage.setItem("activeTabShowTournament", newValue); // Guardar la pestaña activa
   };
   
   React.useEffect(() => {
@@ -101,7 +109,6 @@ export default function TournamentDashboard () {
       await axiosInstance.get(`/partidos/${tournamentId}`)
       .then((response) => {
         setMatches(response.data);
-        setValueTab(stateTab);
       })
       .catch ((err) => {
         console.error('Error loading tournament matches:', err);
@@ -197,7 +204,8 @@ export default function TournamentDashboard () {
   }
   // console.log(matches.length);
   const brackets = generateBracket(Array.isArray(matches)? matches : []);
-
+  console.log(matches);
+  console.log(brackets);
   return (
     <LayoutLogin>
       <Container sx={{display: 'center',m:2, gap:'5%'}}>
@@ -265,7 +273,7 @@ export default function TournamentDashboard () {
                 <Typography variant='body1' gutterBottom sx={{color: 'text.data'}}> 
                 {tournament.descripcion}
                 </Typography>
-              </Container>
+              </Container> 
             </CardContent>
           </Card>
         </Container>
@@ -289,45 +297,63 @@ export default function TournamentDashboard () {
                       key={i}
                     >
                       <CardContent>
-                        <Container sx={{...centerJustify, gap:2}}>
-                            <Typography variant='subtitle2' color='primary'> 
+                        <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
+                          <Typography variant='subtitle2' color='primary'>
                               <strong>Date Match: </strong>
-                            </Typography>
-                            <Typography sx={{color: 'text.data'}}> 
+                          </Typography>
+                          <Typography sx={{color: 'text.data'}}>
                               {new Date(match.fechaPartido).toISOString().split('T')[0]}
+                          </Typography>
+                        </Container>
+                        <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
+                            <Typography variant='subtitle2' color='primary'>
+                                <strong>Time: </strong>
+                            </Typography>
+                            <Typography sx={{color: 'text.data'}}>
+                                {new Date(match.horaPartido).toLocaleTimeString()}
                             </Typography>
                         </Container>
-                        <Container sx={{...centerJustify, gap:2}}>
-                            <Typography variant='subtitle2' color='primary'> 
-                              <strong>Time: </strong>
+                        <Container sx={{...centerJustify, justifyContent:'center', gap:2}}>
+                            <Typography variant='subtitle2' color='warning'>
+                                <strong>Result: </strong>
                             </Typography>
-                            <Typography sx={{color: 'text.data'}}> 
-                              {new Date(match.horaPartido).toLocaleTimeString()}
-                            </Typography>
-                        </Container>
-                        <Container sx={{...centerJustify, gap:2}}>
-                            <Typography variant='subtitle2' color='primary'> 
-                              <strong>Home team: </strong>
-                            </Typography>
-                            <Typography sx={{color: 'text.data'}}> 
-                            {match.equipos_partidos_equipoLocal_idToequipos.name}
+                            <Typography sx={{color: 'text.data'}}>
+                                {match.resLocal} - {match.resVisitante}
                             </Typography>
                         </Container>
-                        <Container sx={{...centerJustify, gap:2}}>
-                            <Typography variant='subtitle2' color='primary'> 
-                              <strong>Guest team: </strong>
-                            </Typography>
-                            <Typography sx={{color: 'text.data'}}> 
-                            {match.equipos_partidos_equipoVisitante_idToequipos.name}
-                            </Typography>
+
+                        <Container sx={{...centerJustify, justifyContent: 'center', alignItems: 'center', my:1}}>
+                            <Avatar
+                                    src={`${URL_SERVER}/utils/uploads/${match.equipo && match.equipos_partidos_equipoLocal_idToequipos.image !== 'logoEquipo.jpg' ? match.equipos_partidos_equipoLocal_idToequipos.image : 'logoEquipo.jpg'}`}
+                                    alt="Home team"
+                                    sx={{ width: 40, height: 40 }}
+                                    crossOrigin="use-credentials"
+                                />
+                            <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
+                                <Typography variant='subtitle2' color='success'>
+                                    <strong>Home Team: </strong>
+                                </Typography>
+                                <Typography>
+                                    {match.equipos_partidos_equipoLocal_idToequipos.name}
+                                </Typography>
+                            </Container>
                         </Container>
-                        <Container sx={{...centerJustify, gap:2}}>
-                            <Typography variant='subtitle2' color='primary'> 
-                              <strong>Result: </strong>
-                            </Typography>
-                            <Typography sx={{color: 'text.data'}}> 
-                            {match.resLocal} - {match.resVisitante}
-                            </Typography>
+
+                        <Container sx={{...centerJustify, justifyContent: 'center', alignItems: 'center', my:1}}>
+                            <Container sx={{...centerJustify, gap:2}}>
+                                <Typography variant='subtitle2' color='error'>
+                                    <strong>Guest Team: </strong>
+                                </Typography>
+                                <Typography>
+                                    {match.equipos_partidos_equipoVisitante_idToequipos.name}
+                                </Typography>
+                            </Container>
+                            <Avatar
+                                src={`${URL_SERVER}/utils/uploads/${match.equipos_partidos_equipoVisitante_idToequipos && match.equipos_partidos_equipoVisitante_idToequipos.image !== 'logoEquipo.jpg' ? match.equipos_partidos_equipoVisitante_idToequipos.image : 'logoEquipo.jpg'}`}
+                                alt="Guest team"
+                                sx={{ width: 40, height: 40 }}
+                                crossOrigin="use-credentials"
+                            />
                         </Container>
                       </CardContent>
                     </Card>
