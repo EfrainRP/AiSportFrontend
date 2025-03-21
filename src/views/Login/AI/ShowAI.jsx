@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Typography,
     Skeleton,
@@ -82,7 +82,7 @@ const StyledBoxIMG = styled('img')(({ theme }) => ({
         filter: "grayscale(50%)", // Quita el efecto al pasar el mouse
     },
 }));
-const myVideo = styled('video')(({ theme }) => ({
+const MyVideo = styled('video')(({ theme }) => ({
     border: "3px solid",
     borderColor: theme.palette.primary.main,
     borderRadius: theme.shape.borderRadius * 2,
@@ -135,7 +135,12 @@ export default function ShowAI() {
     const [modalMessage, setModalMessage] = React.useState("");
     const [showPredictionModal, setShowPredictionModal] = React.useState(false);
     const [isManualClose, setIsManualClose] = React.useState(false);
-    const [showInfoModal, setShowInfoModal] = React.useState(true);
+    const [showInfoModal, setShowInfoModal] = React.useState(() => {
+        // Lee el valor de localStorage y conviértelo a booleano
+        const storedValue = localStorage.getItem("stateModalTip");
+        const stateModalTip = storedValue === null ? true : JSON.parse(storedValue);
+        return stateModalTip;  // Devuelve el valor booleano
+    });
     const [showCameraModal, setShowCameraModal] = React.useState(false);
     const [cameraModalMessage, setCameraModalMessage] = React.useState("");
 
@@ -143,13 +148,36 @@ export default function ShowAI() {
     const [devices, setDevices] = React.useState([]);
     const [selectedDeviceId, setSelectedDeviceId] = React.useState("");
 
+    const [hasPermission, setHasPermission] = React.useState(null);
+    const [stream, setStream] = React.useState(null);
+    useEffect(() => {
+        // Solicitar acceso a la cámara al cargar el componente
+        navigator.mediaDevices.getUserMedia({ video: true })
+          .then((stream) => {
+            // Si se concede el permiso, establecemos el flujo
+            setStream(stream);
+            setHasPermission(true);
+          })
+          .catch((err) => {
+            // Si el permiso es denegado o hay un error
+            console.error('Error accessing camera:', err);
+            setHasPermission(false);
+          });
+    
+        // Limpiar el flujo cuando el componente se desmonta
+        return () => {
+          if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+          }
+        };
+      }, []);
     React.useEffect(() => {
         // Obtener todas las cámaras disponibles
         navigator.mediaDevices.enumerateDevices().then((deviceInfos) => {
-        const videoDevices = deviceInfos.filter(device => device.kind === "videoinput");
-        setDevices(videoDevices);
-        });
-    }, []);
+            const videoDevices = deviceInfos.filter(device => device.kind === "videoinput");
+            setDevices(videoDevices);
+            });
+    },[hasPermission]);
 
     const startCamera = (deviceId) => {
         // Detener la cámara actual si existe
@@ -357,14 +385,15 @@ export default function ShowAI() {
         }
     }, [prediction]);
 
-    React.useEffect(() => {
-        setShowInfoModal(true);
-    }, []);
+    // React.useEffect(() => {
+    //     setShowInfoModal(true);
+    // }, []);
 
     if(loading){
         return (
         <LoadingView/>);
     }
+
     return (
         <LayoutLogin>
             <Container sx={{display:'flex', textAlign:'justify',m:1, gap:'5%'}}>
@@ -404,7 +433,7 @@ export default function ShowAI() {
                     </FormControl>
                     {!isTraining && selectedDeviceId && (
                         <Container>
-                            <myVideo ref={videoRef} autoPlay playsInline className="border border-3 border-primary rounded shadow"></myVideo>
+                            <MyVideo ref={videoRef} autoPlay playsInline className="border border-3 border-primary rounded shadow"></MyVideo>
                         </Container>
                     )}
                     <FormControl sx={{width:"30%"}} size="small" >
@@ -500,10 +529,10 @@ export default function ShowAI() {
             </Container>
 
             {/*     	Section {Modal / Dialog}         */}
-            <DialogComponent modalTittle={'Mensaje del sistema'} modalBody={modalMessage} open={showModal} handleClose={() => setShowModal(false)}/>
+            <DialogComponent modalTittle={'System Message'} modalBody={modalMessage} open={showModal} handleClose={() => setShowModal(false)}/>
 
             <DialogComponent
-                modalTittle={'Predicción del entrenamiento'}
+                modalTittle={'Training prediction'}
                 modalBody={prediction ? (
                     <Container>
                         <Typography variant='body1'><strong>Performance:</strong> {prediction.performance}</Typography>
@@ -512,7 +541,7 @@ export default function ShowAI() {
                         )}
                     </Container>
                     ) : (
-                        <Typography variant='body1'>No hay datos de predicción disponibles.</Typography>
+                        <Typography variant='body1'>No prediction data available.</Typography>
                     )}
                 open={showPredictionModal}
                 handleClose={() => setShowPredictionModal(false)}/>
@@ -521,7 +550,13 @@ export default function ShowAI() {
                 maxWidth={'md'}// ó lg
                 modalTittle={'💡AiSport Tips'}
                 open={showInfoModal}///// showInfoModal
-                handleClose={() => setShowInfoModal(false)}
+                handleClose={() => {
+                    setShowInfoModal(prevState => {
+                        const newState = !prevState;
+                        localStorage.setItem("stateModalTip", JSON.stringify(newState));  // Guarda el nuevo estado como string
+                        return newState;
+                    });                  
+                }}
                 modalBody={
                 <Container>
                     <Typography>Make sure you meet the following requirements before beginning your training. ✅</Typography>
@@ -620,7 +655,7 @@ export default function ShowAI() {
                 }/>
 
             <DialogComponent
-                modalTittle={'Estado de la Cámara'}
+                modalTittle={'Camera State'}
                 modalBody={cameraModalMessage}
                 open={showPredictionModal}
                 handleClose={() => setShowCameraModal(false)}/>
