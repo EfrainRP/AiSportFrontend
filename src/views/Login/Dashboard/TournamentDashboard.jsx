@@ -82,18 +82,26 @@ export default function TournamentDashboard () {
     setOpenSnackBar(false);
   };
   
-  const location = useLocation();//TODO: CHECK MECANISMO DE GUARDADO 
-  const stateTab = location.state || valueTab;
-  const [valueTab, setValueTab] = React.useState((valueTab) => {
-    return Number(localStorage.getItem("activeTabShowTournament")) || 0;
+  const location = useLocation();
+  const [valueTab, setValueTab] = React.useState(() => {
+    let initialTab = location.state || 0; // Si hay un estado en location, usa ese valor; de lo contrario, usa 0.
+    initialTab = Number(localStorage.getItem("activeTabShowTournament")) || initialTab;
+    localStorage.setItem("activeTabShowTournament", initialTab); // Guardar la pestaña activa
+    return initialTab; // Devuelve el valor inicial del tab.
   }); // Mecanismo del Tab
-  console.log((valueTab==1 && !matches?.length));
-  console.log(valueTab);
+  
   const handleChange = (event, newValue) => {
       setValueTab(newValue);
       localStorage.setItem("activeTabShowTournament", newValue); // Guardar la pestaña activa
   };
   
+  React.useEffect(() => {
+      if (matches && matches.length === 0 && valueTab===1) {
+        localStorage.setItem("activeTabShowTournament", 0); // Guarda en el localStorage para persistencia
+        setValueTab(0); // Resetea el tab a 0
+      }
+      }, [matches]);
+
   React.useEffect(() => {
     const fetchTournament = async () => {
       await axiosInstance.get(`/torneo/${tournamentName}/${tournamentId}`)
@@ -113,6 +121,7 @@ export default function TournamentDashboard () {
       .catch ((err) => {
         console.error('Error loading tournament matches:', err);
       })
+      
     };
 
     const fetchTeams = async () => {
@@ -204,8 +213,8 @@ export default function TournamentDashboard () {
   }
   // console.log(matches.length);
   const brackets = generateBracket(Array.isArray(matches)? matches : []);
-  console.log(matches);
-  console.log(brackets);
+  // console.log('matches ',matches);
+  // console.log('brackets ',brackets);
   return (
     <LayoutLogin>
       <Container sx={{display: 'center',m:2, gap:'5%'}}>

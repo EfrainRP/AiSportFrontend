@@ -110,13 +110,23 @@ export default function ShowTournament() {
     };
 
     const [valueTab, setValueTab] = React.useState(() => {
-        return Number(localStorage.getItem("activeTabShowTournament")) || 0;
+        let initialTab = Number(localStorage.getItem("activeTabShowTournament")) || 0;
+        localStorage.setItem("activeTabShowTournament", initialTab); // Guardar la pestaña activa
+        
+        return initialTab; // Devuelve el valor inicial del tab.
     }); // Mecanismo del Tab
     
     const handleChange = (event, newValue) => {
         setValueTab(newValue);
         localStorage.setItem("activeTabShowTournament", newValue); // Guardar la pestaña activa
     };
+    
+    React.useEffect(() => {
+        if (matches && matches.length === 0 && valueTab===1) {
+            localStorage.setItem("activeTabShowTournament", 0); // Guarda en el localStorage para persistencia
+            setValueTab(0); // Resetea el tab a 0
+        }
+    }, [matches]);
     
     const [check, setCheck] = React.useState(false);
     const [checkDelete, setCheckDelete] = React.useState(false);
