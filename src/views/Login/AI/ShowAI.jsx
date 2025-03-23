@@ -3,6 +3,7 @@ import {
     Typography,
     Skeleton,
     Box,
+    Card,
     CardActions,
     CardHeader,
     CardContent,
@@ -34,7 +35,7 @@ import {
     Paper,
 
 } from '@mui/material';
-import MuiCard from '@mui/material/Card';
+// import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
@@ -50,6 +51,7 @@ import DialogComponent from '../../../components/Login/DialogComponent.jsx';
 import BackButton from '../../../components/Login/BackButton.jsx';
 
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
+const centerJustifyAlign = {display:"flex",justifyContent:"center",alignContent:"center"};
 
 const StyledListNumber = styled(List)(({ theme }) => ({
     listStyleType: "decimal", 
@@ -87,30 +89,30 @@ const MyVideo = styled('video')(({ theme }) => ({
     borderColor: theme.palette.primary.main,
     borderRadius: theme.shape.borderRadius * 2,
     boxShadow: theme.shadows[3],
-    padding: theme.spacing(1, 3),
+    // padding: theme.spacing(1, 3),
 }));
 
-const Card = styled(MuiCard)(({ theme }) => ({
-    display: 'flex',
-    flexDirection: 'column',
-    alignSelf: 'center',
-    width: '100%',
-    // height: '100%',
-    //margin: theme.spacing(2),
-    gap: theme.spacing(5),
-    // margin: 'auto',
-    [theme.breakpoints.up('sm')]: {
-        maxWidth: '450px',
-        gap: theme.spacing(2),
-        // margin: theme.spacing(4),
-    },
-    boxShadow:
-        'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-    ...theme.applyStyles('dark', {
-        boxShadow:
-            'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-    }),
-}));
+// const Card = styled(MuiCard)(({ theme }) => ({
+//     display: 'flex',
+//     flexDirection: 'column',
+//     alignSelf: 'center',
+//     // width: '100%',
+//     // height: '100%',
+//     //margin: theme.spacing(2),
+//     gap: theme.spacing(5),
+//     // margin: 'auto',
+//     [theme.breakpoints.up('sm')]: {
+//         maxWidth: '450px',
+//         gap: theme.spacing(2),
+//         // margin: theme.spacing(4),
+//     },
+//     boxShadow:
+//         'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
+//     ...theme.applyStyles('dark', {
+//         boxShadow:
+//             'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
+//     }),
+// }));
 
 export default function ShowAI() {
     const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado
@@ -150,6 +152,7 @@ export default function ShowAI() {
 
     const [hasPermission, setHasPermission] = React.useState(null);
     const [stream, setStream] = React.useState(null);
+    
     useEffect(() => {
         // Solicitar acceso a la cámara al cargar el componente
         navigator.mediaDevices.getUserMedia({ video: true })
@@ -174,9 +177,10 @@ export default function ShowAI() {
     React.useEffect(() => {
         // Obtener todas las cámaras disponibles
         navigator.mediaDevices.enumerateDevices().then((deviceInfos) => {
-            const videoDevices = deviceInfos.filter(device => device.kind === "videoinput");
+            const videoDevices = deviceInfos.filter(
+                device => device.kind === "videoinput" && device.deviceId !== "");
             setDevices(videoDevices);
-            });
+        });
     },[hasPermission]);
 
     const startCamera = (deviceId) => {
@@ -193,7 +197,7 @@ export default function ShowAI() {
         .then((stream) => {
             mediaStreamRef.current = stream;
             if (videoRef.current) {
-            videoRef.current.srcObject = stream; // Asigna la cámara al video
+                videoRef.current.srcObject = stream; // Asigna la cámara al video
             }
             setCameraModalMessage(`Selected camera: ${devices.find(d => d.deviceId === deviceId)?.label || "Unknow"}`);
             setShowCameraModal(true);
@@ -203,6 +207,14 @@ export default function ShowAI() {
             setShowCameraModal(true);
             console.error("Error accessing camera:", error);
         });
+    };
+
+    // Función para detener la cámara
+    const stopCamera = (stream) => {
+        stream.getTracks().forEach(track => {
+            track.stop();  // Detener cada pista (video o audio)
+        });
+        console.log("Cámara apagada");
     };
 
     const resetCameraSelection = () => {
@@ -250,7 +262,7 @@ export default function ShowAI() {
             video.srcObject = stream;
             video.play();
 
-            websocketRef.current = new WebSocket("ws://192.168.100.170:8765");
+            websocketRef.current = new WebSocket(import.meta.env.VITE_URL_IA);
 
             websocketRef.current.onopen = () => {
                 setModalMessage("AiSport: Successful training connection.");
@@ -299,7 +311,7 @@ export default function ShowAI() {
                 }
 
                 if (data && data.prediction) {
-                    sendDataToServer(`/entrenamiento/equipo/AI/${equipoId}`, data, data.prediction);
+                    sendDataToServer(`/entrenamiento/equipo/AI/${teamId}`, data, data.prediction);
                     sendDataToServer(`/entrenamiento/user/AI/${user.userId}`, data, data.prediction);
                 }
 
@@ -393,7 +405,7 @@ export default function ShowAI() {
         return (
         <LoadingView/>);
     }
-
+    console.log(devices);
     return (
         <LayoutLogin>
             <Container sx={{display:'flex', textAlign:'justify',m:1, gap:'5%'}}>
@@ -405,12 +417,13 @@ export default function ShowAI() {
             </Typography>
 
             {/* Controles de entrenamiento */}
-            <Container sx={{width:"100%", display:"flex", justifyContent:"center", alignContent:"center", mt:4, flexDirection:'column', gap:2}}>
-                <Card>
-                    <CardContent sx={{display:"flex", justifyContent:"justify", alignContent:"center", flexDirection:'column', gap:2, }}>
+            <Stack useFlexGap spacing={2} sx={{...centerJustifyAlign, mt:4}}>
+                <Container>
+                <Card sx={{...centerJustifyAlign,flexDirection:'row', gap:2}}>
+                    <CardContent sx={{...centerJustifyAlign, gap:1}}>
                     {/* Selección de cámara */}
-                    <FormControl size="small" >
-                        <FormLabel htmlFor="camaraSelect">📷 Select camera::</FormLabel>
+                    <FormControl>
+                        <FormLabel htmlFor="camaraSelect">📷 Select camera:</FormLabel>
                             <Select
                                 value={selectedDeviceId}
                                 label="cameraSelect"
@@ -422,21 +435,28 @@ export default function ShowAI() {
                                         startCamera(selectedId); // Cambiar a la nueva cámara seleccionada
                                     }
                                 }
+                                // sx={{width:500}}
                                 displayEmpty
+                                disabled={!!jsonData}
+                                renderValue={(selected)=>{
+                                    if (selected?.length ===0){
+                                        return <em>No camera</em>
+                                    }
+                                    const selectedDevice = devices.find(device => device.deviceId === selected);
+                                    return selectedDevice ? selectedDevice.label : selected; // Muestra el nombre de la cámara, si existe
+                                }}
                             >
-                                {devices.map((device, index) => (
-                                    <MenuItem key={device.deviceId} value={device.deviceId}>
-                                        {device.label || `Cámara ${index + 1}`}
-                                    </MenuItem>
-                                ))}
+                                <MenuItem key={0} value=''>No camera</MenuItem>
+                                {devices.map((device, index) => {
+
+                                    return (<MenuItem key={device.deviceId} value={device.deviceId}>
+                                        {device.label //|| `Cámara ${index + 1}`
+                                        }
+                                    </MenuItem>);
+                                })}
                             </Select>
                     </FormControl>
-                    {!isTraining && selectedDeviceId && (
-                        <Container>
-                            <MyVideo ref={videoRef} autoPlay playsInline className="border border-3 border-primary rounded shadow"></MyVideo>
-                        </Container>
-                    )}
-                    <FormControl sx={{width:"30%"}} size="small" >
+                    <FormControl size="small" >
                         <FormLabel htmlFor="time">Time:</FormLabel>
                             <Select
                                 value={selectedTime}
@@ -444,6 +464,7 @@ export default function ShowAI() {
                                 id="time"
                                 onChange={handleChangeSelect}
                                 displayEmpty
+                                disabled={!!jsonData}
                             >
                                 <MenuItem value={"30"}>30 seg</MenuItem>
                                 <MenuItem value={"60"}>1 min</MenuItem>
@@ -453,7 +474,9 @@ export default function ShowAI() {
                                 <MenuItem value={"300"}>5 min</MenuItem>
                             </Select>
                     </FormControl>
-                    <Container sx={{display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "16px",}}>
+                    </CardContent>
+                    {/* sx={{display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "16px",}} */}
+                    <CardActions sx={centerJustifyAlign}>
                         <Button
                             variant='contained'
                             color="secondary"
@@ -470,13 +493,18 @@ export default function ShowAI() {
                             disabled={!isTraining}>
                                 Stop
                         </Button>
-                    </Container>
-                    </CardContent>
+                    </CardActions>
                 </Card>
-                {/* {jsonData && //TO DO: checar con datos */}
-                    <Container sx={{display:"flex", justifyContent:"center", alignContent:"center", flexDirection:'row', gap:2}}>
+                </Container>
+                {!isTraining && selectedDeviceId && (
+                    <Container sx={{...centerJustifyAlign}}>
+                        <MyVideo ref={videoRef} autoPlay playsInline></MyVideo>
+                    </Container>
+                )}
+                {jsonData && //TO DO: checar con datos */}
+                    <Container sx={{...centerJustifyAlign, flexDirection:'row', gap:2}}>
                         <Paper 
-                            sx={{display:"flex", justifyContent:"center", alignContent:"center"}}>
+                            sx={{...centerJustifyAlign}}>
                             <canvas 
                                 ref={canvasRef} 
                                 width="840" 
@@ -484,49 +512,51 @@ export default function ShowAI() {
                                 className="border border-3 border-primary rounded shadow"
                             ></canvas>
                         </Paper>
-                        <Card>
-                            <CardHeader
-                                title='Data and Prediction: '/>
-                            <CardContent>
-                                <Typography>Current Stats: </Typography>
-                                {jsonData ? (//className="list-group list-group-flush" TO DO: checar con datos
-                                <StyledList >  
-                                    <ListItem>
-                                        <ListItemText>Shots: <strong>{jsonData.shots < 0 ? 0 : jsonData.shots}</strong></ListItemText>
-                                    </ListItem>
-                                    <ListItem>
-                                        <ListItemText>Shooting attempts: <strong>{jsonData.attempted_shot < 0 ? 0 : jsonData.attempted_shot}</strong></ListItemText>
-                                    </ListItem>
-                                    <ListItem>
-                                        <ListItemText>Elapsed time: <strong>{jsonData.time < 0 ? 0 : jsonData.time}s</strong></ListItemText>
-                                    </ListItem>
-                                    <ListItem>
-                                        <ListItemText>Duration with ball held: <strong>{jsonData.ball_held < 0 ? 0 : jsonData.ball_held}s</strong></ListItemText>
-                                    </ListItem>
-                                    <ListItem>
-                                        <ListItemText>Dribbles: <strong>{jsonData.dribbles < 0 ? 0 : jsonData.dribbles}</strong></ListItemText>
-                                    </ListItem>
-                                    <ListItem>
-                                        <ListItemText>Toques: <strong>{jsonData.touches < 0 ? 0 : jsonData.touches}</strong></ListItemText>
-                                    </ListItem>
-                                    <ListItem>
-                                        <ListItemText>Steps: <strong>{jsonData.steps < 0 ? 0 : jsonData.steps}</strong></ListItemText>
-                                    </ListItem>
-                                    <ListItem>
-                                        <ListItemText>Double: <strong>{jsonData.double_dribbles < 0 ? 0 : jsonData.double_dribbles}</strong></ListItemText>
-                                    </ListItem>
-                                    <ListItem>
-                                        <ListItemText>Travels: <strong>{jsonData.travels < 0 ? 0 : jsonData.travels}</strong></ListItemText>
-                                    </ListItem>
-                                </StyledList>
-                                ) : (
-                                    <Typography variant='body1' sx={{ml:5}}>No data yet...</Typography>
-                                )}
-                            </CardContent>
-                        </Card>
+                        <Container sx={{display:'flex',alignItems:'center', width:' 100%'}}>
+                            <Card sx={{height: jsonData ? 'auto' : '25%', width:'100%'}}>
+                                <CardHeader sx={{mb:2}}
+                                    title='Data and Prediction: '/>
+                                <CardContent sx={{...centerJustifyAlign, flexDirection:'column'}}>
+                                    <Typography>Current Stats: </Typography>
+                                    {jsonData ? (//className="list-group list-group-flush" TO DO: checar con datos
+                                    <StyledList >  
+                                        <ListItem>
+                                            <ListItemText>Shots: <strong>{jsonData.shots < 0 ? 0 : jsonData.shots}</strong></ListItemText>
+                                        </ListItem>
+                                        <ListItem>
+                                            <ListItemText>Shooting attempts: <strong>{jsonData.attempted_shot < 0 ? 0 : jsonData.attempted_shot}</strong></ListItemText>
+                                        </ListItem>
+                                        <ListItem>
+                                            <ListItemText>Elapsed time: <strong>{jsonData.time < 0 ? 0 : jsonData.time}s</strong></ListItemText>
+                                        </ListItem>
+                                        <ListItem>
+                                            <ListItemText>Duration with ball held: <strong>{jsonData.ball_held < 0 ? 0 : jsonData.ball_held}s</strong></ListItemText>
+                                        </ListItem>
+                                        <ListItem>
+                                            <ListItemText>Dribbles: <strong>{jsonData.dribbles < 0 ? 0 : jsonData.dribbles}</strong></ListItemText>
+                                        </ListItem>
+                                        <ListItem>
+                                            <ListItemText>Toques: <strong>{jsonData.touches < 0 ? 0 : jsonData.touches}</strong></ListItemText>
+                                        </ListItem>
+                                        <ListItem>
+                                            <ListItemText>Steps: <strong>{jsonData.steps < 0 ? 0 : jsonData.steps}</strong></ListItemText>
+                                        </ListItem>
+                                        <ListItem>
+                                            <ListItemText>Double: <strong>{jsonData.double_dribbles < 0 ? 0 : jsonData.double_dribbles}</strong></ListItemText>
+                                        </ListItem>
+                                        <ListItem>
+                                            <ListItemText>Travels: <strong>{jsonData.travels < 0 ? 0 : jsonData.travels}</strong></ListItemText>
+                                        </ListItem>
+                                    </StyledList>
+                                    ) : (
+                                        <Typography variant='body1' sx={{ml:5, mt:2}}>No data yet...</Typography>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        </Container>
                     </Container>
-                {/* } */}
-            </Container>
+                }
+            </Stack>
 
             {/*     	Section {Modal / Dialog}         */}
             <DialogComponent modalTittle={'System Message'} modalBody={modalMessage} open={showModal} handleClose={() => setShowModal(false)}/>
@@ -657,7 +687,8 @@ export default function ShowAI() {
             <DialogComponent
                 modalTittle={'Camera State'}
                 modalBody={cameraModalMessage}
-                open={showPredictionModal}
+                open={showCameraModal}
+                // showPredictionModal
                 handleClose={() => setShowCameraModal(false)}/>
 
         </LayoutLogin>

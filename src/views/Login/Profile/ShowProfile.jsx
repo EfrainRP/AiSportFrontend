@@ -201,7 +201,7 @@ export default function ShowProfile() {
                                         <Avatar src={`${URL_SERVER}/utils/uploads/${note.equipo && note.equipo.image !== 'logoEquipo.jpg' ? note.equipo.image : 'logoEquipo.jpg'}`}/>
                                     </ListItemAvatar>
                                     <ListItemText primary={
-                                        <Typography>Your request for <Typography component={'strong'} color={'primary'}>team {note.equipo.name}</Typography> was <Typography component={'strong'} color={colorStatus}>{note.status}</Typography> for <Typography component={'strong'} color={'primary.light'}>tournament {note.torneo_name}.</Typography></Typography>} secondary= {<Typography>For more information, please contact the admin <Typography component={'strong'} color={'secondary.main'}>{note.user2?.name} ({note.user2?.email})</Typography></Typography>
+                                        <Typography>Your request for <Typography component={'strong'} color={'primary'}>team {note.equipo.name}</Typography> was <Typography component={'strong'} color={colorStatus}>{note.status}</Typography> for <Typography component={'strong'} color={'warning'}>tournament {note.torneo_name}.</Typography></Typography>} secondary= {<Typography>For more information, please contact the admin <Typography component={'strong'} color={'secondary.main'}>{note.user2?.name} ({note.user2?.email})</Typography></Typography>
                                     }/>
                                 </ListItem>);}
                             )}
