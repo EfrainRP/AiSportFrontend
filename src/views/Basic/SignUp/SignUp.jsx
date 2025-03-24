@@ -15,15 +15,18 @@ import { Box,
   Stack,
   FormHelperText,
   OutlinedInput ,
-  InputLabel,
+  Snackbar,
+  Alert,
   InputAdornment,
   IconButton,
   } from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
+import {useNavigate } from 'react-router-dom';
 
 import { GoogleIcon, FacebookIcon, AiSportIcon } from '../../../components/CustomIcons.jsx';
 import LayoutBasic from '../../LayoutBasic.jsx'
+import axiosInstance from "../../../services/axiosConfig.js";
 
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -83,13 +86,25 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp(props) {
+  const navigate = useNavigate();
+  const [errors, setErrors] = React.useState({}); // Almacena errores específicos por campo desde el backend
+  const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
+  const [openSnackBar, setOpenSnackBar] = React.useState(false); // Mecanismo snackbar
+  const handleCloseSnackBar = (event, reason) => {
+    if (reason === 'clickaway') {
+        return;
+    }
+    setOpenSnackBar(false);
+  };
+
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
   const validateName = ()=>{
     const name = document.getElementById('name');
     if (!name.value || name.value.length < 1) {
-      setNameError(true);
-      setNameErrorMessage('Name is required.');
+      // setNameError(true);
+      // setNameErrorMessage('Name is required.');
+      setErrors((prev) => ({ ...prev, ['name']: 'Name is required.' }));
     
     } else {
       setNameError(false);
@@ -103,7 +118,7 @@ export default function SignUp(props) {
     if (!fsurname.value || fsurname.value.length < 1) {
       setFsurnameError(true);
       setFsurnameErrorMessage('Fsurname is required.');
-    
+      setErrors((prev) => ({ ...prev, ['fsurname']: 'Fsurname is required.' }));
     } else {
       setFsurnameError(false);
       setFsurnameErrorMessage('');
@@ -116,28 +131,30 @@ export default function SignUp(props) {
     if (!msurname.value || msurname.value.length < 1) {
       setMsurnameError(true);
       setMsurnameErrorMessage('Musrname is required.');
-    
+      setErrors((prev) => ({ ...prev, ['msurname']: 'Musrname is required.' }));
+
     } else {
       setMsurnameError(false);
       setMsurnameErrorMessage('');
     }
   }
-  const [birthdayError, setBirthdayError] = React.useState(false);
-  const [birthdayErrorMessage, setBirthdayErrorMessage] = React.useState('');
+  const [birthdateError, setBirthdateError] = React.useState(false);
+  const [birthdateErrorMessage, setBirthdateErrorMessage] = React.useState('');
   
-  const validateBirthday = ()=>{
-    const birthday = document.getElementById('birthday').value;
-    const [year, month, day] = birthday.split('-').map(Number);// Creamos la fecha localmente, evitando problemas de zona horaria
+  const validateBirthdate = ()=>{
+    const birthdate = document.getElementById('birthdate').value;
+    const [year, month, day] = birthdate.split('-').map(Number);// Creamos la fecha localmente, evitando problemas de zona horaria
     const birthDate = new Date(year, month, day); // Obtenemos la fecha de hoy para compararla
     const today = new Date();
     
     if (isNaN(birthDate) || birthDate >= today) {
-      setBirthdayError(true);
-      setBirthdayErrorMessage(birthDate >= today? 'Birthday is incorrect.': 'Birthday is required.'); 
+      setBirthdateError(true);
+      setBirthdateErrorMessage(birthDate >= today? 'Birthdate is incorrect.': 'Birthdate is required.'); 
+      setErrors((prev) => ({ ...prev, ['birthdate']: birthDate >= today? 'Birthdate is incorrect.': 'Birthdate is required.' }));
 
     }else{
-      setBirthdayError(false);
-      setBirthdayErrorMessage('');
+      setBirthdateError(false);
+      setBirthdateErrorMessage('');
     }
   }
   const [gender, setGender] = React.useState('');
@@ -145,10 +162,13 @@ export default function SignUp(props) {
   const [genderError, setGenderError] = React.useState(false);
   const [genderErrorMessage, setGenderErrorMessage] = React.useState('');
   const validateGender = ()=>{
-    const gender = document.getElementById('gender');
-    if (!gender.value){
+    // const gender = document.getElementById('gender');
+    // console.log(gender);
+    if (gender.length ===0){
       setGenderError(true);
       setGenderErrorMessage('Gender input is required.');
+      setErrors((prev) => ({ ...prev, ['gender']: 'Gender input is required.' }));
+
     } else {
       setGenderError(false);
       setGenderErrorMessage('');
@@ -161,6 +181,8 @@ export default function SignUp(props) {
     if (!nickname.value || nickname.value.length < 8) {
       setNicknameError(true);
       setNicknameErrorMessage('Nickname is required.');
+      setErrors((prev) => ({ ...prev, ['nickname']: 'Nickname is required.' }));
+
     } else {
       setNicknameError(false);
       setNicknameErrorMessage('');
@@ -174,7 +196,8 @@ export default function SignUp(props) {
     if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
-    
+      setErrors((prev) => ({ ...prev, ['email']: 'Please enter a valid email address.'}));
+
     } else {
       setEmailError(false);
       setEmailErrorMessage('');
@@ -197,7 +220,8 @@ export default function SignUp(props) {
     if (!password.value || password.value.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 6 characters long.');
-    
+      setErrors((prev) => ({ ...prev, ['password']: 'Password must be at least 6 characters long.'}));
+
     } else {
       setPasswordError(false);
       setPasswordErrorMessage('');
@@ -208,35 +232,100 @@ export default function SignUp(props) {
     validateName();
     validateFsurname();
     validateMsurname();
-    validateBirthday();
+    validateBirthdate();
     validateGender();
     validateNickname();
     validateEmail();
     validatePass();
     validateGender();
-
-    if (nameError || fsurnameError || msurnameError || birthdayError || genderError || nicknameError || emailError || passwordError) {
+    // console.log(nameError, fsurnameError, msurnameError, birthdateError, genderError, nicknameError, emailError, passwordError);
+    if (nameError || fsurnameError || msurnameError || birthdateError || genderError || nicknameError || emailError || passwordError) {
       isValid = false;
     }
     return isValid;
   };
 
-  const handleSubmit = (event) => {
-    if (nameError || emailError || passwordError) {
-      event.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!validateInputs) {
+      console.log(' error');
       return;
     }
     const data = new FormData(event.currentTarget);
-    alert.log({
+    console.log(data.get('birthdate'));
+    await axiosInstance.post('/register', {
       name: data.get('name'),
-      lastName: data.get('lastName'),
+      fsurname: data.get('fsurname'),
+      msurname: data.get('msurname'),
+      nickname: data.get('nickname'),
       email: data.get('email'),
+      gender: data.get('gender'),
       password: data.get('password'),
-    });
+      birthdate: data.get('birthdate'),
+  })
+  .then((response)=>{
+    if (response.status === 201) {
+      // Manejo del éxito
+      console.log('Registro exitoso:', response.data);
+      setOpenSnackBar(true);
+      setDataAlert({ severity: "success", message: 'Success register. You can sign in now.' });
+
+      setTimeout(() => navigate(`/signin`), 3000);
+    }
+  })
+  .catch((error)=>{
+    // Manejo del error
+    
+    if (error.response) {
+      console.error('Error registrando:', error.response.data);
+      if(error.response.data.errors){
+        const backendErrors = error.response.data.errors || {}; // Suponiendo que los errores vienen en este formato
+        let nError = errors;
+        // Recorre los errores del backend y los asigna al objeto de errores
+        for (const key in backendErrors) {
+            if (backendErrors.hasOwnProperty(key)) {
+              nError[key] = backendErrors[key];
+            }
+        }
+  
+        setErrors(nError);
+      }else{
+        setOpenSnackBar(true);
+        setDataAlert({ severity: "error", message: error.response.data.message});
+      }
+
+      // if (err.response && err.response.status === 400) {
+      //   const { field, message } = err.response.data;
+      //   if (field) {
+      //       setErrors((prev) => ({ ...prev, [field]: message }));
+      //   } else {
+      //       setOpenSnackBar(true);
+      //       setDataAlert({ severity: "error", message: message });
+      //   }
+    // } else {
+    //     setOpenSnackBar(true);
+    //     setDataAlert({ severity: "error", message: 'Error update profile.' });
+    // }
+    } else {
+      console.error('Error registrando:', error);
+      setOpenSnackBar(true);
+      setDataAlert({ severity: "error", message: 'Error register.' });
+    }
+  });
   };
 
   return (
     <LayoutBasic>
+      <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <Alert
+            severity={dataAlert.severity}
+            variant='filled'
+            sx={{ width: '100%' }}
+            onClose={handleCloseSnackBar}
+        >
+            {dataAlert.message}
+        </Alert>
+      </Snackbar>
       <SignUpContainer>
         <Card variant="outlined">
         <div style={{
@@ -304,18 +393,18 @@ export default function SignUp(props) {
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="birthday">Birthday</FormLabel>
+              <FormLabel htmlFor="birthdate">Birthdate</FormLabel>
               <TextField
-                autoComplete="birthday"
-                name="birthday"
+                autoComplete="birthdate"
+                name="birthdate"
                 required
                 fullWidth
-                id="birthday"
+                id="birthdate"
                 type="date"
-                onChange={validateBirthday}
-                error={birthdayError}
-                helperText={birthdayErrorMessage}
-                color={birthdayError ? 'error' : 'primary'}
+                onChange={validateBirthdate}
+                error={birthdateError}
+                helperText={birthdateErrorMessage}
+                color={birthdateError ? 'error' : 'primary'}
               />
             </FormControl>
             <FormControl >
