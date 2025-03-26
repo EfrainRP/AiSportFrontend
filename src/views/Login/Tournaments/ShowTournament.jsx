@@ -39,6 +39,7 @@ import LoadingView from '../../../components/Login/LoadingView.jsx'
 import BackButton from '../../../components/Login/BackButton.jsx'
 import LoadingCard from '../../../components/Login/LodingCard.jsx';
 import ConfirmDialog from '../../../components/Login/ConfirmDialog.jsx';
+import MatchBracket from '../../../components/Login/MatchBracket.jsx';
 
 import FolderIcon from '@mui/icons-material/Folder';
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -242,6 +243,7 @@ export default function ShowTournament() {
         navigate(`/match/${tournamentName}/${tournamentId}/${matchId}/edit`);
     };
 
+    console.log(matches);
     return (
         <LayoutLogin>
             <Container sx={{...centerJustify}}>
@@ -336,90 +338,91 @@ export default function ShowTournament() {
                         // [{ partido1, partido2 }, { partido3, partido4 }],  // Ronda 1
                         //[{ partido5, partido6 }],  // Ronda 2
                         //[{ partido7 }]  // Ronda 3
-                        brackets.map((round, index) => ( // "Map" itera en el array, y "Round" es un array de "partidos" por ronda
-                            <Card key={index} variant="outlined">     {/* Index indica la Ronda actual <- donde "key" actualiza el DOM (Interfaz de programacion) dinamicamente */}
-                                <CardContent>
-                                    <Typography variant='h5'>Round {index + 1}</Typography>
-                                    <Stack sx={{display:'flex', justifyContent: 'space-around', flexDirection:'row', my:1.5}} useFlexGap spacing={{ xs: 1, sm: 1.5 }}>
-                                        {round.map((match, matchIndex) => {
-                                            // console.log(match.equipos_partidos_equipoLocal_idToequipos.image);
-                                            return (
-                                            <Card key={matchIndex}>
-                                                <CardContent sx={{textAlign: 'center'}}>
-                                                    <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
-                                                        <Typography variant='subtitle2' color='primary'>
-                                                            <strong>Date Match: </strong>
-                                                        </Typography>
-                                                        <Typography >
-                                                            {new Date(match.fechaPartido).toISOString().split('T')[0]}
-                                                        </Typography>
-                                                    </Container>
-                                                    <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
-                                                        <Typography variant='subtitle2' color='primary'>
-                                                            <strong>Time: </strong>
-                                                        </Typography>
-                                                        <Typography>
-                                                            {new Date(match.horaPartido).toLocaleTimeString()}
-                                                        </Typography>
-                                                    </Container>
-                                                    <Container sx={{...centerJustify, justifyContent:'center', gap:2}}>
-                                                        <Typography variant='subtitle2' color='warning'>
-                                                            <strong>Result: </strong>
-                                                        </Typography>
-                                                        <Typography>
-                                                            {match.resLocal} - {match.resVisitante}
-                                                        </Typography>
-                                                    </Container>
+                        <MatchBracket matches={brackets}/>
+                        // brackets.map((round, index) => ( // "Map" itera en el array, y "Round" es un array de "partidos" por ronda
+                        //     <Card key={index} variant="outlined">     {/* Index indica la Ronda actual <- donde "key" actualiza el DOM (Interfaz de programacion) dinamicamente */}
+                        //         <CardContent>
+                        //             <Typography variant='h5'>Round {index + 1}</Typography>
+                        //             <Stack sx={{display:'flex', justifyContent: 'space-around', flexDirection:'row', my:1.5}} useFlexGap spacing={{ xs: 1, sm: 1.5 }}>
+                        //                 {round.map((match, matchIndex) => {
+                        //                     // console.log(match.equipos_partidos_equipoLocal_idToequipos.image);
+                        //                     return (
+                        //                     <Card key={matchIndex}>
+                        //                         <CardContent sx={{textAlign: 'center'}}>
+                        //                             <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
+                        //                                 <Typography variant='subtitle2' color='primary'>
+                        //                                     <strong>Date Match: </strong>
+                        //                                 </Typography>
+                        //                                 <Typography >
+                        //                                     {new Date(match.fechaPartido).toISOString().split('T')[0]}
+                        //                                 </Typography>
+                        //                             </Container>
+                        //                             <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
+                        //                                 <Typography variant='subtitle2' color='primary'>
+                        //                                     <strong>Time: </strong>
+                        //                                 </Typography>
+                        //                                 <Typography>
+                        //                                     {new Date(match.horaPartido).toLocaleTimeString()}
+                        //                                 </Typography>
+                        //                             </Container>
+                        //                             <Container sx={{...centerJustify, justifyContent:'center', gap:2}}>
+                        //                                 <Typography variant='subtitle2' color='warning'>
+                        //                                     <strong>Result: </strong>
+                        //                                 </Typography>
+                        //                                 <Typography>
+                        //                                     {match.resLocal} - {match.resVisitante}
+                        //                                 </Typography>
+                        //                             </Container>
 
-                                                    <Container sx={{...centerJustify, justifyContent: 'center', alignItems: 'center', my:1}}>
-                                                        <Avatar
-                                                                src={`${URL_SERVER}/utils/uploads/${match.equipo && match.equipos_partidos_equipoLocal_idToequipos.image !== 'logoEquipo.jpg' ? match.equipos_partidos_equipoLocal_idToequipos.image : 'logoEquipo.jpg'}`}
-                                                                alt="Home team"
-                                                                sx={{ width: 40, height: 40 }}
-                                                                crossOrigin="use-credentials"
-                                                            />
-                                                        <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
-                                                            <Typography variant='subtitle2' color='success'>
-                                                                <strong>Home Team: </strong>
-                                                            </Typography>
-                                                            <Typography >
-                                                                {match.equipos_partidos_equipoLocal_idToequipos.name}
-                                                            </Typography>
-                                                        </Container>
-                                                    </Container>
+                        //                             <Container sx={{...centerJustify, justifyContent: 'center', alignItems: 'center', my:1}}>
+                        //                                 <Avatar
+                        //                                         src={`${URL_SERVER}/utils/uploads/${match.equipo && match.equipos_partidos_equipoLocal_idToequipos.image !== 'logoEquipo.jpg' ? match.equipos_partidos_equipoLocal_idToequipos.image : 'logoEquipo.jpg'}`}
+                        //                                         alt="Home team"
+                        //                                         sx={{ width: 40, height: 40 }}
+                        //                                         crossOrigin="use-credentials"
+                        //                                     />
+                        //                                 <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
+                        //                                     <Typography variant='subtitle2' color='success'>
+                        //                                         <strong>Home Team: </strong>
+                        //                                     </Typography>
+                        //                                     <Typography >
+                        //                                         {match.equipos_partidos_equipoLocal_idToequipos.name}
+                        //                                     </Typography>
+                        //                                 </Container>
+                        //                             </Container>
 
-                                                    <Container sx={{...centerJustify, justifyContent: 'center', alignItems: 'center', my:1}}>
-                                                        <Container sx={{...centerJustify, gap:2}}>
-                                                            <Typography variant='subtitle2' color='error'>
-                                                                <strong>Guest Team: </strong>
-                                                            </Typography>
-                                                            <Typography >
-                                                                {match.equipos_partidos_equipoVisitante_idToequipos.name}
-                                                            </Typography>
-                                                        </Container>
-                                                        <Avatar
-                                                            src={`${URL_SERVER}/utils/uploads/${match.equipos_partidos_equipoVisitante_idToequipos && match.equipos_partidos_equipoVisitante_idToequipos.image !== 'logoEquipo.jpg' ? match.equipos_partidos_equipoVisitante_idToequipos.image : 'logoEquipo.jpg'}`}
-                                                            alt="Guest team"
-                                                            sx={{ width: 40, height: 40 }}
-                                                            crossOrigin="use-credentials"
-                                                        />
-                                                    </Container>
-                                                </CardContent>
+                        //                             <Container sx={{...centerJustify, justifyContent: 'center', alignItems: 'center', my:1}}>
+                        //                                 <Container sx={{...centerJustify, gap:2}}>
+                        //                                     <Typography variant='subtitle2' color='error'>
+                        //                                         <strong>Guest Team: </strong>
+                        //                                     </Typography>
+                        //                                     <Typography >
+                        //                                         {match.equipos_partidos_equipoVisitante_idToequipos.name}
+                        //                                     </Typography>
+                        //                                 </Container>
+                        //                                 <Avatar
+                        //                                     src={`${URL_SERVER}/utils/uploads/${match.equipos_partidos_equipoVisitante_idToequipos && match.equipos_partidos_equipoVisitante_idToequipos.image !== 'logoEquipo.jpg' ? match.equipos_partidos_equipoVisitante_idToequipos.image : 'logoEquipo.jpg'}`}
+                        //                                     alt="Guest team"
+                        //                                     sx={{ width: 40, height: 40 }}
+                        //                                     crossOrigin="use-credentials"
+                        //                                 />
+                        //                             </Container>
+                        //                         </CardContent>
 
-                                                {/* Botones de Editar y Eliminar */}
-                                                <CardActions sx={{ display: 'flex', justifyContent: 'space-around', mt:2}}>
-                                                    <Fab variant="extended" size="small" color="primary" onClick={() => handleEdit(match.id)}>Edit</Fab>
-                                                    <Fab variant="extended" size="small" color="error" onClick={() => handleOpenDialog(match.id)}>Delete</Fab>
+                        //                         {/* Botones de Editar y Eliminar */}
+                        //                         <CardActions sx={{ display: 'flex', justifyContent: 'space-around', mt:2}}>
+                        //                             <Fab variant="extended" size="small" color="primary" onClick={() => handleEdit(match.id)}>Edit</Fab>
+                        //                             <Fab variant="extended" size="small" color="error" onClick={() => handleOpenDialog(match.id)}>Delete</Fab>
 
-                                                    <ConfirmDialog open={openConfirm} handleClose={handleCloseConfirm} handleConfirm={handleDelete} messageTitle={'Delete match'} message={'Are you sure to delete this match?'}/>
-                                                </CardActions>
-                                            </Card>
+                        //                             <ConfirmDialog open={openConfirm} handleClose={handleCloseConfirm} handleConfirm={handleDelete} messageTitle={'Delete match'} message={'Are you sure to delete this match?'}/>
+                        //                         </CardActions>
+                        //                     </Card>
 
-                                        )})}
-                                    </Stack>
-                                </CardContent>
-                            </Card>
-                        ))
+                        //                 )})}
+                        //             </Stack>
+                        //         </CardContent>
+                        //     </Card>
+                        // ))
                     ) : (
                         <LoadingCard CircularSize={'2%'} message={"Maybe no matches are scheduled for this tournament or the number of teams is invalid."}/>
                     )}
