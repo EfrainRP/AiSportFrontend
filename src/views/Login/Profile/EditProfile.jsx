@@ -12,7 +12,8 @@ import {
     IconButton,
     Stack,
     TextField,
-    Autocomplete,
+    Radio,
+    RadioGroup,
     Fab,
     ButtonGroup,
     Grow,
@@ -20,6 +21,7 @@ import {
     Alert,
     Checkbox,
     FormControlLabel,
+    FormHelperText,
     Divider,
     FormLabel,
     FormControl,
@@ -27,7 +29,6 @@ import {
     Container,
     CardMedia,
     ButtonBase,
-    FormHelperText,
     OutlinedInput ,
     InputAdornment,
 } from '@mui/material';
@@ -190,6 +191,9 @@ export default function EditProfile() {
         newPassword: '',     // Nueva propiedad para la nueva contraseña
         confirmPassword: ''  // Nueva propiedad para la confirmación de la nueva contraseña
     });
+    // const [gender, setGender] = React.useState('');
+    // const radioChange = (event) => { console.log(event.target);setGender(event.target.value);};
+    
     const [previewImage, setPreviewImage] = React.useState(null);
     const [errors, setErrors] = React.useState({}); // Almacena errores específicos por campo desde el backend
 
@@ -338,7 +342,7 @@ export default function EditProfile() {
         return (
         <LoadingView/>);
     }
-
+    
     return (
         <LayoutLogin>
             <FormContainerEdit>
@@ -486,21 +490,23 @@ export default function EditProfile() {
                                 color={!!errors.email ? 'error' : 'primary'}
                             />
                         </FormControl>
-                        <FormControl>
-                            <FormLabel htmlFor="gender">Gender: </FormLabel>
-                            <TextField
-                                name="gender"
-                                id="gender"
-                                fullWidth
-                                required
-                                variant="outlined"
-                                // value={profile.gender}
-                                placeholder={profile.gender}
-                                onChange={handleChange}
-                                error={!!errors.gender} //detecta si tiene algo contenido
-                                helperText={errors.gender}
-                                color={!!errors.gender ? 'error' : 'primary'}
-                            />
+                        <FormControl >
+                            <FormLabel id="gender">Gender</FormLabel>
+                            <RadioGroup
+                            row
+                            sx={{ display:"flex",justifyContent:"center", alignItems:"center"}}
+                            aria-labelledby="gender"
+                            name="gender"
+                            value={profile.gender}
+                            // onChange={validateGender}
+                            onChange={handleChange}
+                            >
+                            <FormControlLabel value="Male" control={<Radio />} label="Male" />
+                            <FormControlLabel value="Female" control={<Radio />} label="Female" />
+                            <FormControlLabel value="Other" control={<Radio />} label="Other" />
+                            </RadioGroup>
+                            <FormHelperText error={!!errors.gender}>{errors.gender}</FormHelperText>
+                            {/* {genderError && <Typography color="error">{genderErrorMessage}</Typography>} */}
                         </FormControl>
                         <FormControl>
                             <FormLabel htmlFor="birthdate">Birthdate: </FormLabel>
