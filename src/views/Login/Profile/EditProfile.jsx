@@ -380,8 +380,8 @@ export default function EditProfile() {
                             focusRipple
                             key={profile.image}
                             style={{
-                                height: '15rem',
-                                width: '15rem', 
+                                height: '10rem',
+                                width: '10rem', 
                             }}
                         >
                             <ImageSrc style={{ 
@@ -511,7 +511,7 @@ export default function EditProfile() {
                                 fullWidth
                                 required
                                 variant="outlined"
-                                // value={profile.birthdate}
+                                value={profile.birthdate}
                                 // placeholder={profile.birthdate}
                                 onChange={handleChange}
                                 error={!!errors.birthdate} //detecta si tiene algo contenido

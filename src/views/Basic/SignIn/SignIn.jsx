@@ -157,7 +157,7 @@ export default function SignIn(props) {
     })
     .catch((error) => {
       // setMessage(error.response.data.message);
-      setMessage("Invalid Data");
+      setMessage(error.response.data.message);
       handleClickSnackBar();
       console.log(error.response.data.message)
     });

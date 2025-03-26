@@ -217,13 +217,14 @@ export default function CreateTeam() {
         e.preventDefault();
         setFieldErrors({});
         
+        const membersValidate = team.miembros.filter(member => member.trim() !== '');
         const formData = new FormData();
-        formData.append('name', equipo.name);
-        formData.append('user_id', equipo.user_id);
-        miembrosValidos.forEach((member, index) => formData.append(`miembros[${index}]`, member));
+        formData.append('name', team.name);
+        formData.append('user_id', team.user_id);
+        membersValidate.forEach((member, index) => formData.append(`miembros[${index}]`, member));
 
-        if (equipo.image) {
-            formData.append('image', equipo.image);
+        if (team.image) {
+            formData.append('image', team.image);
         }
         // Realizar la solicitud
         await axiosInstance.post(

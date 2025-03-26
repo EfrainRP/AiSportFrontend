@@ -138,7 +138,7 @@ export default function TournamentDashboard () {
     fetchMatches();
     fetchTeams();
   }, [tournamentId, tournamentName, user.userId]);
-
+  console.log(valueAutoComplete);
   const handleSendNotification = async () => {
     if (!valueAutoComplete) {
       setOpenSnackBar(true);
@@ -149,8 +149,8 @@ export default function TournamentDashboard () {
       await axiosInstance.post(
         `/notificacion/${user.userId}/${tournament.user_id}`,
         {
-          teamId: valueAutoComplete,
-          tournamentId: tournamentId,
+          equipoId: valueAutoComplete.id,
+          torneoId: tournamentId,
         }
       )
       .then(()=>{
@@ -303,6 +303,12 @@ export default function TournamentDashboard () {
                 <Stack sx={{display:'flex', justifyContent: 'space-around', flexDirection:'row', my:1.5}} useFlexGap spacing={{ xs: 1, sm: 1.5 }}>
                   {round.map((match, i) => ( //TO DO: check format HTML
                     <Card
+                      sx={[(theme)=>({
+                        backgroundColor:theme.palette.warning.dark,
+                        ...theme.applyStyles('dark', {
+                          backgroundColor:theme.palette.secondary.dark,
+                        }),
+                      })]}
                       key={i}
                     >
                       <CardContent>

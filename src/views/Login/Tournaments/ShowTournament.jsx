@@ -266,7 +266,7 @@ export default function ShowTournament() {
             <Box sx={{ borderBottom: 3, borderColor: 'divider' }}>
                 <Tabs centered value={valueTab} onChange={handleChange} >
                     <Tab icon={<FolderIcon />} label="Details" {...a11yProps(0)} />
-                    <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)}/>
+                    <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)} disabled={!matches?.length}/>
                     <Tab  icon={<NotificationAddIcon />} label="Notifications" {...a11yProps(2)} />
                 </Tabs>
             </Box>
