@@ -243,7 +243,7 @@ export default function ShowTournament() {
         navigate(`/match/${tournamentName}/${tournamentId}/${matchId}/edit`);
     };
 
-    console.log(matches);
+    // console.log(matches);
     return (
         <LayoutLogin>
             <Container sx={{...centerJustify}}>
