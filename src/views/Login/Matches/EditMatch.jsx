@@ -30,7 +30,7 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 
 import axiosInstance from "../../../services/axiosConfig.js";
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
@@ -89,6 +89,12 @@ export default function EditMatch() {
     const { tournamentName, tournamentId, matchId } = useParams();
     const { loading, setLoading } = useAuth(); // Obtención del usuario autenticado
     const navigate = useNavigate();
+    
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const id = queryParams.get('id');
+
+    console.log("ID:", id); // te debería mostrar 2
 
     const [allTeams, setAllTeams] = React.useState([]);
     const [formData, setFormData] = React.useState({
@@ -321,7 +327,7 @@ export default function EditMatch() {
                             />
                         </FormControl>
                         <FormControl>
-                            <FormLabel htmlFor="fechaPartido">Match day: </FormLabel>
+                            <FormLabel htmlFor="fechaPartido">Match date: </FormLabel>
                             <TextField
                                 error={!!fieldErrors?.fechaPartido}
                                 helperText={fieldErrors?.fechaPartido}

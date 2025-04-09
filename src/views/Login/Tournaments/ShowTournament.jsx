@@ -94,44 +94,58 @@ export default function ShowTournament() {
     const [openSnackBar, setOpenSnackBar] = React.useState(false); // Mecanismo snackbar
 
     const handleCloseSnackBar = (event, reason) => {
-    if (reason === 'clickaway') {
-        return;
-    }
-    setOpenSnackBar(false);
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnackBar(false);
     };
-    const [openConfirm, setConfirm] = React.useState(false); //Mecanismo confirm
+    
     const [selectedMatch, setSelectedMatch] = React.useState(null);
     const handleOpenDialog = (matchId) => {
         setSelectedMatch(matchId);
         setConfirm(true);
     };
-    const handleCloseConfirm = () => { //Boton cancel del dialog
-        setSelectedMatch(null);
-        setConfirm(false);
-    };
+    
 
     const [valueTab, setValueTab] = React.useState(() => {
         let initialTab = Number(localStorage.getItem("activeTabShowTournament")) || 0;
         localStorage.setItem("activeTabShowTournament", initialTab); // Guardar la pestaña activa
         
         return initialTab; // Devuelve el valor inicial del tab.
-    }); // Mecanismo del Tab
-    
+    }); 
+
     const handleChange = (event, newValue) => {
         setValueTab(newValue);
         localStorage.setItem("activeTabShowTournament", newValue); // Guardar la pestaña activa
     };
     
-    React.useEffect(() => {
-        if (matches && matches.length === 0 && valueTab===1) {
-            localStorage.setItem("activeTabShowTournament", 0); // Guarda en el localStorage para persistencia
-            setValueTab(0); // Resetea el tab a 0
-        }
-    }, [matches]);
-    
     const [check, setCheck] = React.useState(false);
     const [checkDelete, setCheckDelete] = React.useState(false);
-    // useEffect para hacer petición automática de los datos del torneo, partidos y notificaciones
+
+    const [matchesCount, setMatchesCount] = React.useState(0);
+    // React.useEffect(() => {
+    //     if (matchesCount > 3 && valueTab===1) {
+    //         localStorage.setItem("activeTabShowTournament", 0); // Guarda en el localStorage para persistencia
+    //         setValueTab(0); // Resetea el tab a 0
+    //     }
+    // }, [matchesCount]);
+
+    React.useEffect(() => {
+        const fetchMatches = async () => { // Peticion INDEX Partidos del torneo
+            await axiosInstance.get(`/partidos/${tournamentId}`).
+            then((response)=> {
+                setMatches(response.data.brackets); // Datos de los partidos
+                setMatchesCount(response.data.getPartidosCount);
+                setLoading(false);
+            })
+            .catch ((err)=>{
+                // console.error('Error al cargar los partidos del torneo:', err);
+                setMatchesCount(0);
+                setLoading(true);
+            })
+        };
+        fetchMatches(); // Llamada para obtener los partidos del torneo
+    },[]);
     React.useEffect(() => {
         const fetchTournament = async () => { // Peticion SHOW Torneo
             await axiosInstance.get(`/torneo/${tournamentName}/${tournamentId}`)
@@ -144,20 +158,7 @@ export default function ShowTournament() {
                 setLoading(true);
             })
         };
-
-        const fetchMatches = async () => { // Peticion INDEX Partidos del torneo
-            await axiosInstance.get(`/partidos/${tournamentId}`).
-            then((response)=> {
-                setMatches(response.data); // Datos de los partidos
-                setLoading(false);
-            })
-            .catch ((err)=>{
-                // console.error('Error al cargar los partidos del torneo:', err);
-                setLoading(true);
-            })
-        };
         fetchTournament(); // Llamada para obtener los detalles del torneo
-        fetchMatches(); // Llamada para obtener los partidos del torneo
     }, [tournamentId, tournamentName, notificaciones]);
 
     // Función para manejar la aceptación o rechazo de notificaciones <-
@@ -185,24 +186,7 @@ export default function ShowTournament() {
     const isValidTeamCount = [4, 8, 16, 32].includes(tournament?.cantEquipo);
 
     // Validar la cantidad de partidos (Front) (debe ser torneo.countTeam - 1)
-    const isValidMatchesCount = matches.length === tournament?.cantEquipo - 1;
-
-    // Organizar los partidos en brackets (Front)
-    const generateBracket = (matches) => {
-        let rounds = [];
-        let roundSize = tournament.cantEquipo / 2;
-        let roundMatches = [...matches];
-
-        while (roundSize >= 1) {
-            rounds.push(roundMatches.slice(0, roundSize));
-            roundMatches = roundMatches.slice(roundSize);
-            roundSize /= 2;
-        }
-        {/* Retorna la cantidad de rondas que tendra cada torneo */ }
-        return rounds;
-        {/* (Dividen en mitades al torneo, Ex: si countTeam = 8, Ronda 1 = 4, Ronda 2 = 2, Ronda 3 = 1) */ }
-        {/* donde {4,2,1} indican la cantidad de partidos en esa ronda <- */ }
-    };
+    const isValidMatchesCount = matchesCount === tournament?.cantEquipo - 1;
 
     if(!tournament){ // En caso de que este vacio el torneo
         return (
@@ -211,39 +195,11 @@ export default function ShowTournament() {
         />);
     }
 
-    // Generar los brackets solo si es un torneo válido
-    const brackets = isValidTeamCount ? generateBracket(matches) : [];
-
-    // Calcular al ganador del torneo del ultimo partido basado en sus resultados "res" <-
-    const getWinner = (match) => {
-        const localPts = match.resLocal;
-        const visitantePts = match.resVisitante;
-        return localPts > visitantePts ? match.equipos_partidos_equipoLocal_idToequipos
-        .name : match.equipos_partidos_equipoVisitante_idToequipos.name;
-    };
-
-    const handleDelete = async () => { // Peticion DELETE Partido
-        if(!selectedMatch) return;
-
-        await axiosInstance.delete(`/partido/${tournamentId}/${selectedMatch}`)
-        .then(()=>{
-            setOpenSnackBar(true);
-            setDataAlert({severity:"success", message:'Delete match success!'});
-            setMatches(matches.filter(match => match.id !== selectedMatch)); // Eliminar partido de la lista y actualizar el front <-
-        })
-        .catch ((err) => {
-            // console.error('Error deleting the match:', err);
-            setOpenSnackBar(true);
-            setDataAlert({severity:"error", message:'Error delete match.'});
-        });
-        setConfirm(false);
-    };
-
     const handleEdit = (matchId) => { // Cambio de vista a Edit form
         navigate(`/match/${tournamentName}/${tournamentId}/${matchId}/edit`);
     };
+    // console.log(matches[matches.length - 1].nextMatchId);
 
-    // console.log(matches);
     return (
         <LayoutLogin>
             <Container sx={{...centerJustify}}>
@@ -268,7 +224,7 @@ export default function ShowTournament() {
             <Box sx={{ borderBottom: 3, borderColor: 'divider' }}>
                 <Tabs centered value={valueTab} onChange={handleChange} >
                     <Tab icon={<FolderIcon />} label="Details" {...a11yProps(0)} />
-                    <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)} disabled={!matches?.length}/>
+                    <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)} disabled={matchesCount===0}/>
                     <Tab  icon={<NotificationAddIcon />} label="Notifications" {...a11yProps(2)} />
                 </Tabs>
             </Box>
@@ -331,21 +287,21 @@ export default function ShowTournament() {
                 </Container>
             </CustomTabPanel>
             <CustomTabPanel value={valueTab} index={1}> {/*Tab Matches */}
-                <Typography variant='h4' sx={{textAlign:'center', mb:3}}>Tournament matches</Typography>
-                <Container>
-                    {isValidTeamCount && matches?.length ? ( // Si es un torneo valido (4,8,16,32) genera los brackets <-
+                {/* <Container> */}
+                    {matchesCount>0 && isValidTeamCount?  
+                    ( // Si es un torneo valido (4,8,16,32) genera los brackets <- 
                         // Brakets contiene los partidos como: brackets = [
                         // [{ partido1, partido2 }, { partido3, partido4 }],  // Ronda 1
                         //[{ partido5, partido6 }],  // Ronda 2
                         //[{ partido7 }]  // Ronda 3
-                        <MatchBracket matches={brackets}/>
+                        <MatchBracket matches={matches} onwerTournament={tournament.user_id === user.userId}/>
                         // brackets.map((round, index) => ( // "Map" itera en el array, y "Round" es un array de "partidos" por ronda
                         //     <Card key={index} variant="outlined">     {/* Index indica la Ronda actual <- donde "key" actualiza el DOM (Interfaz de programacion) dinamicamente */}
                         //         <CardContent>
                         //             <Typography variant='h5'>Round {index + 1}</Typography>
                         //             <Stack sx={{display:'flex', justifyContent: 'space-around', flexDirection:'row', my:1.5}} useFlexGap spacing={{ xs: 1, sm: 1.5 }}>
                         //                 {round.map((match, matchIndex) => {
-                        //                     // console.log(match.equipos_partidos_equipoLocal_idToequipos.image);
+                        //                     console.log(match.equipos_partidos_equipoLocal_idToequipos.image);
                         //                     return (
                         //                     <Card key={matchIndex}>
                         //                         <CardContent sx={{textAlign: 'center'}}>
@@ -425,25 +381,26 @@ export default function ShowTournament() {
                         // ))
                     ) : (
                         <LoadingCard CircularSize={'2%'} message={"Maybe no matches are scheduled for this tournament or the number of teams is invalid."}/>
-                    )}
+                    )
+                    }
 
                     {/* Mostrar ganador final solo si todos los partidos están completos, (se llego a countTeam-1)*/}
-                    {isValidMatchesCount && matches.length && (
+                    {/* {isValidMatchesCount && matches.length && (
                         <Card variant="outlined">
                             <CardContent sx={{textAlign:'center'}}>
                                 <Typography variant='h4'>Final Tournament Winner</Typography>
                                 <Typography variant='h3'><strong>Champion:</strong> {getWinner(matches[matches.length - 1])}</Typography>
                             </CardContent>
                         </Card>
-                    )}
-                </Container>
+                    )} */}
+                {/* </Container> */}
 
             </CustomTabPanel>
             <CustomTabPanel value={valueTab} index={2}> {/*Tab Matches */}
                 <Container>
                     <Typography variant='h4' sx={{textAlign: 'center', mb:3}}>Tournament Notifications</Typography>
                     <List component={Card} variant="outlined">
-                        {notificaciones.length > 0 ? ( //TODO: checar la vista notificaciones con datos
+                        {notificaciones.length > 0 ? ( 
                             notificaciones.map((notificacion,i) => {
                                 const colorStatus = notificacion.status == 'accepted'? 'success' : 'warning';
                                 return (

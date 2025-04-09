@@ -31,7 +31,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-export default function DialogComponent({modalTittle, modalBody, open, handleClose, maxWidth}) {
+export default function DialogComponent({modalTittle, modalBody, open, handleClose, maxWidth, buttons=null}) {
     return (
         <BootstrapDialog
             onClose={handleClose}
@@ -58,9 +58,13 @@ export default function DialogComponent({modalTittle, modalBody, open, handleClo
                 {modalBody}
             </DialogContent>
             <DialogActions>
-                <Button autoFocus onClick={handleClose} variant='contained' color='secondary'>
-                    Close
-                </Button>
+                {buttons?
+                    buttons
+                    :
+                    <Button autoFocus onClick={handleClose} variant='contained' color='secondary'>
+                        Close
+                    </Button>
+                }
             </DialogActions>
             </BootstrapDialog>
         );

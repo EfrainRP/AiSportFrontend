@@ -49,7 +49,10 @@ import StatsAI from './views/Login/AI/StatsAI.jsx';
 export default function MyRoute(){
     return (
       <AuthProvider>
-      <Router>
+      <Router future={{
+        v7_startTransition: true, //maneja las actualizaciones de estado de manera optimizada para la transición entre vistas
+        v7_relativeSplatPath: true // Habilita el flag para la resolución de rutas relativas
+        }}> 
         <Routes>
           {/* Rutas con acceso general/invitados */}
           <Route index path="/" element={<Welcome/>}/>

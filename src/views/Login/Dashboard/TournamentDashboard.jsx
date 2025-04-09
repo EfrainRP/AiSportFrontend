@@ -25,6 +25,8 @@ import { useAuth } from '../../../services/AuthContext'; //  AuthContext
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx'
 import BackButton from '../../../components/Login/BackButton.jsx';
+import MatchBracket from '../../../components/Login/MatchBracket.jsx';
+import LoadingCard from '../../../components/Login/LodingCard.jsx';
 
 import FolderIcon from '@mui/icons-material/Folder';
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -83,6 +85,8 @@ export default function TournamentDashboard () {
   };
   
   const location = useLocation();
+  const [matchesCount, setMatchesCount] = React.useState(0);
+  
   const [valueTab, setValueTab] = React.useState(() => {
     let initialTab = location.state || 0; // Si hay un estado en location, usa ese valor; de lo contrario, usa 0.
     initialTab = Number(localStorage.getItem("activeTabShowTournament")) || initialTab;
@@ -96,11 +100,11 @@ export default function TournamentDashboard () {
   };
   
   React.useEffect(() => {
-      if (matches && matches.length === 0 && valueTab===1) {
+      if (matchesCount === 0 && valueTab===1) {
         localStorage.setItem("activeTabShowTournament", 0); // Guarda en el localStorage para persistencia
         setValueTab(0); // Resetea el tab a 0
       }
-      }, [matches]);
+      }, [matchesCount]);
 
   React.useEffect(() => {
     const fetchTournament = async () => {
@@ -116,7 +120,8 @@ export default function TournamentDashboard () {
     const fetchMatches = async () => {
       await axiosInstance.get(`/partidos/${tournamentId}`)
       .then((response) => {
-        setMatches(response.data);
+        setMatches(response.data.brackets);
+        setMatchesCount(response.data.getPartidosCount);
       })
       .catch ((err) => {
         console.error('Error loading tournament matches:', err);
@@ -138,7 +143,7 @@ export default function TournamentDashboard () {
     fetchMatches();
     fetchTeams();
   }, [tournamentId, tournamentName, user.userId]);
-  console.log(valueAutoComplete);
+
   const handleSendNotification = async () => {
     if (!valueAutoComplete) {
       setOpenSnackBar(true);
@@ -191,30 +196,13 @@ export default function TournamentDashboard () {
     });
   };
 
-  const generateBracket = (matches) => {
-    let rounds = [];
-    let roundSize = tournament.cantEquipo / 2;
-    let roundMatches = [...matches];
-
-    while (roundSize >= 1) {
-      rounds.push(roundMatches.slice(0, roundSize));
-      roundMatches = roundMatches.slice(roundSize);
-      roundSize /= 2;
-    }
-
-    return rounds;
-  };
-
   if(!tournament){ // En caso de que este vacio el torneo
       return (
       <LoadingView 
         message={`The tournament you are trying to access may not exist.`}
       />);
   }
-  // console.log(matches.length);
-  const brackets = generateBracket(Array.isArray(matches)? matches : []);
-  // console.log('matches ',matches);
-  // console.log('brackets ',brackets);
+
   return (
     <LayoutLogin>
       <Container sx={{display: 'center',m:2, gap:'5%'}}>
@@ -226,7 +214,7 @@ export default function TournamentDashboard () {
       <Box sx={{ borderBottom: 3, borderColor: 'divider' }}>
         <Tabs centered value={valueTab} onChange={handleChange} >
           <Tab icon={<FolderIcon />} label="Details" {...a11yProps(0)} />
-          <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)} disabled={!matches?.length}/>
+          <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)} disabled={matchesCount === 0}/>
           <Tab  icon={<NotificationAddIcon />} label="Send Notifications" {...a11yProps(2)} />
         </Tabs>
       </Box>
@@ -290,11 +278,13 @@ export default function TournamentDashboard () {
 
       <CustomTabPanel value={valueTab} index={1}> {/*Tab Matches */}
         <Container sx={{width:'80%'}}>
-          <Typography variant='h4'> 
-            <strong>Tournament's Matches:</strong>
-          </Typography>
-
-          {brackets.map((round, index) => (
+          {matchesCount>0?
+            <MatchBracket matches={matches} onwerTournament={tournament.user_id === user.userId}/>
+          :
+            <LoadingCard CircularSize={'2%'} message={"Maybe no matches are scheduled for this tournament or the number of teams is invalid."}/>
+            
+          }
+          {/* {brackets.map((round, index) => (
             <Card key={index}>
               <CardContent>
                 <Typography variant='h6' gutterBottom > 
@@ -376,7 +366,7 @@ export default function TournamentDashboard () {
                 </Stack>
               </CardContent>
             </Card>
-          ))}
+          ))} */}
         </Container>
       </CustomTabPanel>
       <CustomTabPanel value={valueTab} index={2}> {/*Tab Notifications */}

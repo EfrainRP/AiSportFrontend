@@ -266,7 +266,7 @@ export default function CreateTournament() {
                             />
                         </FormControl>
                         <FormControl>
-                            <FormLabel htmlFor="cantEquipo">Number of Equipment: </FormLabel>
+                            <FormLabel htmlFor="cantEquipo">Number of Teams: </FormLabel>
                             <TextField
                                 error={!!fieldErrors.cantEquipo}
                                 helperText={fieldErrors.cantEquipo}
