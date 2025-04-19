@@ -91,10 +91,9 @@ export default function EditMatch() {
     const navigate = useNavigate();
     
     const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const id = queryParams.get('id');
+    const {matchIdBracket} = location.state || null;
 
-    console.log("ID:", id); // te debería mostrar 2
+    console.log("ID:", matchIdBracket); // te debería mostrar 2
 
     const [allTeams, setAllTeams] = React.useState([]);
     const [formData, setFormData] = React.useState({
@@ -105,6 +104,7 @@ export default function EditMatch() {
         jornada: '',
         resLocal: 0,
         resVisitante: 0,
+        ordenPartido: matchIdBracket,
     });
     const [formTeam, setFormTeam] = React.useState({ //Autocomplete teams names
         equipoLocal:null,
@@ -151,6 +151,7 @@ export default function EditMatch() {
                     const session = match.jornada ? match.jornada.slice(0, 10) : ''; // YYYY-MM-DD
                     // Toma los datos obtenidos y los reformatea para poderlos mostrar en la vista <-
                     setFormData({
+                        ...formData,
                         equipoLocalId: match.equipoLocal_id || '',
                         equipoVisitanteId: match.equipoVisitante_id || '',
                         horaPartido: match.horaPartido ? match.horaPartido.slice(11, 16) : '', // HH:mm
@@ -182,6 +183,7 @@ export default function EditMatch() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log('desp',formData);
         await axiosInstance.put(`/partido/${tournamentId}/${matchId}`, formData)
             .then((response) => {
                 setOpenSnackBar(true);
@@ -189,9 +191,11 @@ export default function EditMatch() {
                 setTimeout(() => navigate(`/tournament/${tournamentName}/${tournamentId}`), 2000);
             })
             .catch((err) => {
+                console.log(err);
                 if (err.response && err.response.status === 400) {
                     const { field, message } = err.response.data;
-                    if (field) {
+                    if (field !== 'partido') {
+                        console.log('hola');
                         setFieldErrors((prev) => ({ ...prev, [field]: message }));
                     } else {
                         setOpenSnackBar(true);
@@ -201,10 +205,9 @@ export default function EditMatch() {
                     setOpenSnackBar(true);
                     setDataAlert({ severity: "error", message: 'Error update the match.' });
                 }
-                console.log(err);
             })
     };
-    console.log(formData);
+    // console.log(formData);
 
     return (
         <LayoutLogin>
@@ -397,7 +400,7 @@ export default function EditMatch() {
                                 variant="contained"
                                 color='secondary'
                             >
-                                Create Match
+                                Edit Match
                             </Button>
                         </Box>
                     </Box>

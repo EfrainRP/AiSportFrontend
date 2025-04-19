@@ -12,10 +12,10 @@ import {
     Fab,
     Stack,
     Avatar,
-    TextField ,
+    TextField,
     Autocomplete,
     ButtonGroup,
-    Grow ,
+    Grow,
     Tab,
     Tabs,
     Container,
@@ -31,7 +31,7 @@ import {
 import PropTypes from 'prop-types';
 
 import axiosInstance from "../../../services/axiosConfig.js";
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext'; //  AuthContext
 
 import LayoutLogin from '../../LayoutLogin.jsx';
@@ -45,74 +45,64 @@ import FolderIcon from '@mui/icons-material/Folder';
 import GroupsIcon from '@mui/icons-material/Groups';
 import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 import EqualizerIcon from '@mui/icons-material/Equalizer';
-import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import DoDisturbAltOutlinedIcon from '@mui/icons-material/DoDisturbAltOutlined';
 
 function CustomTabPanel(props) {
-  const { children, value, index, ...other } = props;
+    const { children, value, index, sx, ...other } = props;
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-    </div>
-  );
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && <Box sx={{...sx}}>{children}</Box>}
+        </div>
+    );
 }
 
 CustomTabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
+    children: PropTypes.node,
+    index: PropTypes.number.isRequired,
+    value: PropTypes.number.isRequired,
 };
 
 function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
 }
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
-const centerJustify = {display:'flex', textAlign:'justify'};
+const centerJustify = { display: 'flex', textAlign: 'justify' };
 
 export default function ShowTournament() {
     const { tournamentName, tournamentId } = useParams();
     const { user, loading, setLoading } = useAuth(); // Obtención del usuario autenticado
     const [tournament, setTournament] = React.useState([]); // Estado para los detalles del torneo
-    const [matches, setMatches] = React.useState([]); // Estado para los partidos del torneo
     const [notificaciones, setNotificaciones] = React.useState([]); // Estado para las notificaciones
-    const navigate = useNavigate();
 
-    const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
-    const [openSnackBar, setOpenSnackBar] = React.useState(false); // Mecanismo snackbar
+    const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert //TO DO: checar si se usa
+    const [openSnackBar, setOpenSnackBar] = React.useState(false); // Mecanismo snackbar //TO DO: checar si se usa
 
-    const handleCloseSnackBar = (event, reason) => {
+    const handleCloseSnackBar = (event, reason) => { //TO DO: checar si se usa
         if (reason === 'clickaway') {
             return;
         }
         setOpenSnackBar(false);
     };
-    
-    const [selectedMatch, setSelectedMatch] = React.useState(null);
-    const handleOpenDialog = (matchId) => {
-        setSelectedMatch(matchId);
-        setConfirm(true);
-    };
-    
 
     const [valueTab, setValueTab] = React.useState(() => {
         let initialTab = Number(localStorage.getItem("activeTabShowTournament")) || 0;
         localStorage.setItem("activeTabShowTournament", initialTab); // Guardar la pestaña activa
-        
+
         return initialTab; // Devuelve el valor inicial del tab.
-    }); 
+    });
 
     const handleChange = (event, newValue) => {
         setValueTab(newValue);
@@ -122,99 +112,69 @@ export default function ShowTournament() {
     const [check, setCheck] = React.useState(false);
     const [checkDelete, setCheckDelete] = React.useState(false);
 
-    const [matchesCount, setMatchesCount] = React.useState(0);
-    // React.useEffect(() => {
-    //     if (matchesCount > 3 && valueTab===1) {
-    //         localStorage.setItem("activeTabShowTournament", 0); // Guarda en el localStorage para persistencia
-    //         setValueTab(0); // Resetea el tab a 0
-    //     }
-    // }, [matchesCount]);
-
-    React.useEffect(() => {
-        const fetchMatches = async () => { // Peticion INDEX Partidos del torneo
-            await axiosInstance.get(`/partidos/${tournamentId}`).
-            then((response)=> {
-                setMatches(response.data.brackets); // Datos de los partidos
-                setMatchesCount(response.data.getPartidosCount);
-                setLoading(false);
-            })
-            .catch ((err)=>{
-                // console.error('Error al cargar los partidos del torneo:', err);
-                setMatchesCount(0);
-                setLoading(true);
-            })
-        };
-        fetchMatches(); // Llamada para obtener los partidos del torneo
-    },[]);
     React.useEffect(() => {
         const fetchTournament = async () => { // Peticion SHOW Torneo
             await axiosInstance.get(`/torneo/${tournamentName}/${tournamentId}`)
-            .then((response)=>{
-                setTournament(response.data); // Datos del torneo
-                setNotificaciones(response.data.notifications); // Establecer notificaciones del torneo
-            })
-            .catch ((err) =>{
-                // console.error('Error al cargar el torneo:', err);
-                setLoading(true);
-            })
+                .then((response) => {
+                    setTournament(response.data.torneo); // Datos del torneo
+                    setNotificaciones(response.data.torneo.notifications); // Establecer notificaciones del torneo
+                })
+                .catch((err) => {
+                    // console.error('Error al cargar el torneo:', err);
+                    setLoading(true);
+                })
         };
         fetchTournament(); // Llamada para obtener los detalles del torneo
     }, [tournamentId, tournamentName, notificaciones]);
 
     // Función para manejar la aceptación o rechazo de notificaciones <-
     const handleNotificationResponse = async (notificationId, status) => {
-            // Enviar solicitud PUT para actualizar el estado de la notificación
+        if(status === 'accept') {
+            setCheck(true);
+        }else{
+            setCheckDelete(true);
+        }
+        // Enviar solicitud PUT para actualizar el estado de la notificación
         await axiosInstance.put(`/notificaciones/${notificationId}`, {
             status, // Puede ser 'accepted' o 'rejected'
         })
-        .then(()=>{
+        .then(() => {
             // Actualizar el estado local de las notificaciones después de la respuesta
             setNotificaciones((prevState) =>
-                prevState.map((notificacion) =>
-                    notificacion.id === notificationId
-                        ? { ...notificacion, status }
-                        : notificacion
-                )
+                prevState.filter(notificacion => notificacion.id !== notificationId)
             );
         })
-        .catch ((err) => {
+        .catch((err) => {
             console.error('Error responding to notification:', err);
+            setCheckDelete(false);
+            setCheck(false);
         })
     };
 
-    // Validar si la cantidad de equipos del torneo es del rango válido (Front)
-    const isValidTeamCount = [4, 8, 16, 32].includes(tournament?.cantEquipo);
-
-    // Validar la cantidad de partidos (Front) (debe ser torneo.countTeam - 1)
-    const isValidMatchesCount = matchesCount === tournament?.cantEquipo - 1;
-
-    if(!tournament){ // En caso de que este vacio el torneo
+    if (!tournament) { // En caso de que este vacio el torneo
         return (
-        <LoadingView
-            message={`The tournament you are trying to access may not exist.`}
-        />);
+            <LoadingView
+                message={`The tournament you are trying to access may not exist.`}
+            />);
     }
-
-    const handleEdit = (matchId) => { // Cambio de vista a Edit form
-        navigate(`/match/${tournamentName}/${tournamentId}/${matchId}/edit`);
-    };
     // console.log(matches[matches.length - 1].nextMatchId);
-
+    // console.log(' count ',matchesCount);
+    // console.log(' torneo ',tournament);
     return (
         <LayoutLogin>
-            <Container sx={{...centerJustify}}>
-                <BackButton url={`/tournaments`}/>
-                <Typography gutterBottom variant="h2" component="div" sx={{ml:2}}>
-                    {loading?
+            <Container sx={{ ...centerJustify }}>
+                <BackButton url={`/tournaments`} />
+                <Typography gutterBottom variant="h2" component="div" sx={{ ml: 2 }}>
+                    {loading ?
                         <Skeleton variant="rounded" width={'30%'} />
                         : tournament.name}
                 </Typography>
             </Container>
-            <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar} anchorOrigin={{ vertical: 'top', horizontal: 'center'}}>
+            <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
                 <Alert
                     severity={dataAlert.severity}
                     variant='filled'
-                    sx={{ width: '100%'}}
+                    sx={{ width: '100%' }}
                     onClose={handleCloseSnackBar}
                 >
                     {dataAlert.message}
@@ -224,15 +184,15 @@ export default function ShowTournament() {
             <Box sx={{ borderBottom: 3, borderColor: 'divider' }}>
                 <Tabs centered value={valueTab} onChange={handleChange} >
                     <Tab icon={<FolderIcon />} label="Details" {...a11yProps(0)} />
-                    <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)} disabled={matchesCount===0}/>
-                    <Tab  icon={<NotificationAddIcon />} label="Notifications" {...a11yProps(2)} />
+                    <Tab icon={<GroupsIcon />} label="Matches" {...a11yProps(1)} />
+                    <Tab icon={<NotificationAddIcon />} label="Notifications" {...a11yProps(2)} />
                 </Tabs>
             </Box>
-            <CustomTabPanel value={valueTab} index={0}> {/*Tab Details */}
-                <Container sx={{width: '70%'}}>
+            <CustomTabPanel value={valueTab} index={0} sx={{p:3}}> {/*Tab Details */}
+                <Container sx={{ width: '70%' }}>
                     <Card variant="outlined">
                         <CardContent>
-                            <Container sx={{...centerJustify, gap:2}}>
+                            <Container sx={{ ...centerJustify, gap: 2 }}>
                                 <Typography variant='h5' color='primary'>
                                     <strong>Location:</strong>
                                 </Typography>
@@ -240,8 +200,8 @@ export default function ShowTournament() {
                                     {tournament.ubicacion}
                                 </Typography>
                             </Container>
-                            <Divider variant="middle" sx={{my:2}}/>
-                            <Container sx={{...centerJustify, gap:2}}>
+                            <Divider variant="middle" sx={{ my: 2 }} />
+                            <Container sx={{ ...centerJustify, gap: 2 }}>
                                 <Typography variant='h5' color='primary'>
                                     <strong>Description:</strong>
                                 </Typography>
@@ -249,8 +209,8 @@ export default function ShowTournament() {
                                     {tournament.descripcion}
                                 </Typography>
                             </Container>
-                            <Divider variant="middle" sx={{my:2}}/>
-                            <Container sx={{...centerJustify, gap:2}}>
+                            <Divider variant="middle" sx={{ my: 2 }} />
+                            <Container sx={{ ...centerJustify, gap: 2 }}>
                                 <Typography variant='h5' color='primary'>
                                     <strong>Start Date:</strong>
                                 </Typography>
@@ -258,8 +218,8 @@ export default function ShowTournament() {
                                     {new Date(tournament.fechaInicio).toLocaleDateString()}
                                 </Typography>
                             </Container>
-                            <Divider variant="middle" sx={{my:2}}/>
-                            <Container sx={{...centerJustify, gap:2}}>
+                            <Divider variant="middle" sx={{ my: 2 }} />
+                            <Container sx={{ ...centerJustify, gap: 2 }}>
                                 <Typography variant='h5' color='primary'>
                                     <strong>End Date:</strong>
                                 </Typography>
@@ -267,8 +227,8 @@ export default function ShowTournament() {
                                     {new Date(tournament.fechaFin).toLocaleDateString()}
                                 </Typography>
                             </Container>
-                            <Divider variant="middle" sx={{my:2}}/>
-                            <Container sx={{...centerJustify, gap:2}}>
+                            <Divider variant="middle" sx={{ my: 2 }} />
+                            <Container sx={{ ...centerJustify, gap: 2 }}>
                                 <Typography variant='h5' color='primary'>
                                     <strong>Total Teams:</strong>
                                 </Typography>
@@ -276,116 +236,26 @@ export default function ShowTournament() {
                                     {tournament.cantEquipo}
                                 </Typography>
                             </Container>
-                            <Divider variant="middle" sx={{my:2}}/>
+                            <Divider variant="middle" sx={{ my: 2 }} />
                         </CardContent>
-                        <CardActions sx={{display: 'flex', justifyContent:'center'}}>
-                            <Fab variant="extended" color='info' size="small" href={`/tournament/${tournamentName}/${tournamentId}/edit`} sx={{color:'white'}}><EditIcon sx={{ mr: 1 }}/> Edit</Fab>
-                            <Fab variant="extended" color='success' size="small" href={`/match/create/${tournamentName}/${tournamentId}`}> <AddIcon sx={{ mr: 1 }}/> match</Fab>
-                            <Fab variant="extended" color='warning' size="small" href={`/tournament/${tournamentName}/${tournamentId}/stats`}><EqualizerIcon sx={{ mr: 1 }}/> Stats</Fab>
+                        <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+                            <Fab variant="extended" color='info' size="small" href={`/tournament/${tournamentName}/${tournamentId}/edit`} sx={{ color: 'white' }}><EditIcon sx={{ mr: 1 }} /> Edit</Fab>
+                            <Fab variant="extended" color='warning' size="small" href={`/tournament/${tournamentName}/${tournamentId}/stats`}><EqualizerIcon sx={{ mr: 1 }} /> Stats</Fab>
                         </CardActions>
                     </Card>
                 </Container>
             </CustomTabPanel>
-            <CustomTabPanel value={valueTab} index={1}> {/*Tab Matches */}
+            <CustomTabPanel value={valueTab} index={1} sx={{mt:3}}> {/*Tab Matches */}
                 {/* <Container> */}
-                    {matchesCount>0 && isValidTeamCount?  
-                    ( // Si es un torneo valido (4,8,16,32) genera los brackets <- 
+                {/* // Si es un torneo valido (4,8,16,32) genera los brackets <- 
                         // Brakets contiene los partidos como: brackets = [
                         // [{ partido1, partido2 }, { partido3, partido4 }],  // Ronda 1
                         //[{ partido5, partido6 }],  // Ronda 2
-                        //[{ partido7 }]  // Ronda 3
-                        <MatchBracket matches={matches} onwerTournament={tournament.user_id === user.userId}/>
-                        // brackets.map((round, index) => ( // "Map" itera en el array, y "Round" es un array de "partidos" por ronda
-                        //     <Card key={index} variant="outlined">     {/* Index indica la Ronda actual <- donde "key" actualiza el DOM (Interfaz de programacion) dinamicamente */}
-                        //         <CardContent>
-                        //             <Typography variant='h5'>Round {index + 1}</Typography>
-                        //             <Stack sx={{display:'flex', justifyContent: 'space-around', flexDirection:'row', my:1.5}} useFlexGap spacing={{ xs: 1, sm: 1.5 }}>
-                        //                 {round.map((match, matchIndex) => {
-                        //                     console.log(match.equipos_partidos_equipoLocal_idToequipos.image);
-                        //                     return (
-                        //                     <Card key={matchIndex}>
-                        //                         <CardContent sx={{textAlign: 'center'}}>
-                        //                             <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
-                        //                                 <Typography variant='subtitle2' color='primary'>
-                        //                                     <strong>Date Match: </strong>
-                        //                                 </Typography>
-                        //                                 <Typography >
-                        //                                     {new Date(match.fechaPartido).toISOString().split('T')[0]}
-                        //                                 </Typography>
-                        //                             </Container>
-                        //                             <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
-                        //                                 <Typography variant='subtitle2' color='primary'>
-                        //                                     <strong>Time: </strong>
-                        //                                 </Typography>
-                        //                                 <Typography>
-                        //                                     {new Date(match.horaPartido).toLocaleTimeString()}
-                        //                                 </Typography>
-                        //                             </Container>
-                        //                             <Container sx={{...centerJustify, justifyContent:'center', gap:2}}>
-                        //                                 <Typography variant='subtitle2' color='warning'>
-                        //                                     <strong>Result: </strong>
-                        //                                 </Typography>
-                        //                                 <Typography>
-                        //                                     {match.resLocal} - {match.resVisitante}
-                        //                                 </Typography>
-                        //                             </Container>
+                        //[{ partido7 }]  // Ronda 3 */}
+                <MatchBracket onwerTournament={tournament.user_id === user.userId} />
 
-                        //                             <Container sx={{...centerJustify, justifyContent: 'center', alignItems: 'center', my:1}}>
-                        //                                 <Avatar
-                        //                                         src={`${URL_SERVER}/utils/uploads/${match.equipo && match.equipos_partidos_equipoLocal_idToequipos.image !== 'logoEquipo.jpg' ? match.equipos_partidos_equipoLocal_idToequipos.image : 'logoEquipo.jpg'}`}
-                        //                                         alt="Home team"
-                        //                                         sx={{ width: 40, height: 40 }}
-                        //                                         crossOrigin="use-credentials"
-                        //                                     />
-                        //                                 <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
-                        //                                     <Typography variant='subtitle2' color='success'>
-                        //                                         <strong>Home Team: </strong>
-                        //                                     </Typography>
-                        //                                     <Typography >
-                        //                                         {match.equipos_partidos_equipoLocal_idToequipos.name}
-                        //                                     </Typography>
-                        //                                 </Container>
-                        //                             </Container>
-
-                        //                             <Container sx={{...centerJustify, justifyContent: 'center', alignItems: 'center', my:1}}>
-                        //                                 <Container sx={{...centerJustify, gap:2}}>
-                        //                                     <Typography variant='subtitle2' color='error'>
-                        //                                         <strong>Guest Team: </strong>
-                        //                                     </Typography>
-                        //                                     <Typography >
-                        //                                         {match.equipos_partidos_equipoVisitante_idToequipos.name}
-                        //                                     </Typography>
-                        //                                 </Container>
-                        //                                 <Avatar
-                        //                                     src={`${URL_SERVER}/utils/uploads/${match.equipos_partidos_equipoVisitante_idToequipos && match.equipos_partidos_equipoVisitante_idToequipos.image !== 'logoEquipo.jpg' ? match.equipos_partidos_equipoVisitante_idToequipos.image : 'logoEquipo.jpg'}`}
-                        //                                     alt="Guest team"
-                        //                                     sx={{ width: 40, height: 40 }}
-                        //                                     crossOrigin="use-credentials"
-                        //                                 />
-                        //                             </Container>
-                        //                         </CardContent>
-
-                        //                         {/* Botones de Editar y Eliminar */}
-                        //                         <CardActions sx={{ display: 'flex', justifyContent: 'space-around', mt:2}}>
-                        //                             <Fab variant="extended" size="small" color="primary" onClick={() => handleEdit(match.id)}>Edit</Fab>
-                        //                             <Fab variant="extended" size="small" color="error" onClick={() => handleOpenDialog(match.id)}>Delete</Fab>
-
-                        //                             <ConfirmDialog open={openConfirm} handleClose={handleCloseConfirm} handleConfirm={handleDelete} messageTitle={'Delete match'} message={'Are you sure to delete this match?'}/>
-                        //                         </CardActions>
-                        //                     </Card>
-
-                        //                 )})}
-                        //             </Stack>
-                        //         </CardContent>
-                        //     </Card>
-                        // ))
-                    ) : (
-                        <LoadingCard CircularSize={'2%'} message={"Maybe no matches are scheduled for this tournament or the number of teams is invalid."}/>
-                    )
-                    }
-
-                    {/* Mostrar ganador final solo si todos los partidos están completos, (se llego a countTeam-1)*/}
-                    {/* {isValidMatchesCount && matches.length && (
+                {/* Mostrar ganador final solo si todos los partidos están completos, (se llego a countTeam-1)*/}
+                {/* {isValidMatchesCount && matches.length && (
                         <Card variant="outlined">
                             <CardContent sx={{textAlign:'center'}}>
                                 <Typography variant='h4'>Final Tournament Winner</Typography>
@@ -398,69 +268,70 @@ export default function ShowTournament() {
             </CustomTabPanel>
             <CustomTabPanel value={valueTab} index={2}> {/*Tab Matches */}
                 <Container>
-                    <Typography variant='h4' sx={{textAlign: 'center', mb:3}}>Tournament Notifications</Typography>
+                    <Typography variant='h4' sx={{ textAlign: 'center', mb: 3 }}>Tournament Notifications</Typography>
                     <List component={Card} variant="outlined">
-                        {notificaciones.length > 0 ? ( 
-                            notificaciones.map((notificacion,i) => {
-                                const colorStatus = notificacion.status == 'accepted'? 'success' : 'warning';
+                        {notificaciones.length > 0 ? (
+                            notificaciones.map((notificacion, i) => {
+                                const colorStatus = notificacion.status == 'accepted' ? 'success' : 'warning';
                                 return (
-                                <ListItem key={i}
-                                    sx={{display: "flex", padding: 2, }}
-                                    alignItems="flex-start"
-                                    disablePadding
-                                    secondaryAction={
-                                        notificacion.status === 'pending' && (
-                                        //  Botones para aceptar o denegar la notificación
-                                        <ButtonGroup edge="end" variant="contained">
-                                            <Button color="success" alt='accepted' startIcon={ check? <CheckCircleRoundedIcon/> : <RadioButtonUncheckedIcon/> } onClick={() => handleNotificationResponse(notificacion.id, 'accepted')}>
-                                                Accept
-                                            </Button>
-                                            <Button color="error" alt='rejected' startIcon={checkDelete? <CheckCircleRoundedIcon/> : <DoDisturbAltOutlinedIcon/>} onClick={() => handleNotificationResponse(notificacion.id, 'rejected')}>
-                                                Deny
-                                            </Button>
-                                        </ButtonGroup>)
-                                    }
-                                >
-                                    <ListItemText
-                                        sx={{maxWidth: '50%'}}
-                                        primary={
-                                            <Typography variant='body1' component="div">
-                                                Player <Typography component={'strong'} color={'primary'}>{notificacion.users_notifications_user_idTousers.name}</Typography> sent you a notification from team <Typography component={'strong'} color={'secondary'}>{notificacion.equipos.name}</Typography>
-                                            </Typography>}
+                                    <ListItem key={i}
+                                        sx={{ display: "flex", padding: 2, }}
+                                        alignItems="flex-start"
+                                        disablePadding
+                                        secondaryAction={
+                                            notificacion.status === 'pending' && (
+                                                //  Botones para aceptar o denegar la notificación
+                                                <ButtonGroup edge="end" variant="contained">
+                                                    <Button color="success" alt='accepted' startIcon={check ? <CheckCircleRoundedIcon /> : <RadioButtonUncheckedIcon />} onClick={() => handleNotificationResponse(notificacion.id, 'accepted')}>
+                                                        Accept
+                                                    </Button>
+                                                    <Button color="error" alt='rejected' startIcon={checkDelete ? <CheckCircleRoundedIcon /> : <DoDisturbAltOutlinedIcon />} onClick={() => handleNotificationResponse(notificacion.id, 'rejected')}>
+                                                        Deny
+                                                    </Button>
+                                                </ButtonGroup>)
+                                        }
+                                    >
+                                        <ListItemText
+                                            sx={{ maxWidth: '50%' }}
+                                            primary={
+                                                <Typography variant='body1' component="div">
+                                                    Player <Typography component={'strong'} color={'primary'}>{notificacion.users_notifications_user_idTousers.name}</Typography> sent you a notification from team <Typography component={'strong'} color={'secondary'}>{notificacion.equipos.name}</Typography>
+                                                </Typography>}
 
-                                        secondary={
-                                            <Typography
-                                                sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:1}}
-                                                component={'div'}
-                                            >
-                                                <Typography component={'strong'}>Status:</Typography>
-                                                <Typography color={colorStatus}>{notificacion.status}</Typography>
-                                            </Typography>
-                                    }
-                                    />
-                                    <ListItemText
-                                        sx={{maxWidth: '40%'}}
-                                        primary={
-                                            <Typography
-                                                sx={{display:'flex', flexDirection: 'row', textAlign:'justify', gap:1}}
-                                                component={'div'}
-                                            >
-                                                <Typography component={'strong'} color={'pink'}>Email:</Typography>
-                                                <Typography>{notificacion.users_notifications_user_idTousers.email}</Typography>
-                                            </Typography>}/>
+                                            secondary={
+                                                <Typography
+                                                    sx={{ display: 'flex', flexDirection: 'row', textAlign: 'justify', gap: 1 }}
+                                                    component={'div'}
+                                                >
+                                                    <Typography component={'strong'}>Status:</Typography>
+                                                    <Typography color={colorStatus}>{notificacion.status}</Typography>
+                                                </Typography>
+                                            }
+                                        />
+                                        <ListItemText
+                                            sx={{ maxWidth: '40%' }}
+                                            primary={
+                                                <Typography
+                                                    sx={{ display: 'flex', flexDirection: 'row', textAlign: 'justify', gap: 1 }}
+                                                    component={'div'}
+                                                >
+                                                    <Typography component={'strong'} color={'pink'}>Email:</Typography>
+                                                    <Typography>{notificacion.users_notifications_user_idTousers.email}</Typography>
+                                                </Typography>} />
 
-                                    {/* {notificacion.status === 'pending' && (
+                                        {/* {notificacion.status === 'pending' && (
                                         <Container sx={{display: "flex", justifyContent: "center", gap: 1, width: "20%" }}>
                                             <ListItemButton alt='accepted' onClick={() => handleNotificationResponse(notificacion.id, 'accepted')}>Accept</ListItemButton>
                                             <ListItemButton alt='rejected' onClick={() => handleNotificationResponse(notificacion.id, 'rejected')}>Deny</ListItemButton>
 
                                         </Container>
                                     )} */}
-                                </ListItem>
-                            );})
+                                    </ListItem>
+                                );
+                            })
                         ) : (
-                            <ListItem sx={{display: "flex", gap: 1, justifyContent: 'center'}}>
-                                <LoadingCard CircularSize={'2%'} message={"Maybe there are no pending notifications for this tournament."} variant='info'/>
+                            <ListItem sx={{ display: "flex", gap: 1, justifyContent: 'center' }}>
+                                <LoadingCard CircularSize={'2%'} message={"Maybe there are no pending notifications for this tournament."} variant='info' />
                             </ListItem>
                         )}
                     </List>

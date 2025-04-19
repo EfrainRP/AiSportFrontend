@@ -30,7 +30,7 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 
 import axiosInstance from "../../../services/axiosConfig.js";
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 
 import BackButton from '../../../components/Login/BackButton.jsx';
@@ -91,6 +91,11 @@ export default function CreateMatch() {
     const { loading, setLoading } = useAuth(); // Obtención del usuario autenticado
     const navigate = useNavigate();
 
+    const location = useLocation();
+    const {matchIdBracket} = location.state || null;
+
+    // -console.log("ID:", matchIdBracket); // te debería mostrar 2
+
     const [allTeams, setAllTeams] = React.useState([]);
     const [formData, setFormData] = React.useState({
         equipoLocalId: '',
@@ -100,6 +105,7 @@ export default function CreateMatch() {
         jornada: '',
         resLocal: 0,
         resVisitante: 0,
+        ordenPartido: matchIdBracket
     });
     const [formTeam, setFormTeam] = React.useState({ //Autocomplete teams names
         equipoLocal:null,
@@ -144,6 +150,7 @@ export default function CreateMatch() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(formData);
         await axiosInstance.post(`/partido/create/${tournamentId}`, formData)
             .then((response) => {
                 setOpenSnackBar(true);

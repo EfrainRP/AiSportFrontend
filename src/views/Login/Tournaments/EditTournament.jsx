@@ -112,7 +112,7 @@ export default function EditTournament() {
         const fetchTournament = async () => {
             await axiosInstance.get(`/torneo/${tournamentName}/${tournamentId}`)
                 .then((response) => {
-                    setTournament(response.data);
+                    setTournament(response.data.torneo);
                     setDataAlert({message:null});
                     setLoading(false);
                 }).catch((err) => {

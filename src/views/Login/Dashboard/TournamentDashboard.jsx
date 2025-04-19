@@ -70,7 +70,6 @@ export default function TournamentDashboard () {
   const {user} = useAuth(); // Accede al usuario autenticado y al método logout
   const { tournamentName, tournamentId } = useParams();
   const [tournament, setTournament] = React.useState(null);
-  const [matches, setMatches] = React.useState(null);
   const [teams, setTeams] = React.useState(null);
   const [valueAutoComplete, setValueAutoComplete] = React.useState(null); //Mecanismo autocomplete
   
@@ -110,23 +109,13 @@ export default function TournamentDashboard () {
     const fetchTournament = async () => {
       await axiosInstance.get(`/torneo/${tournamentName}/${tournamentId}`)
       .then((response) => {
-        setTournament(response.data);
+        setTournament(response.data.torneo);
+        setMatchesCount(response.data.cantidadPartidos);
       })
       .catch ((err) => {
         console.error('Error loading tournament:', err);
+        setMatchesCount(0);
       });
-    };
-
-    const fetchMatches = async () => {
-      await axiosInstance.get(`/partidos/${tournamentId}`)
-      .then((response) => {
-        setMatches(response.data.brackets);
-        setMatchesCount(response.data.getPartidosCount);
-      })
-      .catch ((err) => {
-        console.error('Error loading tournament matches:', err);
-      })
-      
     };
 
     const fetchTeams = async () => {
@@ -140,7 +129,6 @@ export default function TournamentDashboard () {
     };
 
     fetchTournament();
-    fetchMatches();
     fetchTeams();
   }, [tournamentId, tournamentName, user.userId]);
 
@@ -202,7 +190,6 @@ export default function TournamentDashboard () {
         message={`The tournament you are trying to access may not exist.`}
       />);
   }
-
   return (
     <LayoutLogin>
       <Container sx={{display: 'center',m:2, gap:'5%'}}>
@@ -277,96 +264,8 @@ export default function TournamentDashboard () {
       </CustomTabPanel>
 
       <CustomTabPanel value={valueTab} index={1}> {/*Tab Matches */}
-        <Container sx={{width:'80%'}}>
-          {matchesCount>0?
-            <MatchBracket matches={matches} onwerTournament={tournament.user_id === user.userId}/>
-          :
-            <LoadingCard CircularSize={'2%'} message={"Maybe no matches are scheduled for this tournament or the number of teams is invalid."}/>
-            
-          }
-          {/* {brackets.map((round, index) => (
-            <Card key={index}>
-              <CardContent>
-                <Typography variant='h6' gutterBottom > 
-                  Round: {index + 1}
-                </Typography>
-                <Stack sx={{display:'flex', justifyContent: 'space-around', flexDirection:'row', my:1.5}} useFlexGap spacing={{ xs: 1, sm: 1.5 }}>
-                  {round.map((match, i) => ( //TO DO: check format HTML
-                    <Card
-                      sx={[(theme)=>({
-                        backgroundColor:theme.palette.warning.dark,
-                        ...theme.applyStyles('dark', {
-                          backgroundColor:theme.palette.secondary.dark,
-                        }),
-                      })]}
-                      key={i}
-                    >
-                      <CardContent>
-                        <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
-                          <Typography variant='subtitle2' color='primary'>
-                              <strong>Date Match: </strong>
-                          </Typography>
-                          <Typography sx={{color: 'text.data'}}>
-                              {new Date(match.fechaPartido).toISOString().split('T')[0]}
-                          </Typography>
-                        </Container>
-                        <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
-                            <Typography variant='subtitle2' color='primary'>
-                                <strong>Time: </strong>
-                            </Typography>
-                            <Typography sx={{color: 'text.data'}}>
-                                {new Date(match.horaPartido).toLocaleTimeString()}
-                            </Typography>
-                        </Container>
-                        <Container sx={{...centerJustify, justifyContent:'center', gap:2}}>
-                            <Typography variant='subtitle2' color='warning'>
-                                <strong>Result: </strong>
-                            </Typography>
-                            <Typography sx={{color: 'text.data'}}>
-                                {match.resLocal} - {match.resVisitante}
-                            </Typography>
-                        </Container>
-
-                        <Container sx={{...centerJustify, justifyContent: 'center', alignItems: 'center', my:1}}>
-                            <Avatar
-                                    src={`${URL_SERVER}/utils/uploads/${match.equipo && match.equipos_partidos_equipoLocal_idToequipos.image !== 'logoEquipo.jpg' ? match.equipos_partidos_equipoLocal_idToequipos.image : 'logoEquipo.jpg'}`}
-                                    alt="Home team"
-                                    sx={{ width: 40, height: 40 }}
-                                    crossOrigin="use-credentials"
-                                />
-                            <Container sx={{...centerJustify, justifyContent: 'center', gap:2}}>
-                                <Typography variant='subtitle2' color='success'>
-                                    <strong>Home Team: </strong>
-                                </Typography>
-                                <Typography>
-                                    {match.equipos_partidos_equipoLocal_idToequipos.name}
-                                </Typography>
-                            </Container>
-                        </Container>
-
-                        <Container sx={{...centerJustify, justifyContent: 'center', alignItems: 'center', my:1}}>
-                            <Container sx={{...centerJustify, gap:2}}>
-                                <Typography variant='subtitle2' color='error'>
-                                    <strong>Guest Team: </strong>
-                                </Typography>
-                                <Typography>
-                                    {match.equipos_partidos_equipoVisitante_idToequipos.name}
-                                </Typography>
-                            </Container>
-                            <Avatar
-                                src={`${URL_SERVER}/utils/uploads/${match.equipos_partidos_equipoVisitante_idToequipos && match.equipos_partidos_equipoVisitante_idToequipos.image !== 'logoEquipo.jpg' ? match.equipos_partidos_equipoVisitante_idToequipos.image : 'logoEquipo.jpg'}`}
-                                alt="Guest team"
-                                sx={{ width: 40, height: 40 }}
-                                crossOrigin="use-credentials"
-                            />
-                        </Container>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </Stack>
-              </CardContent>
-            </Card>
-          ))} */}
+        <Container>
+            <MatchBracket onwerTournament={tournament.user_id === user.userId}/>
         </Container>
       </CustomTabPanel>
       <CustomTabPanel value={valueTab} index={2}> {/*Tab Notifications */}
