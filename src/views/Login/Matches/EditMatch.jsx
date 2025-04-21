@@ -123,7 +123,7 @@ export default function EditMatch() {
     // useEffect para hacer petición automática de los datos del torneo, partidos y notificaciones
     React.useEffect(() => {
         const fetchAllTeams = async () => {
-            await axiosInstance.get(`/equipos/torneo/${tournamentId}`)
+            await axiosInstance.get(`/equipos/torneo/${tournamentId}`, { params: { matchIdBracket } } )
                 .then((response) => {
                     setAllTeams(response.data);
                     setFieldErrors(null);

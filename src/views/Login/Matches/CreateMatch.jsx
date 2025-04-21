@@ -94,7 +94,7 @@ export default function CreateMatch() {
     const location = useLocation();
     const {matchIdBracket} = location.state || null;
 
-    // -console.log("ID:", matchIdBracket); // te debería mostrar 2
+    console.log("ID:", matchIdBracket); // te debería mostrar 2
 
     const [allTeams, setAllTeams] = React.useState([]);
     const [formData, setFormData] = React.useState({
@@ -124,12 +124,13 @@ export default function CreateMatch() {
 
     React.useEffect(() => {
         const fetchAllTeams = async () => { // TO DO: error si no hay torenos registrados
-            await axiosInstance.get(`equipos/torneo/${tournamentId}`)
+            await axiosInstance.get(`equipos/torneo/${tournamentId}`, { params: { matchIdBracket } } )
                 .then((response) => {
                     setLoading(false);
                     setAllTeams(response.data);
                     setDataAlert({message:null});
                 }).catch((err) => {
+                    console.log(err);
                     setLoading(true);
                     setDataAlert({severity:"error", message:'Error loading teams'});
                     setOpenSnackBar(true);
@@ -158,6 +159,7 @@ export default function CreateMatch() {
                 setTimeout(() => navigate(`/tournament/${tournamentName}/${tournamentId}`), 2000);
             })
             .catch((err) => {
+                console.log(err);
                 if (err.response && err.response.data && err.response.data.field) {
                     const { field, message } = err.response.data;
                     if (field) {

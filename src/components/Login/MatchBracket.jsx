@@ -71,6 +71,8 @@ const MatchBracket = ({onwerTournament}) => { //TO DO: falta hacer el proceso de
             setMatches(res.data.brackets); // Datos de los partidos
             // console.log(res.data.brackets);
             // console.log('res',res.data.getPartidosCount);
+            // console.log('d',res.data.cantEquipoTorneo);
+            // console.log('d21',cantEquipoTorneo);
             setMatchesCount(res.data.getPartidosCount);
             setCantEquipoTorneo(res.data.cantEquipoTorneo);
         })
@@ -231,21 +233,23 @@ const MatchBracket = ({onwerTournament}) => { //TO DO: falta hacer el proceso de
     );
     return (
       <Box>
-        <Container sx={[{display:'flex', textAlign: 'center', alignItems: 'center'}, match?.myIdMatch ?{justifyContent:'space-between'}:{justifyContent:'center'}]}>
-          {match?.myIdMatch ?
-            (<>
-              <Typography variant="caption">{match.fechaPartido}</Typography>
-              <Typography variant="caption" >{match.horaPartido}</Typography>
-              {/* <Typography variant="caption" >{match.myIdMatch}</Typography> */}
-            </>)
-          :
-            (<Fab variant="extended" color='success' sx={{height:20, fontSize:12}} 
-              onClick={
-                () => navigate(`/match/create/${tournamentName}/${tournamentId}`, {state:{ matchIdBracket: match.id }}) }> 
-              <AddIcon sx={{ mr: 1, fontSize:18}} /> match
-            </Fab>)
-          }
-        </Container>
+        {match?.partidosHijos && 
+          <Container sx={[{display:'flex', textAlign: 'center', alignItems: 'center'}, match?.myIdMatch ?{justifyContent:'space-between'}:{justifyContent:'center'}]}>
+            {match?.myIdMatch ?
+              (<>
+                <Typography variant="caption">{match.fechaPartido}</Typography>
+                <Typography variant="caption" >{match.horaPartido}</Typography>
+                {/* <Typography variant="caption" >{match.myIdMatch}</Typography> */}
+              </>)
+            :
+              (<Fab variant="extended" color='success' sx={{height:20, fontSize:12}} 
+                onClick={
+                  () => navigate(`/match/create/${tournamentName}/${tournamentId}`, {state:{ matchIdBracket: match.id }}) }> 
+                <AddIcon sx={{ mr: 1, fontSize:18}} /> match
+              </Fab>)
+            }
+          </Container>
+        }
         <Card sx={{
           p: 1,
           // backgroundColor: isWinner ? '#87b2c4' : '#f5f5f5',
@@ -320,7 +324,7 @@ const MatchBracket = ({onwerTournament}) => { //TO DO: falta hacer el proceso de
         modalBody={modalMessage} 
         open={showModal} 
         handleClose={() => setShowModal(false)} 
-        buttons={onwerTournament && matchesCount < cantEquipoTorneo-1 && // valida si es el admin del torneo y esten completos los partidos del TORNEO
+        buttons={onwerTournament && matchesCount < cantEquipoTorneo-1 && selectedMatch?.partidosHijos &&// valida si es el admin del torneo y esten completos los partidos del TORNEO
           <Container sx={{display:'flex', justifyContent:'center', gap:1}}>
             {!selectedMatch?.myIdMatch ?
               <Fab variant="extended" color='success' size='small' 
@@ -352,12 +356,12 @@ const MatchBracket = ({onwerTournament}) => { //TO DO: falta hacer el proceso de
 
       {matchesCount > 0 ?
         <>
-          {matchesCount === cantEquipoTorneo-1?
-            <Typography variant='h3' sx={{textAlign: 'center'}}>
-              <strong>
-                🏆 <u> Champion team: {getWinner(matches[cantEquipoTorneo-2])} </u> 🏆
-              </strong>
-            </Typography>
+          {matchesCount === cantEquipoTorneo - 1 ?
+              <Typography variant='h3' sx={{textAlign: 'center'}}>
+                <strong>
+                  🏆 <u> Champion team: {getWinner(matches[cantEquipoTorneo-2])} </u> 🏆
+                </strong>
+              </Typography>
             :
             <Typography variant='caption'>
                 * TBD - to be decided
