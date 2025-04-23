@@ -20,6 +20,7 @@ export default function LayoutLogin(props) {
       <CssBaseline enableColorScheme />
         <Box sx={(theme) => ({
             display: 'flex',
+            flexDirection: {md:'row', xs: 'column'},
             width: '100%',
             minHeight: '100vh',
             backgroundRepeat: 'no-repeat',

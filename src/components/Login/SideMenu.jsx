@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
+import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Button from '@mui/material/Button';
+import Drawer from '@mui/material/Drawer';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
@@ -25,6 +30,7 @@ import SmartToyTwoToneIcon from '@mui/icons-material/SmartToyTwoTone';
 import ChatIcon from '@mui/icons-material/Chat';
 import Settings from '@mui/icons-material/Settings';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 import { AiSportIcon } from '../CustomIcons.jsx';
 import { useAuth } from '../../services/AuthContext.jsx'; // Importa el AuthContext
@@ -33,6 +39,7 @@ import axiosInstance from '../../services/axiosConfig.js';
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 
 import ColorModeSelect from '../shared-theme/ColorModeSelect.jsx';
+import { Paper } from '@mui/material';
 
 const drawerWidth = 195;
 
@@ -44,26 +51,46 @@ const dataSideMenu = [ //TO DO: checar las urls
   {name: 'Notifications', img: <ChatIcon/>, url: '/notifications' }
 ];
 
-const openedMixin = (theme) => ({
-  width: drawerWidth,
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: 'hidden',
-});
+const openedMixin = (theme, anchor) => {
+  const isVertical = anchor === 'top' || anchor === 'bottom';
+  return {
+    ...(isVertical
+      ? {
+          height: 200,
+          width: '100%',
+        }
+      : {
+          width: drawerWidth,
+        }),
+    transition: theme.transitions.create(isVertical ? 'height' : 'width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    overflow: 'hidden',
+  };
+};
 
-const closedMixin = (theme) => ({
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: 'hidden',
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-});
+const closedMixin = (theme, anchor) => {
+  const isVertical = anchor === 'top' || anchor === 'bottom';
+  return {
+    ...(isVertical
+      ? {
+          height: 0,
+          width: '100%',
+        }
+      : {
+          width: `calc(${theme.spacing(7)} + 1px)`,
+          [theme.breakpoints.up('sm')]: {
+            width: `calc(${theme.spacing(8)} + 1px)`,
+          },
+        }),
+    transition: theme.transitions.create(isVertical ? 'height' : 'width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    overflow: 'hidden',
+  };
+};
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -74,30 +101,20 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme }) => ({
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-    boxSizing: 'border-box',
-    variants: [
-      {
-        props: ({ open }) => open,
-        style: {
-          ...openedMixin(theme),
-          '& .MuiDrawer-paper': openedMixin(theme),
-        },
-      },
-      {
-        props: ({ open }) => !open,
-        style: {
-          ...closedMixin(theme),
-          '& .MuiDrawer-paper': closedMixin(theme),
-        },
-      },
-    ],
-  }),
-);
+const MyDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open, anchor }) => ({
+  flexShrink: 0,
+  whiteSpace: 'nowrap',
+  boxSizing: 'border-box',
+  ...(open
+    ? {
+        ...openedMixin(theme, anchor),
+        '& .MuiDrawer-paper': openedMixin(theme, anchor),
+      }
+    : {
+        ...closedMixin(theme, anchor),
+        '& .MuiDrawer-paper': closedMixin(theme, anchor),
+      }),
+}));
 
 function stringToColor(string) {
   let hash = 0;
@@ -197,14 +214,13 @@ export default function SideMenu(props) {
   // console.log(`${URL_SERVER}/utils/uploads/logoPerfil.jpg`);
 
   return (
-      <Drawer variant="permanent" open={openList} sx={{display: 'block '}} {...props}>
+    <>
+      <MyDrawer variant="permanent" open={openList} sx={{display: { xs: 'none', md: 'block' }}} {...props}>
         <DrawerHeader>
-
-          
-            <Box sx={openList? { display: 'flex', flexGrow: 0.1, alignItems: 'center',} : { display:'none'}}>
-              <AiSportIcon fontSize={{md:30,xs:35}}/>
-              <Typography sx={{m:{md:1,xs:0.7}}} variant='h6'>AiSport</Typography>
-            </Box>
+          <Box sx={openList? { display: 'flex', flexGrow: 0.1, alignItems: 'center',} : { display:'none'}}>
+            <AiSportIcon fontSize={{md:30,xs:35}}/>
+            <Typography sx={{m:{md:1,xs:0.7}}} variant='h6'>AiSport</Typography>
+          </Box>
           
           <IconButton onClick={toggleDrawer}>
             {openList? <ChevronLeftIcon /> 
@@ -426,6 +442,189 @@ export default function SideMenu(props) {
           </ListItem>
         </List>
         
-      </Drawer>
+      </MyDrawer>
+      
+      <AppBar position="static" 
+        sx={[
+          (theme) => ({
+            display: { md: 'none', xs:'flex'},
+            backgroundColor: theme.palette.background.paper,
+            ...theme.applyStyles('dark', {
+              backgroundColor: (theme.vars || theme).palette.background.paper
+            }),
+            
+          }),
+        ]}
+      >
+        <Toolbar sx={{justifyContent: 'space-between'}}>
+          {/* <Box sx={openList? { display: 'flex', flexGrow: 0.1, alignItems: 'center',} : { display:'none'}}>
+            <AiSportIcon fontSize={{md:30,xs:35}}/>
+            <Typography sx={{m:{md:1,xs:0.7}}} variant='h6'>AiSport</Typography>
+          </Box> */}
+          <IconButton onClick={toggleDrawer}>
+            {loading? <CircularProgress size={20}/> : <MenuIcon />}
+          </IconButton>
+          <Box sx={{ display: 'flex', flexDirection: 'row', alignContent: 'center', ml:2}}>
+            <AiSportIcon fontSize={{md:30,xs:35}}/>
+            <Typography sx={{mx: 1}} variant='h4'>AiSport</Typography>
+          </Box>
+          <ColorModeSelect 
+            sx={{mt:1}}
+          />
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        anchor='top'
+        open={openList}
+        sx={{display: { md: 'none', xs:'flex'}, width: '100%'}}
+        {...props}
+        >
+          <Container sx={{display: 'flex', flexDirection:'row', mt: 2, justifyContent: 'space-between'}}>
+            <IconButton
+              onClick={toggleDrawer}
+              // edge="start"
+              // sx={{ mr: 2 }}
+            >
+              {loading? <CircularProgress size={20}/> : <ExpandLessIcon />}
+            </IconButton>
+            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', ml:2}}>
+              <AiSportIcon fontSize={{md:30,xs:30}}/>
+              <Typography sx={{mx: 1, mt:0.5}} variant='h4'>AiSport</Typography>
+            </Box>
+            <ColorModeSelect 
+              sx={{mt:1}}
+            />
+            </Container>
+            <List
+              sx={{
+                display: 'flex',
+                flexDirection: 'column', // Colocar elementos en columna
+                height: '100%', // Ocupar toda la altura del contenedor
+              }}
+            >
+              {loading?
+                dataSideMenu.map((data, index) => {
+                return (
+                  <ListItem key={data.name} disablePadding 
+                  sx={{ display: 'block' }}
+                >
+                  <ListItemButton>
+                    <ListItemIcon
+                    sx={{
+                      // height:75, 
+                      justifyContent:'center',
+                      alignItems:'center',
+                      ml: 1
+                      }}>
+                    <CircularProgress size={20}/>
+                  </ListItemIcon>
+                </ListItemButton>
+                <Divider />
+                </ListItem>
+                );
+                })
+              :
+              dataSideMenu.map((data, index) => {
+                return (<ListItem key={data.name} disablePadding 
+                  sx={{ display: 'block'}}
+                >
+                  <ListItemButton
+                    title={data.name}
+                    alt={data.url}
+                    href={data.url}
+                    selected={location.pathname === data.url}
+                    sx={{
+                      my:1,
+                    }}>
+                    <ListItemIcon
+                      sx={[{
+                          minWidth: 0,
+                          justifyContent: 'center',
+                          ml: 2,
+                        },
+                      ]}>
+                      {data.name == 'Notifications'? 
+                        <Badge badgeContent={countNotification} color="primary" 
+                        sx={{
+                          "& .MuiBadge-badge": {
+                              fontSize: "0.6rem", // Tamaño del texto
+                              height: "14px", // Altura del badge
+                            },
+                        }}>
+                        {data.img}</Badge> 
+                        : 
+                        data.img
+                      }
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={data.name}
+                      sx={{ml:1}}
+                    />
+                  </ListItemButton>
+                  <Divider />
+                </ListItem>
+              );})}
+              
+              {!openList && 
+              <ListItem key={'Logout'} disablePadding 
+                sx={{ mt: 'auto', ml:-0.5, flexDirection: 'row',}}
+              >
+                <ListItemButton
+                  onClick={handleLogout}
+                  sx={{
+                    minHeight: 40,
+                  }}
+                >
+                  <ListItemIcon>
+                    {loading?
+                      <CircularProgress size={20} sx={{ml:1}}/>
+                    :
+                      <Logout sx={{ml:1.5, fontSize: 100 }}/>
+                    }
+                  </ListItemIcon>
+                </ListItemButton>
+              </ListItem>}
+              <ListItem key={'Profile'} disablePadding 
+                sx={[{ml:-0.5, flexDirection: 'row'},openList? {mt: 'auto'}: {mt: 1,}]}
+              >
+                <ListItemButton
+                  title={'Profile'}
+                  selected={location.pathname === 'profile'}
+                  href={`/dashboard/profile/${user.userName}`}
+                  onClick={handleClickMenu}
+                  sx={[{
+                      minHeight: 40,
+                    },
+                    //open? { justifyContent: 'initial',} : { justifyContent: 'center',},
+                  ]}>
+                  <ListItemIcon
+                    sx={[{
+                        minWidth: 0,
+                      },
+                    ]}>
+                    {loading?
+                      <CircularProgress size={20} sx={{ml:1}}/>
+                    :
+                    // {...stringAvatar(userName, {width: 30, height: 30, fontSize:15,})}
+                      <Avatar src={`${URL_SERVER}/utils/uploads/${(profile && profile.image !== 'logoPerfil.jpg') ? profile.image : 'logoPerfil.jpg'}`} crossOrigin="use-credentials"/>
+                    }
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={userName}
+                    sx={[openList? { opacity: 1,} : { opacity: 0, }, ]}
+                  />
+                </ListItemButton>
+                
+                {/* && !openMenu  agregarlo en la condicion siguiente al usar el miniMenu*/}
+                {openList && (
+                  <IconButton onClick={handleLogout} title='Logout' aria-label='Logout'>
+                    <Logout />
+                  </IconButton>
+                )}
+              </ListItem>
+            </List>
+        </Drawer>
+  
+    </>
   );
 }
