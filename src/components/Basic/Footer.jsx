@@ -12,9 +12,9 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 
 function Copyright() {
   return (
-    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+    <Typography variant="body2" sx={{ color: 'text.primary', mt: 1 }}>
       {'Copyright © '}
-      <Link color="text.secondary" href="/">
+      <Link color="text.primary" href="/">
         AiSport
       </Link>
       &nbsp;
@@ -68,13 +68,13 @@ export default function Footer(prop) {
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
               <strong>Information</strong>
             </Typography>
-            <Link color="text.secondary" variant="body2" href="/signin">
+            <Link color="text.primary" variant="body2" href="/signin">
               Sign In
             </Link>
-            <Link color="text.secondary" variant="body2" href="/signup">
+            <Link color="text.primary" variant="body2" href="/signup">
               Sign Up
             </Link>
-            <Link color="text.secondary" variant="body2" href='/aboutus'>
+            <Link color="text.primary" variant="body2" href='/aboutus'>
               About us
             </Link>
           </Box>
@@ -88,21 +88,21 @@ export default function Footer(prop) {
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
               <strong>Legal</strong>
             </Typography>
-            <Link color="text.secondary" variant="body2" href="/terms">
+            <Link color="text.primary" variant="body2" href="/terms">
               Terms
             </Link>
-            <Link color="text.secondary" variant="body2" href="/privacy">
+            <Link color="text.primary" variant="body2" href="/privacy">
               Privacy
             </Link>
           </Box>
           <div>
-          <Link color="text.secondary" variant="body2" href="/privacy">
+          <Link color="text.primary" variant="body2" href="/privacy">
             Privacy Policy
           </Link>
           <Typography sx={{ display: 'inline', mx: 0.5, opacity: 0.5 }}>
             &nbsp;•&nbsp;
           </Typography>
-          <Link color="text.secondary" variant="body2" href="/terms">
+          <Link color="text.primary" variant="body2" href="/terms">
             Terms of Service
           </Link>
           <Copyright />
@@ -111,7 +111,7 @@ export default function Footer(prop) {
           direction="row"
           spacing={1}
           useFlexGap
-          sx={{ justifyContent: 'center', color: 'text.secondary' }}
+          sx={{ justifyContent: 'center', color: 'text.primary' }}
         >
           <IconButton
             color="inherit"

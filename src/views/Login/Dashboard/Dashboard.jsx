@@ -15,21 +15,28 @@ import {
   CardMedia,
   CardContent,
   CardActionArea,
-  Divider, 
+  Divider,
   Container,
+  Grid,
+  Chip,
+  Avatar,
+  alpha,
+  useTheme
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-
-import { useAuth } from '../../../services/AuthContext.jsx'; // Importa el AuthContext
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
+import { useAuth } from '../../../services/AuthContext.jsx';
 import axiosInstance from "../../../services/axiosConfig.js";
 import LayoutLogin from '../../LayoutLogin.jsx';
-
+import TrendingUpIcon from '@mui/icons-material/AnalyticsOutlined';
 import LoadingCard from '../../../components/Login/LodingCard.jsx';
 import Search from '../../../components/Login/Search.jsx';
-
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate
+import { useNavigate } from 'react-router-dom';
 import Carousel from 'react-multi-carousel';
 import "react-multi-carousel/lib/styles.css";
+import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
+import GroupsIcon from '@mui/icons-material/Groups';
+import EventIcon from '@mui/icons-material/Event';
 
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 const centerJustify = {display: 'flex', alignContent:'center', textAlign:'justify', justifyContent:'space-evenly'};
@@ -37,30 +44,64 @@ const centerJustify = {display: 'flex', alignContent:'center', textAlign:'justif
 const TitleTypography = styled(Typography)(({ theme }) => ({
   color: theme.palette.success.dark,
   ...theme.applyStyles('dark', {
-    color: theme.palette.success.light,
+    color: theme.palette.warning.light,
   }),
 }));
 
-const myResponsive = {
+const StyledTitle = styled(Typography)(({ theme }) => ({
+  fontWeight: 700,
+  letterSpacing: 1,
+  marginBottom: theme.spacing(3),
+  position: 'relative',
+  display: 'inline-block',
+  '&:after': {
+    content: '""',
+    position: 'absolute',
+    bottom: -8,
+    left: 0,
+    width: '50%',
+    height: 4,
+    background: theme.palette.mode === 'dark' ? 
+      `linear-gradient(to right, ${theme.palette.warning.light}, transparent)` :
+      `linear-gradient(to right, ${theme.palette.success.dark}, transparent)`,
+    borderRadius: 2
+  }
+}));
+
+const GradientCard = styled(Card)(({ theme }) => ({
+  background: theme.palette.mode === 'dark' ?
+    `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.8)} 0%, ${alpha(theme.palette.background.default, 0.9)} 100%)` :
+    `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.grey[100], 0.8)} 100%)`,
+  borderRadius: 16,
+  boxShadow: theme.shadows[4],
+  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: theme.shadows[8]
+  }
+}));
+
+const responsive = {
   superLargeDesktop: {
-    // the naming can be any, depends on you.
     breakpoint: { max: 4000, min: 3000 },
     items: 5
   },
   desktop: {
     breakpoint: { max: 3000, min: 1024 },
-    items: 4
+    items: 3,
+    partialVisibilityGutter: 40
   },
   tablet: {
-    breakpoint: { max: 1024, min: 464 },
-    items: 3
+    breakpoint: { max: 1024, min: 600 },
+    items: 2,
+    partialVisibilityGutter: 30
   },
   mobile: {
-    breakpoint: { max: 464, min: 0 },
-    items: 2
+    breakpoint: { max: 600, min: 0 },
+    items: 1,
+    partialVisibilityGutter: 20
   }
 };
-
 const columns = [
   { 
     id: 'torneos', 
@@ -123,7 +164,7 @@ export default function Dashboard() {
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
+  const theme = useTheme();
   const [selectedTournament, setSelectedTournament] = React.useState(null); // Estado para almacenar el searchTournament
   const [selectedTeam, setSelectedTeam] = React.useState(null); // Estado para almacenar el searchTeam
   
@@ -162,191 +203,500 @@ export default function Dashboard() {
   }, [[user]]);
   return (
     <LayoutLogin>
-      {/* Tiene el skeleton para dar una animacion de carga al cargar los datos */}
-      <Typography variant='h2' sx={{ mb: 2 }}> 
-        {loading ? 
-        <Skeleton variant="rounded" width={'50%'} height={40} /> 
-        : 
-        `Welcome ${user.userName.toUpperCase() || 'invitado'} to you dashboard!`} 
-      </Typography>
-      <Typography variant='subtitle2'>
-        {loading ? 
-          <Skeleton variant="rounded" width={'42%'}/> 
-          : 
-          'Here you can management your preferences and consult your information.'
-        }
-      </Typography>
-
-        {/* CARUSEL DE TORNEOS*/}
-      
-      <TitleTypography variant='h4' 
-        sx={{mt: 6, display: 'flex', flexDirection: 'row', alignItems: 'center'}}
-      >
-        {/* Tournaments Available  */}
-        {loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'Tournaments Available'}
-        {!loading && data.torneos.length > 0 &&
-          <Search myOptions={data.torneos} myValue={selectedTournament} /*Se renderizara el buscador, si se cargo los datos correctamente*/
-            onChange={(e, newValue) => {
-              setSelectedTournament(newValue || null);
-            }}
-            isOptionEqualToValue = {(option, value) => option.id === value.id}
-            myLabel={'Search Tournament'}
-            toUrl={'tournament'}/>
-        } 
-      </TitleTypography>
-      <Box sx={{ width: '100%', height: 'auto', mx: 2 }}>
-        {loading ? <Skeleton variant="rounded" sx={{mx:-2, width:'100%', height:150}}/> :
-          <Carousel
-            responsive={myResponsive}
-            slidesToSlide={2}
-            //autoPlay={true}
-            //autoPlaySpeed={8000} //ms
-            // infinite={true}
-            removeArrowOnDeviceType={["tablet", "mobile"]}
-          >
-            {data.torneos.length > 0 ? 
-              data.torneos.map((torneo, i) => {
-                return (
-                <Card
-                  variant="outlined" 
-                  sx={{p:0, m:1,}}
-                  key={i}
-                >
-                  <CardActionArea href={`/dashboard/tournament/${torneo.name}/${torneo.id}`} sx={{p:2}}>
-                    <Typography variant='h4' component='strong' sx={centerJustify} color='secondary'>{torneo.name}</Typography>
-                    <Divider sx={{my:1}}/>
-                    
-                    <Container sx={centerJustify}>
-                      <Typography variant='subtitle2' color='primary'> 
-                        <strong>Location: </strong>
-                      </Typography>
-                      <Typography sx={{color: 'text.data'}}> 
-                        {torneo.ubicacion}
-                      </Typography>
-                    </Container>
-
-                    <Container sx={centerJustify}>
-                      <Typography variant='subtitle2' color='primary'> 
-                        <strong>Start date: </strong>
-                      </Typography>
-                      <Typography sx={{color: 'text.data'}}> 
-                        {new Date(torneo.fechaInicio).toLocaleDateString()}
-                      </Typography>
-                    </Container>
-                    
-                    <Container sx={centerJustify}>
-                      <Typography variant='subtitle2' color='primary'> 
-                        <strong>End date: </strong>
-                      </Typography>
-                      <Typography sx={{color: 'text.data'}}> 
-                        {new Date(torneo.fechaFin).toLocaleDateString()}
-                      </Typography>
-                    </Container>
-                    
-                    <Container sx={centerJustify}>
-                      <Typography variant='subtitle2' color='primary' sx={{mr:2}}> 
-                        <strong>Description: </strong>
-                      </Typography>
-                      <Typography sx={{color: 'text.data'}}> 
-                        {torneo.descripcion}
-                      </Typography>
-                    </Container>
-                  </CardActionArea>
-                </Card>
-                );})
-            : 
-              <LoadingCard message={'Maybe tournaments are not found.'}/>
+     {/* Welcome Section */}
+        <Box
+          sx={(theme) => ({
+            mb: 6,
+            position: 'relative',
+            '&:after': {
+              content: '""',
+              position: 'absolute',
+              bottom: -16,
+              left: 0,
+              width: '100%',
+              height: 1,
+              background: `linear-gradient(to right, transparent, ${alpha(theme.palette.divider, 0.3)}, transparent)`
             }
-          </Carousel>
-        }
-      </Box>
-
-        {/* CARUSEL DE EQUIPOS */}
-      <TitleTypography variant='h4' 
-        sx={{mt: 6, display: 'flex', flexDirection: 'row', alignItems: 'center'}}
-      >
-        {loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'Teams Available'}
-        {!loading && data.equipos.length > 0 && 
-          <Search myOptions={data.equipos} myValue={selectedTeam} /*Se renderizara el buscador, si se cargo los datos correctamente*/
-            onChange={(e, newValue) => {
-              setSelectedTeam(newValue || null);
-            }}
-            isOptionEqualToValue = {(option, value) => option.name === value.name}
-            myLabel={'Search Team'}
-            toUrl={'team'}/>
-        } 
-      </TitleTypography>
-      <Box sx={{ width: '100%', height: 'auto', mx: 2 }}>
-        {loading ? <Skeleton variant="rounded" sx={{mx:-2, width:'100%', height:150}}/> :
-          <Carousel
-            responsive={myResponsive}
-            slidesToSlide={2}
-            removeArrowOnDeviceType={["tablet", "mobile"]}
-          >
-            {data.equipos.length > 0? (
-              data.equipos.map((equipo, i) => {
-                return (
-                <Card 
-                  variant="outlined" 
-                  key={i} 
-                  sx={{p:0, m:1}}
+          })}
+        >
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12} md={8}>
+              <Box
+                sx={(theme) => ({
+                  p: 3,
+                  borderRadius: 4,
+                  background:
+                    theme.palette.mode === 'light'
+                      ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.primary.light, 0.3)} 100%)`
+                      : `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.primary.dark, 0.2)} 100%)`,
+                  boxShadow: theme.shadows[2]
+                })}
+              >
+                <Typography
+                  variant="h4"
+                  sx={(theme) => ({
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 2,
+                    fontWeight: 800,
+                    background:
+                      theme.palette.mode === 'dark'
+                        ? 'linear-gradient(to right, hsl(210, 100%, 70%), hsl(143, 88.70%, 51.40%), gold)'
+                        : 'linear-gradient(to right, hsl(219, 77%, 40%), hsl(143, 88.70%, 35.40%), goldenrod)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    letterSpacing: 0.5
+                  })}
                 >
-                  <CardActionArea href={`/dashboard/team/${equipo.name}/${equipo.id}`} sx={{p:2}}>
-                      <CardMedia
-                          component="img"
-                          height={120}
-                          image={`${URL_SERVER}/utils/uploads/${equipo && equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`} 
-                          alt={equipo.name}
-                          // crossOrigin="anonymous" // tambien se puede usar este
-                          crossOrigin="use-credentials"
+                  {loading ? (
+                    <Skeleton variant="rounded" width={'70%'} height={48} />
+                  ) : (
+                    <>
+                      Welcome back
+                      <Box
+                        component="span"
+                        sx={{
+                          background: 'linear-gradient(to right, orange, gold, white)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          fontWeight: 900
+                        }}
+                      >
+                        {user?.userName?.toUpperCase() || 'GUEST'}
+                      </Box>
+                      <TrendingUpIcon
+                        sx={(theme) => ({
+                          fontSize: '2rem',
+                          background: 'linear-gradient(to right, orange, gold, gray)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent'
+                        })}
                       />
-                      <CardContent>
-                      
-                          <Typography variant="h5" component="span" color='secondary' sx={{...centerJustify, my:0.5}}>
-                              <strong>{equipo.name}</strong>
-                          </Typography>
-                          <Container sx={centerJustify}>
-                            <Typography variant='subtitle2' color='primary'> 
-                              <strong>Leader: </strong>
-                            </Typography>
-                            <Typography sx={{color: 'text.data'}}> 
-                              {equipo['users'].name}
-                            </Typography>
-                          </Container>
-                      </CardContent>
-                  </CardActionArea>
-              </Card>
-            );})) 
-            : 
-            <LoadingCard message={'Maybe teams are not found.'}/>
-            }
-          </Carousel>
-        }
-      </Box>
+                    </>
+                  )}
+                </Typography>
 
-        {/* TABLA DE PROXIMOS PARTIDOS */}
-      <TitleTypography variant='h4' 
-        sx={{mt: 6, mb: 2,}}
-      >
-          {loading ? <Skeleton variant="rounded" height={40} width={200}/> : 'My Matches'}
-      </TitleTypography>
+                <Typography variant="subtitle1" sx={{ mt: 1.5, color: 'text.secondary' }}>
+                  {loading ? (
+                    <Skeleton variant="rounded" width={'60%'} />
+                  ) : (
+                    'Manage your tournaments, teams and upcoming matches all in one place.'
+                  )}
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  height: '100%',
+                  alignItems: 'center'
+                }}
+              >
+                <Avatar
+                  sx={(theme) => ({
+                    width: 120,
+                    height: 120,
+                    bgcolor:
+                      theme.palette.mode === 'dark'
+                        ? alpha(theme.palette.primary.light, 0.2)
+                        : alpha(theme.palette.primary.dark, 0.1),
+                    border: `2px solid ${alpha(theme.palette.secondary.dark, 0.3)}`
+                  })}
+                >
+                  <SmartToyOutlinedIcon sx={{ fontSize: 60 }} />
+                </Avatar>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+
+      {/* Tournaments Section */}
+        <Box sx={{ mb: 8 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mb: 3
+            }}
+          >
+            <StyledTitle
+              variant="h4"
+              sx={(theme) => ({
+                display: 'flex',
+                alignItems: 'center',
+                fontWeight: 800,
+                color: theme.palette.text.primary,
+              })}
+            >
+              <SportsSoccerIcon
+                sx={(theme) => ({
+                  mr: 1.5,
+                  verticalAlign: 'middle',
+                  fontSize: '2rem',
+                  color:
+                    theme.palette.mode === 'light'
+                      ? theme.palette.secondary.dark
+                      : theme.palette.primary.main
+                })}
+              />
+              TOURNAMENTS
+            </StyledTitle>
+
+            {!loading && data.torneos.length > 0 && (
+              <Search
+                myOptions={data.torneos}
+                myValue={selectedTournament}
+                onChange={(e, newValue) => setSelectedTournament(newValue || null)}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                myLabel={'Search Tournament'}
+                toUrl={'tournament'}
+              />
+            )}
+          </Box>
+
+          {loading ? (
+            <Skeleton variant="rounded" height={240} sx={{ borderRadius: 4 }} />
+          ) : (
+            <Carousel
+              responsive={responsive}
+              slidesToSlide={1}
+              partialVisible={true}
+              swipeable={true}
+              draggable={true}
+              containerClass="carousel-container"
+              itemClass="carousel-item"
+              additionalTransfrom={0}
+              arrows
+              centerMode={false}
+              className=""
+              dotListClass=""
+              focusOnSelect={false}
+              infinite
+              keyBoardControl
+              minimumTouchDrag={80}
+              renderButtonGroupOutside={false}
+              renderDotsOutside={false}
+              showDots={false}
+              sliderClass=""
+              transitionDuration={500} // Aumentamos la duración de la transición
+              customTransition="transform 500ms ease-in-out" // Transición personalizada
+              removeArrowOnDeviceType={["tablet", "mobile"]}
+            >
+              {data.torneos.length > 0 ? (
+                data.torneos.map((torneo) => (
+                  <Box key={torneo.id} sx={{ px: 1.5, py: 1 }}>
+                    <GradientCard>
+                      <CardActionArea
+                        href={`/dashboard/tournament/${torneo.name}/${torneo.id}`}
+                        sx={{ p: 3, height: '100%' }}
+                      >
+                        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                          <Typography
+                            variant="h5"
+                            component="div"
+                            sx={(theme) => ({
+                              fontWeight: 700,
+                              mb: 2,
+                              color:
+                                theme.palette.mode === 'light'
+                                  ? theme.palette.secondary.dark
+                                  : theme.palette.primary.main
+                            })}
+                          >
+                            {torneo.name}
+                          </Typography>
+
+                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5, color: 'text.secondary' }}>
+                            <EventIcon sx={{ mr: 1, fontSize: 20 }} />
+                            <Typography variant="body2">
+                              {new Date(torneo.fechaInicio).toLocaleDateString()} - {new Date(torneo.fechaFin).toLocaleDateString()}
+                            </Typography>
+                          </Box>
+
+                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, color: 'text.secondary' }}>
+                            <Box component="span" sx={{ mr: 1 }}>📍</Box>
+                            <Typography variant="body2">{torneo.ubicacion}</Typography>
+                          </Box>
+
+                          <Divider sx={{ my: 1.5 }} />
+
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              flexGrow: 1,
+                              color: 'text.secondary',
+                              display: '-webkit-box',
+                              WebkitLineClamp: 3,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden'
+                            }}
+                          >
+                            {torneo.descripcion}
+                          </Typography>
+
+                          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+                            <Chip
+                              label="View Details"
+                              size="small"
+                              sx={(theme) => ({
+                                fontWeight: 600,
+                                bgcolor: alpha(theme.palette.primary.main, 0.1),
+                                color: theme.palette.primary.main,
+                                '&:hover': {
+                                  bgcolor: alpha(theme.palette.primary.main, 0.2)
+                                }
+                              })}
+                            />
+                          </Box>
+                        </Box>
+                      </CardActionArea>
+                    </GradientCard>
+                  </Box>
+                ))
+              ) : (
+                <LoadingCard message={'No tournaments found. Check back later!'} />
+              )}
+            </Carousel>
+          )}
+        </Box>
+
+        {/* Teams Section */}
+        <Box sx={{ mb: 8 }}>
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            mb: 3
+          }}>
+            <StyledTitle
+              variant="h4"
+              sx={(theme) => ({
+                display: 'flex',
+                alignItems: 'center',
+                fontWeight: 800,
+                color: theme.palette.text.primary,
+              })}
+            >
+              <GroupsIcon
+                sx={(theme) => ({
+                  mr: 1.5,
+                  verticalAlign: 'middle',
+                  fontSize: '2rem',
+                  color:
+                    theme.palette.mode === 'light'
+                      ? theme.palette.secondary.dark
+                      : theme.palette.secondary.main
+                })}
+              />
+              TEAMS
+            </StyledTitle>
+            {!loading && data.equipos.length > 0 && 
+              <Search 
+                myOptions={data.equipos} 
+                myValue={selectedTeam}
+                onChange={(e, newValue) => setSelectedTeam(newValue || null)}
+                isOptionEqualToValue={(option, value) => option.name === value.name}
+                myLabel={'Search Team'}
+                toUrl={'team'}
+              />
+            }
+          </Box>
+
+          {loading ? (
+            <Skeleton variant="rounded" height={240} sx={{ borderRadius: 4 }} />
+          ) : (
+            <Carousel
+              responsive={responsive}
+              slidesToSlide={1}
+              partialVisible={true}
+              swipeable={true}
+              draggable={true}
+              containerClass="carousel-container"
+              itemClass="carousel-item"
+              additionalTransfrom={0}
+              arrows
+              centerMode={false}
+              className=""
+              dotListClass=""
+              focusOnSelect={false}
+              infinite
+              keyBoardControl
+              minimumTouchDrag={80}
+              renderButtonGroupOutside={false}
+              renderDotsOutside={false}
+              showDots={false}
+              sliderClass=""
+              transitionDuration={600} // Transición más suave
+              customTransition="all 600ms ease-in-out" // Transición personalizada
+              removeArrowOnDeviceType={["tablet", "mobile"]}
+            >
+              {data.equipos.length > 0 ? 
+                data.equipos.map((equipo) => (
+                  <Box key={equipo.id} sx={{ px: 1.5, py: 1 }}>
+                    <GradientCard>
+                      <CardActionArea 
+                        href={`/dashboard/team/${equipo.name}/${equipo.id}`} 
+                        sx={{ p: 3, height: '100%' }}
+                      >
+                        <Box sx={{ 
+                          display: 'flex', 
+                          flexDirection: 'column', 
+                          alignItems: 'center',
+                          height: '100%'
+                        }}>
+                          <Avatar
+                            src={`${URL_SERVER}/utils/uploads/${equipo && equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`}
+                            alt={equipo.name}
+                            sx={{ 
+                              width: 120, 
+                              height: 120, 
+                              mb: 3,
+                              border: `3px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                              transition: 'transform 0.3s ease',
+                              '&:hover': {
+                                transform: 'scale(1.05)'
+                              }
+                            }}
+                          />
+                          
+                          <Typography
+                            variant="h5"
+                            component="div"
+                            sx={(theme) => ({
+                              fontWeight: 700,
+                              mb: 2,
+                              color:
+                                theme.palette.mode === 'light'
+                                  ? theme.palette.secondary.dark
+                                  : theme.palette.primary.light
+                            })}
+                          >
+                            {equipo.name}
+                          </Typography>
+                          
+                          <Box sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            mb: 2,
+                            color: 'text.secondary'
+                          }}>
+                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                              Leader: {equipo['users'].name}
+                            </Typography>
+                          </Box>
+                          
+                          <Box sx={{ 
+                            mt: 'auto', 
+                            width: '100%',
+                            display: 'flex',
+                            justifyContent: 'center'
+                          }}>
+                            <Chip 
+                              label="Team Profile" 
+                              size="small" 
+                              sx={(theme) => ({
+                                fontWeight: 600,
+                                bgcolor: alpha(theme.palette.secondary.main, 0.1),
+                                color: theme.palette.secondary.main,
+                                '&:hover': {
+                                  bgcolor: alpha(theme.palette.secondary.main, 0.2)
+                                },
+                                transition: 'all 0.3s ease'
+                              })} 
+                            />
+                          </Box>
+                        </Box>
+                      </CardActionArea>
+                    </GradientCard>
+                  </Box>
+                )) : 
+                <LoadingCard message={'No teams found. Check back later!'} />
+              }
+            </Carousel>
+          )}
+        </Box>
+      {/* Matches Section */}
       <Box>
-        {loading ? <Skeleton variant="rounded" height={440} />
-          :
-        data.proximosPartidos.length>0?
-          <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-            <TableContainer sx={{ maxHeight: 440}}>
+        <StyledTitle
+          variant="h4"
+          sx={(theme) => ({
+            display: 'flex',
+            alignItems: 'center',
+            fontWeight: 800,
+            color: theme.palette.mode === 'light' 
+              ? theme.palette.success.dark 
+              : theme.palette.warning.light,
+          })}
+        >
+          <EventIcon
+            sx={(theme) => ({
+              mr: 1.5,
+              verticalAlign: 'middle',
+              fontSize: '2rem',
+              color: theme.palette.mode === 'light'
+                ? theme.palette.success.dark
+                : theme.palette.warning.light
+            })}
+          />
+          UPCOMING MATCHES
+        </StyledTitle>
+
+        {loading ? (
+          <Skeleton variant="rounded" height={440} sx={{ borderRadius: 4 }} />
+        ) : data.proximosPartidos.length > 0 ? (
+          <Paper 
+            sx={(theme) => ({ 
+              width: '100%', 
+              overflow: 'hidden',
+              borderRadius: 4,
+              background: theme.palette.mode === 'dark'
+                ? alpha(theme.palette.background.paper, 0.9)
+                : alpha(theme.palette.grey[100], 0.8),
+              boxShadow: theme.shadows[4],
+              border: `1px solid ${
+                theme.palette.mode === 'dark'
+                  ? alpha(theme.palette.divider, 0.2)
+                  : alpha(theme.palette.divider, 0.1)
+              }`
+            })}
+          >
+            <TableContainer sx={{ maxHeight: 440 }}>
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                   <TableRow>
-                    <TableCell > {/*Celda para el numero de elementos de la tabla, lo cual esta vacia*/}
-                      {""}
+                    <TableCell 
+                      align="center"
+                      sx={(theme) => ({
+                        fontWeight: 700,
+                        backgroundColor: theme.palette.mode === 'dark'
+                          ? alpha(theme.palette.background.paper, 0.7)
+                          : alpha(theme.palette.grey[100], 0.9),
+                        color: theme.palette.mode === 'light'
+                          ? theme.palette.success.dark
+                          : theme.palette.warning.light,
+                        borderBottom: `1px solid ${alpha(theme.palette.divider, 0.2)}`
+                      })}
+                    >
+                      #
                     </TableCell>
                     {columns.map((column) => (
                       <TableCell
-                        key={column.extraIndex? column.id+'.'+column.extraIndex : column.id}
+                        key={column.extraIndex ? column.id+'.'+column.extraIndex : column.id}
                         align={column.align}
-                        style={{ minWidth: column.minWidth }}
+                        sx={(theme) => ({
+                          fontWeight: 700,
+                          backgroundColor: theme.palette.mode === 'dark'
+                            ? alpha(theme.palette.background.paper, 0.7)
+                            : alpha(theme.palette.grey[100], 0.9),
+                          color: theme.palette.mode === 'light'
+                            ? theme.palette.success.dark
+                            : theme.palette.warning.light,
+                          borderBottom: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+                          minWidth: column.minWidth
+                        })}
                       >
                         {column.label}
                       </TableCell>
@@ -356,19 +706,56 @@ export default function Dashboard() {
                 <TableBody>
                   {data.proximosPartidos
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row, i) => {
-                      i+=1; //Recorremos 1 a los elementos
+                    .map((row, index) => {
                       const tournament = row.torneos;
                       return (
-                        <TableRow hover role="checkbox" tabIndex={-1} key={i} onClick={() => handleRowClick(tournament.id, tournament.name)} style={{ cursor: 'pointer' }}> 
-                          <TableCell key={i} width={50} align='center'>
-                            {i}
+                        <TableRow 
+                          hover 
+                          tabIndex={-1} 
+                          key={index} 
+                          onClick={() => handleRowClick(tournament.id, tournament.name)}
+                          sx={(theme) => ({
+                            '&:nth-of-type(even)': {
+                              backgroundColor: theme.palette.mode === 'dark'
+                                ? alpha(theme.palette.background.paper, 0.5)
+                                : alpha(theme.palette.grey[100], 0.5)
+                            },
+                            '&:hover': {
+                              backgroundColor: theme.palette.mode === 'dark'
+                                ? alpha(theme.palette.primary.main, 0.2)
+                                : alpha(theme.palette.primary.main, 0.1)
+                            },
+                            cursor: 'pointer'
+                          })}
+                        >
+                          <TableCell 
+                            align="center"
+                            sx={(theme) => ({
+                              fontWeight: 600,
+                              borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                              color: theme.palette.text.secondary
+                            })}
+                          >
+                            {page * rowsPerPage + index + 1}
                           </TableCell>
-                          {columns.map((column,i) => {
-                            i+=1; //Recorremos 1 a los elementos
-                            const value = column.extraIndex? row[column.id][column.extraIndex] : row[column.id];
+                          {columns.map((column) => {
+                            const value = column.extraIndex ? 
+                              row[column.id][column.extraIndex] : 
+                              row[column.id];
                             return (
-                              <TableCell key={i} align={column.align}>
+                              <TableCell 
+                                key={column.id} 
+                                align={column.align}
+                                sx={(theme) => ({
+                                  fontWeight: 500,
+                                  borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                                  color: column.id.includes('equipoLocal') 
+                                    ? theme.palette.text.secondary 
+                                    : column.id.includes('equipoVisitante') 
+                                      ? theme.palette.primary.light 
+                                      : theme.palette.text.primary
+                                })}
+                              >
                                 {column.format ? 
                                   column.format(value) : value
                                 }
@@ -389,13 +776,25 @@ export default function Dashboard() {
               page={page}
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
+              sx={(theme) => ({
+                borderTop: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
+                  fontWeight: 500,
+                  color: theme.palette.text.secondary
+                },
+                backgroundColor: theme.palette.mode === 'dark'
+                  ? alpha(theme.palette.background.paper, 0.7)
+                  : alpha(theme.palette.grey[100], 0.9)
+              })}
             />
           </Paper>
-          :
-          <LoadingCard message={'Maybe matches are not found.'} CircularSize='2%'/>
-        }
+        ) : (
+          <LoadingCard 
+            message={'No upcoming matches scheduled.'} 
+            CircularSize='2%'
+          />
+        )}
       </Box>
-
     </LayoutLogin>
   );
 }

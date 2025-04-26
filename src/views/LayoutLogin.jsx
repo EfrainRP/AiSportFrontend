@@ -26,11 +26,10 @@ export default function LayoutLogin(props) {
             backgroundRepeat: 'no-repeat',
             ...theme.applyStyles('light', {
               backgroundImage:
-              'radial-gradient(ellipse at 50% 5%, hsla(29, 95.30%, 57.80%, 0.73), hsla(29, 74.50%, 70.80%, 0.90))',
+              `linear-gradient(to bottom left, #e3f2fd, #90caf9, #42a5f5, #1e88e5)`,
             }),
             ...theme.applyStyles('dark', {
-              backgroundImage:
-              'radial-gradient(at 50% 50%, hsla(29, 90.90%, 30.20%, 0.85), hsla(29, 41.70%, 18.80%, 0.84))', 
+              backgroundImage: 'linear-gradient(to bottom left, #1a1c2e, #2e324f, #3a3f6b, #4b4f7e)',
             }),
             zIndex: 1
           })}

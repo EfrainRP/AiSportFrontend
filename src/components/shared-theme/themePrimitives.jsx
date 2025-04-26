@@ -17,6 +17,19 @@ export const purple = {
   900: 'hsl(266, 100%, 21%)',
 };
 
+export const teal = {
+  50: 'hsl(172, 96%, 95%)',
+  100: 'hsl(172, 96%, 90%)',
+  200: 'hsl(172, 96%, 75%)',
+  300: 'hsl(172, 96%, 60%)',
+  400: 'hsl(172, 96%, 50%)', 
+  500: 'hsl(172, 90%, 42%)',
+  600: 'hsl(172, 80%, 34%)',
+  700: 'hsl(172, 70%, 26%)',
+  800: 'hsl(172, 70%, 18%)',
+  900: 'hsl(172, 70%, 12%)',
+};
+
 export const brand = {
   50: 'hsl(210, 100%, 95%)',
   100: 'hsl(210, 100%, 92%)',
@@ -57,16 +70,29 @@ export const green = {
 };
 
 export const orange = {
-  50: 'hsl(45, 100%, 97%)',
-  100: 'hsl(45, 92%, 90%)',
-  200: 'hsl(45, 94%, 80%)',
-  300: 'hsl(45, 90%, 65%)',
-  400: 'hsl(45, 90%, 40%)',
-  500: 'hsl(45, 90%, 35%)',
-  600: 'hsl(45, 91%, 25%)',
-  700: 'hsl(45, 94%, 20%)',
-  800: 'hsl(45, 95%, 16%)',
-  900: 'hsl(45, 93%, 12%)',
+  50: 'hsl(24, 100%, 95%)',
+  100: 'hsl(24, 100%, 90%)',
+  200: 'hsl(24, 100%, 80%)',
+  300: 'hsl(24, 100%, 65%)',
+  400: 'hsl(24, 100%, 55%)',
+  500: 'hsl(24, 100%, 50%)', // Aproximado base ff6900
+  600: 'hsl(24, 100%, 45%)',
+  700: 'hsl(24, 100%, 38%)',
+  800: 'hsl(24, 100%, 28%)',
+  900: 'hsl(24, 100%, 18%)',
+};
+
+export const gold = {
+  50: 'hsl(45, 100%, 95%)',   
+  100: 'hsl(45, 95%, 90%)',
+  200: 'hsl(45, 90%, 80%)',
+  300: 'hsl(45, 85%, 65%)',
+  400: 'hsl(45, 85%, 55%)',  
+  500: 'hsl(45, 80%, 50%)',   // Dorado medio clásico
+  600: 'hsl(45, 75%, 45%)',
+  700: 'hsl(45, 70%, 35%)',  
+  800: 'hsl(45, 60%, 25%)',
+  900: 'hsl(45, 50%, 15%)',   
 };
 
 export const red = {
@@ -296,15 +322,15 @@ export const colorSchemes = {
     palette: {
       primary: {
         contrastText: brand[50],
-        light: brand[300],
-        main: brand[400],
-        dark: brand[700],
+        light: orange[200],
+        main: orange[400],
+        dark: orange[800],
       },
       secondary: {
-        light: purple[400],
-        main: purple[600],
-        dark: purple[800],
-        contrastText: gray[300],
+        light: teal[600],
+        main: teal[500],
+        dark: teal[800],
+        contrastText: orange[300],
       },
       info: {
         contrastText: brand[300],
@@ -313,9 +339,9 @@ export const colorSchemes = {
         dark: brand[900],
       },
       warning: {
-        light: orange[400],
-        main: orange[500],
-        dark: orange[700],
+        light: gold[400],
+        main: gold[500],
+        dark: gold[700],
       },
       error: {
         light: red[400],
@@ -330,22 +356,22 @@ export const colorSchemes = {
       grey: {
         ...gray,
       },
-      divider: alpha(gray[600], 0.6),
+      divider: brand[600], // Components Divider Color
       background: {
-        default: gray[900],
-        paper: 'hsl(219, 77.30%, 8.60%)',
+        default: 'hsl(227, 14.30%, 12.40%)', // SideMenu base Color
+        paper: 'hsl(219, 77%, 4.5%)', // Searsh Widget Color
       },
-      text: {
-        primary: 'hsl(0, 0%, 100%)',
-        secondary: gray[400],
+      text: { 
+        primary: 'hsla(0, 0.00%, 100.00%, 0.97)', // // SideMenu options Text Titles, subtitles
+        secondary: 'hsl(160, 96.00%, 50.40%)', // SideMenu Icons Color
       },
       action: {
-        hover: alpha(gray[600], 0.2),
-        selected: alpha(gray[600], 0.3),
+        hover: 'hsl(219, 77%, 4.5%)', // Icons Hover Color
+        selected:'hsl(172, 96.00%, 50.40%)', // SideMenu Opcion Selected Color
       },
       baseShadow:
         'hsla(220, 30%, 5%, 0.7) 0px 4px 16px 0px, hsla(220, 25%, 10%, 0.8) 0px 8px 16px -5px',
-    },
+    }, 
   },
 };
 
