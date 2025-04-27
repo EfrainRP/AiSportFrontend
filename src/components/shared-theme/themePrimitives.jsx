@@ -4,20 +4,7 @@ const defaultTheme = createTheme();
 
 const customShadows = [...defaultTheme.shadows];
 
-export const purple = {
-  50: 'hsl(266, 100%, 95%)',
-  100: 'hsl(266, 100%, 92%)',
-  200: 'hsl(266, 100%, 80%)',
-  300: 'hsl(266, 100%, 65%)',
-  400: 'hsl(266, 98%, 48%)',
-  500: 'hsl(266, 98.10%, 42.00%)',
-  600: 'hsl(266, 83.30%, 62.40%)',
-  700: 'hsl(266, 100%, 35%)',
-  800: 'hsl(266, 100%, 16%)',
-  900: 'hsl(266, 100%, 21%)',
-};
-
-export const brand = {
+export const colorPrimary = {
   50: 'hsl(210, 100%, 95%)',
   100: 'hsl(210, 100%, 92%)',
   200: 'hsl(210, 100%, 80%)',
@@ -28,6 +15,19 @@ export const brand = {
   700: 'hsl(210, 100%, 35%)',
   800: 'hsl(210, 100%, 16%)',
   900: 'hsl(210, 100%, 21%)',
+};
+
+export const colorSecondary = {
+  50: 'hsl(266, 100%, 95%)',
+  100: 'hsl(266, 100%, 92%)',
+  200: 'hsl(266, 100%, 80%)',
+  300: 'hsl(266, 100%, 65%)',
+  400: 'hsl(266, 98%, 48%)',
+  500: 'hsl(266, 98.10%, 42.00%)',
+  600: 'hsl(266, 83.30%, 62.40%)',
+  700: 'hsl(266, 100%, 35%)',
+  800: 'hsl(266, 100%, 16%)',
+  900: 'hsl(266, 100%, 21%)',
 };
 
 export const gray = {
@@ -92,33 +92,33 @@ export const getDesignTokens = (mode) => {
     palette: {
       mode,
       primary: {
-        light: brand[200],
-        main: brand[400],
-        dark: brand[700],
-        contrastText: brand[50],
+        light: colorPrimary[200],
+        main: colorPrimary[400],
+        dark: colorPrimary[700],
+        contrastText: colorPrimary[50],
         ...(mode === 'dark' && {
-          contrastText: brand[50],
-          light: brand[300],
-          main: brand[400],
-          dark: brand[700],
+          contrastText: colorPrimary[50],
+          light: colorPrimary[300],
+          main: colorPrimary[400],
+          dark: colorPrimary[700],
         }),
       },
       secondary: { // Agregando el color secundario
-        light: purple[300],
-        main: purple[500],  // Aquí defines el color principal secundario
-        dark: purple[700],
-        contrastText: purple[50],
+        light: colorSecondary[300],
+        main: colorSecondary[500],  // Aquí defines el color principal secundario
+        dark: colorSecondary[700],
+        contrastText: colorSecondary[50],
       },
       info: {
-        light: brand[100],
-        main: brand[300],
-        dark: brand[600],
+        light: colorPrimary[100],
+        main: colorPrimary[300],
+        dark: colorPrimary[600],
         contrastText: gray[50],
         ...(mode === 'dark' && {
-          contrastText: brand[300],
-          light: brand[500],
-          main: brand[700],
-          dark: brand[900],
+          contrastText: colorPrimary[300],
+          light: colorPrimary[500],
+          main: colorPrimary[700],
+          dark: colorPrimary[900],
         }),
       },
       warning: {
@@ -238,21 +238,21 @@ export const colorSchemes = {
   light: {
     palette: {
       primary: {
-        light: brand[200],
-        main: brand[300],
-        dark: brand[800],
-        contrastText: brand[50],
+        light: colorPrimary[200],
+        main: colorPrimary[300],
+        dark: colorPrimary[800],
+        contrastText: colorPrimary[50],
       },
       secondary: { // Agregando el color secundario
-        light: purple[300],
-        main: purple[200],  // Aquí defines el color principal secundario
-        dark: purple[700],
-        contrastText: purple[50],
+        light: colorSecondary[300],
+        main: colorSecondary[200],  // Aquí defines el color principal secundario
+        dark: colorSecondary[700],
+        contrastText: colorSecondary[50],
       },
       info: {
-        light: brand[100],
-        main: brand[400],
-        dark: brand[600],
+        light: colorPrimary[100],
+        main: colorPrimary[400],
+        dark: colorPrimary[600],
         contrastText: gray[50],
       },
       warning: {
@@ -295,22 +295,22 @@ export const colorSchemes = {
   dark: {
     palette: {
       primary: {
-        contrastText: brand[50],
-        light: brand[300],
-        main: brand[400],
-        dark: brand[700],
+        contrastText: colorPrimary[50],
+        light: colorPrimary[300],
+        main: colorPrimary[400],
+        dark: colorPrimary[700],
       },
       secondary: {
-        light: purple[400],
-        main: purple[600],
-        dark: purple[800],
+        light: colorSecondary[400],
+        main: colorSecondary[600],
+        dark: colorSecondary[800],
         contrastText: gray[300],
       },
       info: {
-        contrastText: brand[300],
-        light: brand[500],
-        main: brand[700],
-        dark: brand[900],
+        contrastText: colorPrimary[300],
+        light: colorPrimary[500],
+        main: colorPrimary[700],
+        dark: colorPrimary[900],
       },
       warning: {
         light: orange[400],

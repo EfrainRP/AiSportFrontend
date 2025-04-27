@@ -7,7 +7,7 @@ import { menuItemClasses } from '@mui/material/MenuItem';
 import { selectClasses } from '@mui/material/Select';
 import { tabClasses } from '@mui/material/Tab';
 import UnfoldMoreRoundedIcon from '@mui/icons-material/UnfoldMoreRounded';
-import { gray, brand } from '../themePrimitives';
+import { gray, colorPrimary } from '../themePrimitives';
 
 /* eslint-disable import/prefer-default-export */
 export const navigationCustomizations = {
@@ -192,7 +192,7 @@ export const navigationCustomizations = {
           width: 0,
         },
         '&:focus-visible': {
-          outline: `3px solid ${alpha(brand[500], 0.5)}`,
+          outline: `3px solid ${alpha(colorPrimary[500], 0.5)}`,
           outlineOffset: '4px',
           borderRadius: '2px',
         },
@@ -202,7 +202,12 @@ export const navigationCustomizations = {
   MuiDrawer: {
     styleOverrides: {
       paper: ({ theme }) => ({
-        backgroundColor: (theme.vars || theme).palette.background.default,
+        // backgroundImage:'linear-gradient(180deg, #00c896, #ffaa00)', 
+        background: (theme.vars || theme).palette.background.default,
+        // ...theme.applyStyles('dark', {
+        //   backgroundImage:'linear-gradient(to bottom, #0077ff, #ffaa00)', 
+          
+        // }),
       }),
     },
   },

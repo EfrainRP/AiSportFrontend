@@ -83,8 +83,8 @@ const MatchBracket = ({onwerTournament}) => { //TO DO: falta hacer el proceso de
         })
     };
     fetchMatches(); // Llamada para obtener los partidos del torneo
+    }
     setFlag(false);  
-  }
   },[flag]);
 
   const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
@@ -233,13 +233,14 @@ const MatchBracket = ({onwerTournament}) => { //TO DO: falta hacer el proceso de
     );
     return (
       <Box>
+        {/* <Typography variant="caption" >{match.id}</Typography> */}
         {match?.partidosHijos && 
           <Container sx={[{display:'flex', textAlign: 'center', alignItems: 'center'}, match?.myIdMatch ?{justifyContent:'space-between'}:{justifyContent:'center'}]}>
             {match?.myIdMatch ?
               (<>
                 <Typography variant="caption">{match.fechaPartido}</Typography>
                 <Typography variant="caption" >{match.horaPartido}</Typography>
-                {/* <Typography variant="caption" >{match.myIdMatch}</Typography> */}
+                
               </>)
             :
               (<Fab variant="extended" color='success' sx={{height:20, fontSize:12}} 
@@ -354,7 +355,7 @@ const MatchBracket = ({onwerTournament}) => { //TO DO: falta hacer el proceso de
 
       <ConfirmDialog open={openConfirm} handleClose={handleCloseConfirm} handleConfirm={handleDelete} messageTitle={'Delete match'} message={'Are you sure to delete this match?'}/>
 
-      {matchesCount > 0 ?
+      {matches.length ?
         <>
           {matchesCount === cantEquipoTorneo - 1 ?
               <Typography variant='h3' sx={{textAlign: 'center'}}>
