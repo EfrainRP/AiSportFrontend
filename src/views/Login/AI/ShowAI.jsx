@@ -46,7 +46,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
-
+import WelcomeSection from '../../../components/Login/UserWelcome.jsx';
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx';
 import DialogComponent from '../../../components/Login/DialogComponent.jsx';
@@ -536,15 +536,13 @@ export default function ShowAI() {
                     {dataAlert.message}
                 </Alert>
             </Snackbar>
-
-            <Container sx={{ display: 'flex', textAlign: 'justify', m: 1, gap: '5%' }}>
-                <BackButton url={`/dashboard/trainning/IA`} />
-                <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AI Trainning`} </Typography>
-            </Container>
-            <Typography variant='subtitle2' sx={{ mt: 3, ml: 20 }}>
-                Here you can consult the general analyzer.
-            </Typography>
-
+            <BackButton url={`/dashboard/trainning/IA`} />
+             <WelcomeSection 
+                            user={user} 
+                            loading={loading} 
+                            subtitle="To AI Training" 
+                            description="In this section you will be able to train and prove your habilities." 
+                            />
             {/* Controles de entrenamiento */}
             <Stack useFlexGap spacing={2} sx={{ ...centerJustifyAlign, mt: 4 }}>
                 <Container>

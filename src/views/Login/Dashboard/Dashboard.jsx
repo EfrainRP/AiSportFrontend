@@ -37,7 +37,7 @@ import "react-multi-carousel/lib/styles.css";
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 import GroupsIcon from '@mui/icons-material/Groups';
 import EventIcon from '@mui/icons-material/Event';
-
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 const centerJustify = {display: 'flex', alignContent:'center', textAlign:'justify', justifyContent:'space-evenly'};
 
@@ -106,34 +106,34 @@ const columns = [
   { 
     id: 'torneos', 
     extraIndex: 'name', 
-    label: 'Tournament', 
+    label: '🏆Tournament', 
     align: 'center', 
     minWidth: 120 
   },
   { 
     id: 'torneos', 
     extraIndex: 'ubicacion', 
-    label: 'Location', 
+    label: '📍Location', 
     align: 'center', 
     minWidth: 120 
   },
   { 
     id: 'equipos_partidos_equipoLocal_idToequipos', 
     extraIndex: 'name', 
-    label: 'Home\u00a0Team', 
+    label: '🏠Home\u00a0Team', 
     align: 'center', 
     minWidth: 130 
   },
   { 
     id: 'equipos_partidos_equipoVisitante_idToequipos', 
     extraIndex: 'name', 
-    label: 'Guest\u00a0Team', 
+    label: '🏨Guest\u00a0Team', 
     align: 'center', 
     minWidth: 130 
   },
   {
     id: 'fechaPartido',
-    label: 'Date',
+    label: '📅Date',
     minWidth: 110,
     align: 'center',
     format: (value) => {
@@ -142,7 +142,7 @@ const columns = [
   },
   {
     id: 'horaPartido',
-    label: 'Time',
+    label: '🕡Time',
     minWidth: 110,
     align: 'center',
     format: (value) => {
@@ -161,7 +161,10 @@ export default function Dashboard() {
   const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado 
 
   const [data, setData] = React.useState({ torneos: [], equipos: [], proximosPartidos: [] }); // Estado para almacenar torneos y equipos
-
+  const [activeTournamentSlide, setActiveTournamentSlide] = React.useState(0);
+  const [activeTeamSlide, setActiveTeamSlide] = React.useState(0);
+  const tournamentCarouselRef = React.useRef(null);
+  const teamCarouselRef = React.useRef(null);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const theme = useTheme();
@@ -182,6 +185,31 @@ export default function Dashboard() {
     setPage(0);
   };
 
+  // Configuración del intervalo para el auto-desplazamiento
+  React.useEffect(() => {
+    const tournamentInterval = setInterval(() => {
+      if (data.torneos.length > 0) {
+        setActiveTournamentSlide(prev => (prev + 1) % data.torneos.length);
+        if (tournamentCarouselRef.current) {
+          tournamentCarouselRef.current.next();
+        }
+      }
+    }, 4000); // 4 segundos
+
+    const teamInterval = setInterval(() => {
+      if (data.equipos.length > 0) {
+        setActiveTeamSlide(prev => (prev + 1) % data.equipos.length);
+        if (teamCarouselRef.current) {
+          teamCarouselRef.current.next();
+        }
+      }
+    }, 4500); // 4.5 segundos (ligeramente diferente para no sincronizarse)
+
+    return () => {
+      clearInterval(tournamentInterval);
+      clearInterval(teamInterval);
+    };
+  }, [data.torneos.length, data.equipos.length]);
   React.useEffect(() => {
     const fetchData = async () => {
       await axiosInstance.get(`/dashboard/${user.userId}`)
@@ -313,311 +341,335 @@ export default function Dashboard() {
         </Box>
 
       {/* Tournaments Section */}
-        <Box sx={{ mb: 8 }}>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              mb: 3
-            }}
-          >
-            <StyledTitle
-              variant="h4"
-              sx={(theme) => ({
-                display: 'flex',
-                alignItems: 'center',
-                fontWeight: 800,
-                color: theme.palette.text.primary,
-              })}
-            >
-              <SportsSoccerIcon
-                sx={(theme) => ({
-                  mr: 1.5,
-                  verticalAlign: 'middle',
-                  fontSize: '2rem',
-                  color:
-                    theme.palette.mode === 'light'
-                      ? theme.palette.secondary.dark
-                      : theme.palette.primary.main
-                })}
-              />
-              TOURNAMENTS
-            </StyledTitle>
-
-            {!loading && data.torneos.length > 0 && (
-              <Search
-                myOptions={data.torneos}
-                myValue={selectedTournament}
-                onChange={(e, newValue) => setSelectedTournament(newValue || null)}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                myLabel={'Search Tournament'}
-                toUrl={'tournament'}
-              />
-            )}
-          </Box>
-
-          {loading ? (
-            <Skeleton variant="rounded" height={240} sx={{ borderRadius: 4 }} />
-          ) : (
-            <Carousel
-              responsive={responsive}
-              slidesToSlide={1}
-              partialVisible={true}
-              swipeable={true}
-              draggable={true}
-              containerClass="carousel-container"
-              itemClass="carousel-item"
-              additionalTransfrom={0}
-              arrows
-              centerMode={false}
-              className=""
-              dotListClass=""
-              focusOnSelect={false}
-              infinite
-              keyBoardControl
-              minimumTouchDrag={80}
-              renderButtonGroupOutside={false}
-              renderDotsOutside={false}
-              showDots={false}
-              sliderClass=""
-              transitionDuration={500} // Aumentamos la duración de la transición
-              customTransition="transform 500ms ease-in-out" // Transición personalizada
-              removeArrowOnDeviceType={["tablet", "mobile"]}
-            >
-              {data.torneos.length > 0 ? (
-                data.torneos.map((torneo) => (
-                  <Box key={torneo.id} sx={{ px: 1.5, py: 1 }}>
-                    <GradientCard>
-                      <CardActionArea
-                        href={`/dashboard/tournament/${torneo.name}/${torneo.id}`}
-                        sx={{ p: 3, height: '100%' }}
-                      >
-                        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                          <Typography
-                            variant="h5"
-                            component="div"
-                            sx={(theme) => ({
-                              fontWeight: 700,
-                              mb: 2,
-                              color:
-                                theme.palette.mode === 'light'
-                                  ? theme.palette.secondary.dark
-                                  : theme.palette.primary.main
-                            })}
-                          >
-                            {torneo.name}
-                          </Typography>
-
-                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5, color: 'text.secondary' }}>
-                            <EventIcon sx={{ mr: 1, fontSize: 20 }} />
-                            <Typography variant="body2">
-                              {new Date(torneo.fechaInicio).toLocaleDateString()} - {new Date(torneo.fechaFin).toLocaleDateString()}
-                            </Typography>
-                          </Box>
-
-                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, color: 'text.secondary' }}>
-                            <Box component="span" sx={{ mr: 1 }}>📍</Box>
-                            <Typography variant="body2">{torneo.ubicacion}</Typography>
-                          </Box>
-
-                          <Divider sx={{ my: 1.5 }} />
-
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              flexGrow: 1,
-                              color: 'text.secondary',
-                              display: '-webkit-box',
-                              WebkitLineClamp: 3,
-                              WebkitBoxOrient: 'vertical',
-                              overflow: 'hidden'
-                            }}
-                          >
-                            {torneo.descripcion}
-                          </Typography>
-
-                          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-                            <Chip
-                              label="View Details"
-                              size="small"
-                              sx={(theme) => ({
-                                fontWeight: 600,
-                                bgcolor: alpha(theme.palette.primary.main, 0.1),
-                                color: theme.palette.primary.main,
-                                '&:hover': {
-                                  bgcolor: alpha(theme.palette.primary.main, 0.2)
-                                }
-                              })}
-                            />
-                          </Box>
-                        </Box>
-                      </CardActionArea>
-                    </GradientCard>
-                  </Box>
-                ))
-              ) : (
-                <LoadingCard message={'No tournaments found. Check back later!'} />
-              )}
-            </Carousel>
-          )}
-        </Box>
-
-        {/* Teams Section */}
-        <Box sx={{ mb: 8 }}>
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
+      <Box sx={{ mb: 8 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
             alignItems: 'center',
             mb: 3
-          }}>
-            <StyledTitle
-              variant="h4"
+          }}
+        >
+          <StyledTitle
+            variant="h4"
+            sx={(theme) => ({
+              display: 'flex',
+              alignItems: 'center',
+              fontWeight: 800,
+              color: theme.palette.text.primary,
+            })}
+          >
+            <SportsSoccerIcon
               sx={(theme) => ({
-                display: 'flex',
-                alignItems: 'center',
-                fontWeight: 800,
-                color: theme.palette.text.primary,
+                mr: 1.5,
+                verticalAlign: 'middle',
+                fontSize: '2rem',
+                color:
+                  theme.palette.mode === 'light'
+                    ? theme.palette.secondary.dark
+                    : theme.palette.primary.main
               })}
-            >
-              <GroupsIcon
-                sx={(theme) => ({
-                  mr: 1.5,
-                  verticalAlign: 'middle',
-                  fontSize: '2rem',
-                  color:
-                    theme.palette.mode === 'light'
-                      ? theme.palette.secondary.dark
-                      : theme.palette.secondary.main
-                })}
-              />
-              TEAMS
-            </StyledTitle>
-            {!loading && data.equipos.length > 0 && 
-              <Search 
-                myOptions={data.equipos} 
-                myValue={selectedTeam}
-                onChange={(e, newValue) => setSelectedTeam(newValue || null)}
-                isOptionEqualToValue={(option, value) => option.name === value.name}
-                myLabel={'Search Team'}
-                toUrl={'team'}
-              />
-            }
-          </Box>
+            />
+            TOURNAMENTS
+          </StyledTitle>
 
-          {loading ? (
-            <Skeleton variant="rounded" height={240} sx={{ borderRadius: 4 }} />
-          ) : (
-            <Carousel
-              responsive={responsive}
-              slidesToSlide={1}
-              partialVisible={true}
-              swipeable={true}
-              draggable={true}
-              containerClass="carousel-container"
-              itemClass="carousel-item"
-              additionalTransfrom={0}
-              arrows
-              centerMode={false}
-              className=""
-              dotListClass=""
-              focusOnSelect={false}
-              infinite
-              keyBoardControl
-              minimumTouchDrag={80}
-              renderButtonGroupOutside={false}
-              renderDotsOutside={false}
-              showDots={false}
-              sliderClass=""
-              transitionDuration={600} // Transición más suave
-              customTransition="all 600ms ease-in-out" // Transición personalizada
-              removeArrowOnDeviceType={["tablet", "mobile"]}
-            >
-              {data.equipos.length > 0 ? 
-                data.equipos.map((equipo) => (
-                  <Box key={equipo.id} sx={{ px: 1.5, py: 1 }}>
-                    <GradientCard>
-                      <CardActionArea 
-                        href={`/dashboard/team/${equipo.name}/${equipo.id}`} 
-                        sx={{ p: 3, height: '100%' }}
-                      >
-                        <Box sx={{ 
-                          display: 'flex', 
-                          flexDirection: 'column', 
-                          alignItems: 'center',
-                          height: '100%'
-                        }}>
-                          <Avatar
-                            src={`${URL_SERVER}/utils/uploads/${equipo && equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`}
-                            alt={equipo.name}
-                            sx={{ 
-                              width: 120, 
-                              height: 120, 
-                              mb: 3,
-                              border: `3px solid ${alpha(theme.palette.primary.main, 0.2)}`,
-                              transition: 'transform 0.3s ease',
-                              '&:hover': {
-                                transform: 'scale(1.05)'
-                              }
-                            }}
-                          />
-                          
-                          <Typography
-                            variant="h5"
-                            component="div"
-                            sx={(theme) => ({
-                              fontWeight: 700,
-                              mb: 2,
-                              color:
-                                theme.palette.mode === 'light'
-                                  ? theme.palette.secondary.dark
-                                  : theme.palette.primary.light
-                            })}
-                          >
-                            {equipo.name}
-                          </Typography>
-                          
-                          <Box sx={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            mb: 2,
-                            color: 'text.secondary'
-                          }}>
-                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                              Leader: {equipo['users'].name}
-                            </Typography>
-                          </Box>
-                          
-                          <Box sx={{ 
-                            mt: 'auto', 
-                            width: '100%',
-                            display: 'flex',
-                            justifyContent: 'center'
-                          }}>
-                            <Chip 
-                              label="Team Profile" 
-                              size="small" 
-                              sx={(theme) => ({
-                                fontWeight: 600,
-                                bgcolor: alpha(theme.palette.secondary.main, 0.1),
-                                color: theme.palette.secondary.main,
-                                '&:hover': {
-                                  bgcolor: alpha(theme.palette.secondary.main, 0.2)
-                                },
-                                transition: 'all 0.3s ease'
-                              })} 
-                            />
-                          </Box>
-                        </Box>
-                      </CardActionArea>
-                    </GradientCard>
-                  </Box>
-                )) : 
-                <LoadingCard message={'No teams found. Check back later!'} />
-              }
-            </Carousel>
+          {!loading && data.torneos.length > 0 && (
+            <Search
+              myOptions={data.torneos}
+              myValue={selectedTournament}
+              onChange={(e, newValue) => setSelectedTournament(newValue || null)}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              myLabel={'Search Tournament'}
+              toUrl={'tournament'}
+            />
           )}
         </Box>
+
+        {loading ? (
+          <Skeleton variant="rounded" height={240} sx={{ borderRadius: 4 }} />
+        ) : (
+          <Carousel
+            ref={tournamentCarouselRef}
+            responsive={responsive}
+            slidesToSlide={1}
+            partialVisible={true}
+            swipeable={true}
+            draggable={true}
+            containerClass="carousel-container"
+            itemClass="carousel-item"
+            additionalTransfrom={0}
+            arrows
+            centerMode={false}
+            infinite
+            keyBoardControl
+            minimumTouchDrag={80}
+            renderButtonGroupOutside={false}
+            renderDotsOutside={false}
+            showDots={false}
+            sliderClass=""
+            transitionDuration={500}
+            customTransition="transform 500ms ease-in-out"
+            removeArrowOnDeviceType={["tablet", "mobile"]}
+            beforeChange={(currentSlide) => setActiveTournamentSlide(currentSlide)}
+          >
+            {data.torneos.length > 0 ? (
+              data.torneos.map((torneo) => (
+                <Box key={torneo.id} sx={{ px: 1.5, py: 1 }}>
+                  <GradientCard>
+                    <CardActionArea
+                      href={`/dashboard/tournament/${torneo.name}/${torneo.id}`}
+                      sx={{ p: 3, height: '100%' }}
+                    >
+                      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                        <Typography
+                          variant="h5"
+                          component="div"
+                          sx={(theme) => ({
+                            fontWeight: 700,
+                            mb: 2,
+                            color:
+                              theme.palette.mode === 'light'
+                                ? theme.palette.secondary.dark
+                                : theme.palette.primary.light
+                          })}
+                            > <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                  <EmojiEventsIcon 
+                                    sx={(theme) => ({
+                                      mr: 1.5,
+                                      verticalAlign: 'middle',
+                                      fontSize: '2.5rem',
+                                      color:
+                                        theme.palette.mode === 'light'
+                                          ? theme.palette.warning.light
+                                          : theme.palette.primary.main
+                                    })}
+                                  />
+                                  <Typography sx={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'inherit' }}>
+                                    {torneo.name}
+                                  </Typography>
+                          </Box>
+                        </Typography>
+
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5, color: 'text.secondary' }}>
+                          <EventIcon sx={{ mr: 1, fontSize: 20 }} />
+                          <Typography variant="body2">
+                            {new Date(torneo.fechaInicio).toLocaleDateString()} - {new Date(torneo.fechaFin).toLocaleDateString()}
+                          </Typography>
+                        </Box>
+
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, color: 'text.primary' }}>
+                          <Box component="span" sx={{ mr: 1 }}>📍</Box>
+                          <Typography variant="body2">{torneo.ubicacion}</Typography>
+                        </Box>
+
+                        <Divider sx={{ my: 1.5 }} />
+
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            flexGrow: 1,
+                            color: 'text.primary',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden'
+                          }}
+                        >
+                          {torneo.descripcion}
+                        </Typography>
+
+                        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+                          <Chip
+                            label="View Details"
+                            size="small"
+                            sx={(theme) => ({
+                              fontWeight: 600,
+                              bgcolor: alpha(theme.palette.primary.main, 0.1),
+                              color: theme.palette.primary.main,
+                              '&:hover': {
+                                bgcolor: alpha(theme.palette.primary.main, 0.2)
+                              }
+                            })}
+                          />
+                        </Box>
+                      </Box>
+                    </CardActionArea>
+                  </GradientCard>
+                </Box>
+              ))
+            ) : (
+              <LoadingCard message={'No tournaments found. Check back later!'} />
+            )}
+          </Carousel>
+        )}
+      </Box>
+
+      {/* Teams Section */}
+      <Box sx={{ mb: 8 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          mb: 3
+        }}>
+          <StyledTitle
+            variant="h4"
+            sx={(theme) => ({
+              display: 'flex',
+              alignItems: 'center',
+              fontWeight: 800,
+              color: theme.palette.text.primary,
+            })}
+          >
+            <GroupsIcon
+              sx={(theme) => ({
+                mr: 1.5,
+                verticalAlign: 'middle',
+                fontSize: '2rem',
+                color:
+                  theme.palette.mode === 'light'
+                    ? theme.palette.secondary.dark
+                    : theme.palette.secondary.main
+              })}
+            />
+            TEAMS
+          </StyledTitle>
+          {!loading && data.equipos.length > 0 && 
+            <Search 
+              myOptions={data.equipos} 
+              myValue={selectedTeam}
+              onChange={(e, newValue) => setSelectedTeam(newValue || null)}
+              isOptionEqualToValue={(option, value) => option.name === value.name}
+              myLabel={'Search Team'}
+              toUrl={'team'}
+            />
+          }
+        </Box>
+
+        {loading ? (
+          <Skeleton variant="rounded" height={240} sx={{ borderRadius: 4 }} />
+        ) : (
+          <Carousel
+            ref={teamCarouselRef}
+            responsive={responsive}
+            slidesToSlide={1}
+            partialVisible={true}
+            swipeable={true}
+            draggable={true}
+            containerClass="carousel-container"
+            itemClass="carousel-item"
+            additionalTransfrom={0}
+            arrows
+            centerMode={false}
+            infinite
+            keyBoardControl
+            minimumTouchDrag={80}
+            renderButtonGroupOutside={false}
+            renderDotsOutside={false}
+            showDots={false}
+            sliderClass=""
+            transitionDuration={600}
+            customTransition="all 600ms ease-in-out"
+            removeArrowOnDeviceType={["tablet", "mobile"]}
+            beforeChange={(currentSlide) => setActiveTeamSlide(currentSlide)}
+          >
+            {data.equipos.length > 0 ? 
+              data.equipos.map((equipo) => (
+                <Box key={equipo.id} sx={{ px: 1.5, py: 1 }}>
+                  <GradientCard>
+                    <CardActionArea 
+                      href={`/dashboard/team/${equipo.name}/${equipo.id}`} 
+                      sx={{ p: 3, height: '100%' }}
+                    >
+                      <Box sx={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center',
+                        height: '100%'
+                      }}>
+                  
+                        <Avatar
+                          src={`${URL_SERVER}/utils/uploads/${equipo && equipo.image !== 'logoEquipo.jpg' ? equipo.image : 'logoEquipo.jpg'}`}
+
+                          alt={equipo.name}
+                          sx={{ 
+                            width: 120, 
+                            height: 120, 
+                            mb: 3,
+                            border: `3px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                            transition: 'transform 0.3s ease',
+                            '&:hover': {
+                              transform: 'scale(1.05)'
+                            }
+                          }}
+                        />
+                        
+                        <Typography
+                          variant="h5"
+                          component="div"
+                          sx={(theme) => ({
+                            fontWeight: 700,
+                            mb: 2,
+                            color:
+                              theme.palette.mode === 'light'
+                                ? theme.palette.secondary.dark
+                                : theme.palette.primary.light
+                          })}
+                            ><GroupsIcon
+                                sx={(theme) => ({
+                                  mr: 1.5,
+                                  verticalAlign: 'middle',
+                                  fontSize: '2.5rem',
+                                  color:
+                                    theme.palette.mode === 'light'
+                                      ? theme.palette.secondary.dark
+                                      : theme.palette.secondary.main
+                                })}
+                          />
+                          {equipo.name}
+                        </Typography>
+                        
+                        <Box sx={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          mb: 2,
+                          color: 'text.secondary'
+                        }}>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                            Leader: {equipo['users'].name}
+                          </Typography>
+                        </Box>
+                        
+                        <Box sx={{ 
+                          mt: 'auto', 
+                          width: '100%',
+                          display: 'flex',
+                          justifyContent: 'center'
+                        }}>
+                          <Chip 
+                            label="Team Profile" 
+                            size="small" 
+                            sx={(theme) => ({
+                              fontWeight: 600,
+                              bgcolor: alpha(theme.palette.secondary.main, 0.1),
+                              color: theme.palette.secondary.main,
+                              '&:hover': {
+                                bgcolor: alpha(theme.palette.secondary.main, 0.2)
+                              },
+                              transition: 'all 0.3s ease'
+                            })} 
+                          />
+                        </Box>
+                      </Box>
+                    </CardActionArea>
+                  </GradientCard>
+                </Box>
+              )) : 
+              <LoadingCard message={'No teams found. Check back later!'} />
+            }
+          </Carousel>
+        )}
+      </Box>
       {/* Matches Section */}
       <Box>
         <StyledTitle
@@ -680,7 +732,7 @@ export default function Dashboard() {
                         borderBottom: `1px solid ${alpha(theme.palette.divider, 0.2)}`
                       })}
                     >
-                      #
+                      #️⃣
                     </TableCell>
                     {columns.map((column) => (
                       <TableCell

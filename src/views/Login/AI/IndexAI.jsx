@@ -25,21 +25,28 @@ import {
     FormControl,
     Link,
     Container,
+    CardHeader,
+    Avatar
 } from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-
+import SmartToyIcon from '@mui/icons-material/SmartToy';
+import PsychologyIcon from '@mui/icons-material/Psychology';
+import InsightsIcon from '@mui/icons-material/Insights';
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-
+import WelcomeSection from '../../../components/Login/UserWelcome.jsx';
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
-
+import GroupsIcon from '@mui/icons-material/Groups';
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx';
 import LoadingCard from '../../../components/Login/LodingCard.jsx';
-
+const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 // const CustomAutocomplete = styled(Autocomplete)({
 //     "& .MuiAutocomplete-popupIndicator": {
 //         outline: "none",
@@ -117,62 +124,245 @@ export default function IndexAI() {
     }
     return (
         <LayoutLogin>
-            <Typography variant='h2' sx={{ml:7}}> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AiSport Performance Analyzer`} </Typography>
-            <Typography variant='subtitle2' sx={{ mt:3, ml:7 }}>
-                Here you can consult the general analyzer.
-            </Typography>
-            <Container sx={{display:'flex', alignItems:'center', justifyItems:'center', mt:4, flexDirection:'column', gap:2}}>
-                <Card variant='outlined'>
-                    <Typography variant='h6'>
-                        Choose your team to upgrade or add their stats:
-                    </Typography>
+            <WelcomeSection 
+                user={user} 
+                loading={loading} 
+                subtitle="To AiSport Performance Analyzer!" 
+                description="In this section you will be able to train." 
+                />
+            <Container 
+            sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mt: 9,
+                mb: 9,
+                flexDirection: 'column',
+                gap: 3,
+                width: '100%',
+                maxWidth: '800px'
+            }}
+            >
+            {/* Main Card with AI Theme */}
+            <Card 
+                variant="outlined"
+                sx={(theme) => ({
+                width: '100%',
+                borderRadius: 2,
+                borderColor: (theme.palette.primary.light, 0.3),
+                boxShadow: theme.shadows[4],
+                background: theme.palette.mode === 'dark' 
+                    ? (theme.palette.background.paper, 0.8) 
+                    : (theme.palette.grey[50], 0.9),
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                    boxShadow: theme.shadows[8],
+                    borderColor: theme.palette.primary.main
+                }
+                })}
+            >
+                <CardHeader
+                avatar={
+                    <Avatar 
+                    sx={(theme) => ({ 
+                        bgcolor: (theme.palette.secondary.main, 0.2),
+                        color: theme.palette.secondary.main 
+                    })}
+                    >
+                    <SmartToyIcon />
+                    </Avatar>
+                }
+                title={
                     <Typography 
-                        component='label' 
-                        variant='subtitle2' 
-                        sx={[( theme ) => ({
-                            color: (theme.vars || theme).palette.grey[400],
-                            my:-1
-                        })]}>
-                            Choose a team:
+                    variant="h6"
+                    sx={(theme) => ({
+                        fontWeight: 700,
+                        color: theme.palette.text.secondary,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1
+                    })}
+                    >
+                    <AutoAwesomeIcon fontSize="small" />
+                    Team Performance Optimization
                     </Typography>
-                    <Autocomplete
-                        autoComplete
-                        autoSelect
-                        includeInputInList
-                        selectOnFocus
-                        options={stats}
-                        getOptionLabel={(option)=>option.name} // Muestra el nombre como etiqueta
-                        isOptionEqualToValue={(option, value) => option.equipo_id === value.equipo_id} // Compara por `id`
-                        value={selectedTeam || null}
-                        onChange={(e, newValue) => {
-                            setSelectedTeam(newValue || null);
+                }
+                subheader="Select a team to analyze and improve with AI"
+                subheaderTypographyProps={{
+                    sx: { color: 'text.primary', display: 'flex', alignItems: 'center', gap: 1 }
+                }}
+                />
+                
+                <Divider sx={{ mx: 2 }} />
+                
+                <CardContent>
+                <Box 
+                    sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 2,
+                    mb: 2
+                    }}
+                >
+                    <PsychologyIcon color="secondary" />
+                    <Typography variant="body2" color="text.primary">
+                    Our AI will analyze your team's performance and suggest improvements.
+                    </Typography>
+                </Box>
+                
+                <Autocomplete
+                fullWidth
+                autoComplete
+                autoSelect
+                includeInputInList
+                selectOnFocus
+                options={stats}
+                getOptionLabel={(option) => option.name}
+                isOptionEqualToValue={(option, value) => option.equipo_id === value.equipo_id}
+                value={selectedTeam || null}
+                onChange={(e, newValue) => setSelectedTeam(newValue || null)}
+                size="medium"
+                renderInput={(params) => (
+                    <TextField 
+                        {...params} 
+                        label=""
+                        variant="outlined"
+                        InputProps={{
+                            ...params.InputProps,
+                            startAdornment: (
+                                <>
+                                    <GroupsIcon sx={(theme) => ({
+                                        mr: 1.5,
+                                        verticalAlign: 'middle',
+                                        fontSize: '1.5rem',
+                                        color:
+                                            theme.palette.mode === 'light'
+                                                ? theme.palette.secondary.dark
+                                                : theme.palette.text.secondary
+                                    })} />
+                                    {params.InputProps.startAdornment}
+                                </>
+                            )
                         }}
-                        size="medium"
-                        renderInput={(params) => <TextField {...params} sx={{fontSize: '1px'}}
-                        placeholder={'Select any team'}/>}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: 2,
+                                backgroundColor: (theme) => (theme.palette.background.paper, 0.5)
+                            },
+                            mt: 0
+                        }}
                     />
-                    {selectedTeam && 
-                        <CardActions sx={{display:'flex', justifyContent:'flex-end'}}>
-                            {/* Pasa el ID y el nombre del equipo */}
-                            
-                            <Button 
-                                color='success' 
-                                variant="contained"
-                                startIcon={<FitnessCenterIcon/>}
-                                href={`/dashboard/trainning/IA/${selectedTeam.equipo_id}/${selectedTeam.name}`}>
-                                Trainning this team
-                            </Button>
-                        </CardActions>
-                    }
-                </Card>
-                <Button 
-                    color='secondary' 
+                )}
+                renderOption={(props, option) => (
+                    <Box 
+                        component="li" 
+                        {...props}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            py: 1.5
+                        }}
+                    >
+                        <Avatar 
+                            src={`${URL_SERVER}/utils/uploads/${option.image || 'logoEquipo.jpg'}`}
+                            sx={{ width: 32, height: 32 }}
+                        />
+                        <Box>
+                            <Typography variant="subtitle1">{option.name}</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                {option.members} members
+                            </Typography>
+                        </Box>
+                    </Box>
+                )}
+            />
+                </CardContent>
+                
+                {selectedTeam && (
+                <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>
+                    <Button 
                     variant="contained"
-                    sx={{width:'40%'}}
-                    startIcon={<TrendingUpIcon/>}
-                    href={`/dashboard/trainning/personal/IA/${user.userName}`}>
-                    Personal Stats
+                    size="large"
+                    startIcon={<FitnessCenterIcon />}
+                    endIcon={<ArrowForwardIcon />}
+                    href={`/dashboard/trainning/IA/${selectedTeam.equipo_id}/${selectedTeam.name}`}
+                    sx={{
+                        borderRadius: 2,
+                        px: 3,
+                        py: 1,
+                        background: (theme) => `linear-gradient(135deg, ${theme.palette.secondary.dark}, ${theme.palette.primary.main})`,
+                        '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: (theme) => theme.shadows[4]
+                        },
+                        transition: 'all 0.3s ease'
+                    }}
+                    >
+                    AI Training Analysis
+                    </Button>
+                </CardActions>
+                )}
+            </Card>
+
+            {/* Personal Stats Card */}
+            <Card
+                sx={(theme) => ({
+                width: '100%',
+                borderRadius: 2,
+                borderColor: (theme.palette.secondary.light, 0.3),
+                boxShadow: theme.shadows[2],
+                background: theme.palette.mode === 'dark' 
+                    ? (theme.palette.background.paper, 0.7) 
+                    : (theme.palette.grey[50], 0.8),
+                '&:hover': {
+                    boxShadow: theme.shadows[4],
+                    borderColor: theme.palette.primary.main
+                }
+                })}
+            >
+                <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <PersonSearchIcon sx={(theme) => ({
+                                                        mr: 1.5,
+                                                        verticalAlign: 'middle',
+                                                        fontSize: '2.5rem',
+                                                        color:
+                                                            theme.palette.mode === 'light'
+                                                            ? theme.palette.secondary.dark
+                                                            : theme.palette.warning.light
+                                                        })} />
+                    <Typography variant="h6" color="primary.light">
+                    Individual Performance
+                    </Typography>
+                </Box>
+                
+                <Typography variant="body2" color="text.primary" textAlign="center">
+                    Analyze and improve your personal stats with our AI assistant
+                </Typography>
+                
+                <Button 
+                    variant="outlined"
+                    size="large"
+                    fullWidth
+                    startIcon={<TrendingUpIcon />}
+                    endIcon={<InsightsIcon />}
+                    href={`/dashboard/trainning/personal/IA/${user.userName}`}
+                    sx={{
+                    mt: 1,
+                    borderRadius: 2,
+                    py: 1.5,
+                    borderWidth: 2,
+                    '&:hover': {
+                        borderWidth: 2,
+                        backgroundColor: (theme) => (theme.palette.primary.light, 0.1)
+                    }
+                    }}
+                >
+                    My Personal Stats
                 </Button>
+                </CardContent>
+            </Card>
             </Container>
         </LayoutLogin>
     );

@@ -33,7 +33,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import DoDisturbAltOutlinedIcon from '@mui/icons-material/DoDisturbAltOutlined';
-
+import WelcomeSection from '../../../components/Login/UserWelcome.jsx';
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
 import LayoutLogin from '../../LayoutLogin.jsx';
@@ -141,15 +141,12 @@ export default function IndexNotifications() {
                     {dataAlert.message}
                 </Alert>
             </Snackbar>
-            <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'30%'} /> : `Welcome ${user.userName.toUpperCase() || 'invitado'}`} </Typography>
-            <Typography variant='h3' sx={{ mb: 2, ml:10 }}> {loading ? <Skeleton variant="rounded" width={'20%'} sx={{my: 2}}/> : 'to your notifications !'} </Typography>
-            <Typography variant='subtitle2' sx={{ mt:3 }}>
-                {loading ? 
-                    <Skeleton variant="rounded" width={'31%'}/> 
-                    : 
-                    'Here you can see your notifications information.'
-                }
-            </Typography>
+            <WelcomeSection 
+                user={user} 
+                loading={loading} 
+                subtitle="To your AiSport Notifications!" 
+                description="In this section you will be able to administer your notifications." 
+                />
             <Box sx={{ width: '100%', height: 'auto', my:3, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 
                     {loading?
@@ -159,7 +156,7 @@ export default function IndexNotifications() {
                             (
                             <List component={Card} sx={{width:"93%"}}>
                                 {notifications.map((note, i) => {
-                                    const colorStatus = note.status == 'rejected'? 'error' : 'success';
+                                    const colorStatus = note.status == 'rejected' ? 'lightcoral' : 'lightgreen';
                                 return (
                                 <ListItem key={i}
                                     secondaryAction={
