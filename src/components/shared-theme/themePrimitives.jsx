@@ -264,10 +264,10 @@ export const colorSchemes = {
   light: {
     palette: {
       primary: {
-        light: brand[200],
-        main: brand[300],
-        dark: brand[800],
-        contrastText: brand[50],
+        light: gold[500],
+        main: gold[700],
+        dark: gold[800],
+        contrastText: gold[200],
       },
       secondary: { // Agregando el color secundario
         light: purple[300],
@@ -276,15 +276,15 @@ export const colorSchemes = {
         contrastText: purple[50],
       },
       info: {
-        light: brand[100],
-        main: brand[400],
-        dark: brand[600],
+        light: teal[400],
+        main: teal[600],
+        dark: teal[700],
         contrastText: gray[50],
       },
       warning: {
-        light: orange[300],
-        main: orange[400],
-        dark: orange[800],
+        light: orange[500],
+        main: orange[600],
+        dark: orange[700],
       },
       error: {
         light: red[300],
@@ -299,20 +299,20 @@ export const colorSchemes = {
       grey: {
         ...gray,
       },
-      divider: alpha(gray[800], 0.3),
+      divider: brand[900],
       background: {
-        default: 'rgba(217, 217, 217, 0.95)', //rgba(171, 167, 165, 0.85)
-        paper: 'rgba(153, 153, 153, 0.96)', //Edited
+        default: 'hsl(210, 33%, 97%)',//rgba(171, 167, 165, 0.85)
+        paper: 'hsla(0, 0.00%, 93.50%, 0.92)', //Edited 'hsla(0, 0.00%, 93.50%, 0.92)'
       },
       text: { //Edited form text
-        primary: gray[800],
-        secondary: gray[600],
+        primary: 'hsla(0, 0.00%, 0.00%, 0.97)',
+        secondary: 'hsl(160, 96.10%, 10.30%)',
         warning: orange[400],
         data: gray[50],
       },
       action: {
-        hover: 'rgba(250, 165, 128, 0.83)',
-        selected: 'rgba(245, 131, 82, 0.88)',
+        hover: 'hsl(160, 96.00%, 50.40%)',
+        selected: 'hsl(125, 80.60%, 65.70%)',
       },
       baseShadow:
         'hsla(224, 15.50%, 13.90%, 0.07) 0px 4px 16px 0px, hsla(222, 12.80%, 15.30%, 0.07) 0px 8px 16px -5px',
@@ -359,7 +359,7 @@ export const colorSchemes = {
       divider: brand[600], // Components Divider Color
       background: {
         default: 'hsl(227, 14.30%, 12.40%)', // SideMenu base Color
-        paper: 'hsl(219, 77%, 4.5%)', // Searsh Widget Color
+        paper: 'hsla(219, 73.90%, 4.50%, 0.90)', // Searsh Widget Color
       },
       text: { 
         primary: 'hsla(0, 0.00%, 100.00%, 0.97)', // // SideMenu options Text Titles, subtitles

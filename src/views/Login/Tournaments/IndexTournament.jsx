@@ -131,156 +131,212 @@ export default function IndexTournaments() {
                 </Container>
             }   
             {/* Tournaments Grid */}
-  <Box sx={{ width: '100%', my: 3 }}>
-    {loading ? (
-      <Skeleton variant="rounded" width={'95%'} height={350} />
-    ) : (
-      <>
-        <Grid container spacing={3}>
-          {tournaments.length > 0 ? (
-            tournaments
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((tournament) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={tournament.id}>
-                  <Card 
-                    variant="outlined"
-                    sx={{
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        transform: 'translateY(-5px)',
-                        boxShadow: 3,
-                        borderColor: 'primary.main'
-                      }
-                    }}
-                  >
-                    <CardActionArea 
-                      href={`/tournament/${tournament.name}/${tournament.id}`}
-                      sx={{
-                        height: '100%',
-                        p: 2,
-                        display: 'flex',
-                        flexDirection: 'column'
-                      }}
-                    >
-                      <Typography 
-                        variant="h5" 
-                        component="div"
-                        sx={{
-                          fontWeight: 700,
-                          color: 'text.primary',
-                          textAlign: 'center',
-                          mb: 2,
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis'
-                        }}
-                      > <EmojiEventsIcon 
-                            sx={(theme) => ({
-                            mr: 1.5,
-                            verticalAlign: 'middle',
-                            fontSize: '2.5rem',
-                            color:
-                                theme.palette.mode === 'light'
-                                ? theme.palette.warning.light
-                                : theme.palette.primary.main
-                            })}
-                        />
-                        {tournament.name}
-                      </Typography>
+          <Box sx={{ width: '100%', my: 3 }}>
+            {loading ? (
+              <Skeleton variant="rounded" width={'95%'} height={350} />
+            ) : (
+              <>
+                <Grid container spacing={3}>
+                  {tournaments.length > 0 ? (
+                    tournaments
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map((tournament) => (
+                        <Grid item xs={12} sm={6} md={4} lg={3} key={tournament.id}>
+                          <Card
+                              variant="outlined"
+                              sx={(theme) => ({
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                backgroundColor: theme.palette.mode === 'dark'
+                                  ? theme.palette.background.paper
+                                  : theme.palette.background.paper,
+                                borderColor: theme.palette.mode === 'dark'
+                                  ? theme.palette.primary.dark
+                                  : theme.palette.text.primary,
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                  transform: 'translateY(-5px)',
+                                  boxShadow: theme.palette.mode === 'dark' ? 6 : 6,
+                                  borderColor: theme.palette.mode === 'dark'
+                                  ? theme.palette.primary.main
+                                  : theme.palette.secondary.dark,
+                                  backgroundColor: theme.palette.mode === 'dark'
+                                    ? theme.palette.action.hover
+                                    : theme.palette.secondary.hover
+                                }
+                              })}
+                            >
+                            <CardActionArea 
+                              href={`/tournament/${tournament.name}/${tournament.id}`}
+                              sx={{
+                                height: '100%',
+                                p: 2,
+                                display: 'flex',
+                                flexDirection: 'column'
+                              }}
+                            >
+                              <Typography 
+                                variant="h5" 
+                                component="div"
+                                sx={{
+                                  fontWeight: 700,
+                                  color: 'text.primary',
+                                  textAlign: 'center',
+                                  mb: 2,
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis'
+                                }}
+                              > <EmojiEventsIcon 
+                                    sx={(theme) => ({
+                                    mr: 1.5,
+                                    verticalAlign: 'middle',
+                                    fontSize: '2.5rem',
+                                    color:
+                                        theme.palette.mode === 'light'
+                                        ? theme.palette.warning.light
+                                        : theme.palette.primary.main
+                                    })}
+                                />
+                                {tournament.name}
+                              </Typography>
 
-                      <Divider sx={{ my: 1 }} />
+                              <Divider sx={{ my: 1 }} />
 
-                      <Box sx={{ mb: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                          <PlaceIcon color="secondary" sx={{ mr: 1, fontSize: 20 }} />
-                          <Typography variant="body2" sx={{ color: 'text.primary' }}>
-                            {tournament.ubicacion}
-                          </Typography>
-                        </Box>
+                              <Box sx={{ mb: 2 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                <PlaceIcon
+                                  sx={(theme) => ({
+                                    mr: 1,
+                                    fontSize: 20,
+                                    color: theme.palette.mode === 'dark'
+                                      ? theme.palette.secondary.light
+                                      : theme.palette.secondary.dark
+                                  })}
+                                />
+                                 <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                                    {tournament.ubicacion}
+                                  </Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                <EventAvailableIcon
+                                  sx={(theme) => ({
+                                    mr: 1,
+                                    fontSize: 20,
+                                    color: theme.palette.mode === 'dark'
+                                      ? theme.palette.success.light
+                                      : theme.palette.success.dark
+                                  })}
+                                />
 
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                          <EventAvailableIcon color="secondary" sx={{ mr: 1, fontSize: 20 }} />
-                          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                            {new Date(tournament.fechaInicio).toLocaleDateString()}
-                          </Typography>
-                        </Box>
+                                  <Typography
+                                      variant="body2"
+                                      sx={(theme) => ({
+                                        color: theme.palette.mode === 'dark'
+                                          ? theme.palette.text.secondary
+                                          : theme.palette.success.dark
+                                      })}
+                                    >
+                                    {new Date(tournament.fechaInicio).toLocaleDateString()}
+                                  </Typography>
+                                </Box>
 
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                          <EventBusyIcon color="primary" sx={{ mr: 1, fontSize: 20 }} />
-                          <Typography variant="body2" sx={{ color: 'primary.light' }}>
-                            {new Date(tournament.fechaFin).toLocaleDateString()}
-                          </Typography>
-                        </Box>
-                      </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                <EventBusyIcon
+                                  sx={(theme) => ({
+                                    mr: 1,
+                                    fontSize: 20,
+                                    color: theme.palette.mode === 'dark'
+                                      ? theme.palette.primary.light
+                                      : theme.palette.error.dark
+                                  })}
+                                />
+                                  <Typography
+                                    variant="body2"
+                                    sx={(theme) => ({
+                                      color: theme.palette.mode === 'dark'
+                                        ? theme.palette.primary.light
+                                        : theme.palette.error.dark
+                                    })}
+                                  >
+                                    {new Date(tournament.fechaFin).toLocaleDateString()}
+                                  </Typography>
+                                </Box>
+                              </Box>
 
-                      <Box sx={{ 
-                        flexGrow: 1,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'flex-end'
-                      }}>
-                        <Typography 
-                          variant="body2"
-                          sx={{
-                            color: 'text.primary',
-                            display: '-webkit-box',
-                            WebkitLineClamp: 3,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                            mb: 2
-                          }}
-                        >
-                          {tournament.descripcion}
-                        </Typography>
+                              <Box sx={{ 
+                                flexGrow: 1,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'flex-end'
+                              }}>
+                                <Typography 
+                                  variant="body2"
+                                  sx={{
+                                    color: 'text.primary',
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 3,
+                                    WebkitBoxOrient: 'vertical',
+                                    overflow: 'hidden',
+                                    mb: 2
+                                  }}
+                                >
+                                  {tournament.descripcion}
+                                </Typography>
 
-                        <Chip
-                          label="View Details"
-                          size="small"
-                          sx={{
-                            alignSelf: 'center',
-                            fontWeight: 600,
-                            backgroundColor: 'secondary.light',
-                            color: 'secondary.contrastText'
-                          }}
-                        />
-                      </Box>
-                    </CardActionArea>
-                  </Card>
+                                <Chip 
+                                  label="View Details" 
+                                  size="small" 
+                                  sx={(theme) => ({
+                                    fontWeight: 600,
+                                    bgcolor: theme.palette.background.paper, 
+                                    color: theme.palette.primary.main,
+                                    border: `1px solid ${theme.palette.primary.dark}`, // << Añadido borde azul fuerte
+                                    '&:hover': {
+                                      bgcolor: theme.palette.mode === 'dark'
+                                      ? theme.palette.secondary.dark
+                                      : theme.palette.primary.light,
+                                      borderColor: theme.palette.text.primary, // Cambia el borde al hacer hover
+                                    },
+                                    transition: 'all 0.3s ease'
+                                  })} 
+                                />
+                              </Box>
+                            </CardActionArea>
+                          </Card>
+                        </Grid>
+                      ))
+                  ) : (
+                    <Grid item xs={12}>
+                      <LoadingCard message={"You don't have any tournaments registered yet."} />
+                    </Grid>
+                  )}
                 </Grid>
-              ))
-          ) : (
-            <Grid item xs={12}>
-              <LoadingCard message={"You don't have any tournaments registered yet."} />
-            </Grid>
-          )}
-        </Grid>
 
-        {/* Pagination */}
-        {tournaments.length > 0 && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Pagination
-              count={Math.ceil(tournaments.length / rowsPerPage)}
-              page={page + 1}
-              onChange={(event, value) => setPage(value - 1)}
-              color="secondary"
-              size="large"
-              showFirstButton
-              showLastButton
-              sx={{
-                '& .MuiPaginationItem-root': {
-                  fontSize: '1rem',
-                  fontWeight: 600
-                }
-              }}
-            />
+                {/* Pagination */}
+                {tournaments.length > 0 && (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                    <Pagination
+                      count={Math.ceil(tournaments.length / rowsPerPage)}
+                      page={page + 1}
+                      onChange={(event, value) => setPage(value - 1)}
+                      color="secondary"
+                      size="large"
+                      showFirstButton
+                      showLastButton
+                      sx={{
+                        '& .MuiPaginationItem-root': {
+                          fontSize: '1rem',
+                          fontWeight: 600
+                        }
+                      }}
+                    />
+                  </Box>
+                )}
+              </>
+            )}
           </Box>
-        )}
-      </>
-    )}
-  </Box>
         </LayoutLogin>
     );
 };

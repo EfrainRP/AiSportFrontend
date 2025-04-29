@@ -26,7 +26,7 @@ import {
     Link,
     Container,
     CardHeader,
-    Avatar
+    Avatar, alpha
 } from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
@@ -144,118 +144,134 @@ export default function IndexAI() {
             }}
             >
             {/* Main Card with AI Theme */}
-            <Card 
+            <Card
                 variant="outlined"
                 sx={(theme) => ({
-                width: '100%',
-                borderRadius: 2,
-                borderColor: (theme.palette.primary.light, 0.3),
-                boxShadow: theme.shadows[4],
-                background: theme.palette.mode === 'dark' 
-                    ? (theme.palette.background.paper, 0.8) 
-                    : (theme.palette.grey[50], 0.9),
-                transition: 'all 0.3s ease',
-                '&:hover': {
+                    width: '100%',
+                    borderRadius: 2,
+                    borderColor: (theme.palette.primary.light, 0.3),
+                    boxShadow: theme.shadows[4],
+                    background: theme.palette.mode === 'dark'
+                    ? alpha(theme.palette.background.paper, 0.8)  // Fondo en modo oscuro
+                    : alpha(theme.palette.background.paper, 0.9),  // Fondo modo claro
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
                     boxShadow: theme.shadows[8],
                     borderColor: theme.palette.primary.main
-                }
+                    }
                 })}
-            >
+                >
                 <CardHeader
-                avatar={
-                    <Avatar 
-                    sx={(theme) => ({ 
-                        bgcolor: (theme.palette.secondary.main, 0.2),
-                        color: theme.palette.secondary.main 
-                    })}
+                    avatar={
+                    <Avatar
+                        sx={(theme) => ({
+                        bgcolor: theme.palette.mode === 'dark'
+                            ? alpha(theme.palette.secondary.main, 0.2)
+                            : alpha(theme.palette.info.dark, 0.4),
+                        color: theme.palette.mode === 'dark'
+                            ? theme.palette.secondary.main
+                            : theme.palette.secondary.dark
+                        })}
                     >
-                    <SmartToyIcon />
+                        <SmartToyIcon />
                     </Avatar>
-                }
-                title={
-                    <Typography 
-                    variant="h6"
-                    sx={(theme) => ({
+                    }
+                    title={
+                    <Typography
+                        variant="h6"
+                        sx={(theme) => ({
                         fontWeight: 700,
-                        color: theme.palette.text.secondary,
+                        color: theme.palette.mode === 'dark'
+                            ? theme.palette.text.secondary
+                            : theme.palette.text.primary,
                         display: 'flex',
                         alignItems: 'center',
                         gap: 1
-                    })}
+                        })}
                     >
-                    <AutoAwesomeIcon fontSize="small" />
-                    Team Performance Optimization
+                        <AutoAwesomeIcon fontSize="small" />
+                        Team Performance Optimization
                     </Typography>
-                }
-                subheader="Select a team to analyze and improve with AI"
-                subheaderTypographyProps={{
-                    sx: { color: 'text.primary', display: 'flex', alignItems: 'center', gap: 1 }
-                }}
+                    }
+                    subheader="Select a team to analyze and improve with AI"
+                    subheaderTypographyProps={{
+                    sx: (theme) => ({
+                        color: theme.palette.mode === 'dark'
+                        ? theme.palette.text.primary
+                        : theme.palette.text.secondary,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1
+                    })
+                    }}
                 />
-                
+
                 <Divider sx={{ mx: 2 }} />
                 
                 <CardContent>
-                <Box 
-                    sx={{
+                    <Box sx={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: 2,
                     mb: 2
-                    }}
-                >
-                    <PsychologyIcon color="secondary" />
+                    }}>
+                    <PsychologyIcon 
+                    sx={(theme) => ({
+                        color: theme.palette.mode === 'dark' 
+                        ? theme.palette.secondary.main    // Color para modo dark
+                        : theme.palette.primary.dark       // Color para modo light
+                    })}
+                    />
                     <Typography variant="body2" color="text.primary">
-                    Our AI will analyze your team's performance and suggest improvements.
+                        Our AI will analyze your team's performance and suggest improvements.
                     </Typography>
-                </Box>
-                
-                <Autocomplete
-                fullWidth
-                autoComplete
-                autoSelect
-                includeInputInList
-                selectOnFocus
-                options={stats}
-                getOptionLabel={(option) => option.name}
-                isOptionEqualToValue={(option, value) => option.equipo_id === value.equipo_id}
-                value={selectedTeam || null}
-                onChange={(e, newValue) => setSelectedTeam(newValue || null)}
-                size="medium"
-                renderInput={(params) => (
-                    <TextField 
-                        {...params} 
+                    </Box>
+
+                    <Autocomplete
+                    fullWidth
+                    autoComplete
+                    autoSelect
+                    includeInputInList
+                    selectOnFocus
+                    options={stats}
+                    getOptionLabel={(option) => option.name}
+                    isOptionEqualToValue={(option, value) => option.equipo_id === value.equipo_id}
+                    value={selectedTeam || null}
+                    onChange={(e, newValue) => setSelectedTeam(newValue || null)}
+                    size="medium"
+                    renderInput={(params) => (
+                        <TextField
+                        {...params}
                         label=""
                         variant="outlined"
                         InputProps={{
                             ...params.InputProps,
                             startAdornment: (
-                                <>
-                                    <GroupsIcon sx={(theme) => ({
-                                        mr: 1.5,
-                                        verticalAlign: 'middle',
-                                        fontSize: '1.5rem',
-                                        color:
-                                            theme.palette.mode === 'light'
-                                                ? theme.palette.secondary.dark
-                                                : theme.palette.text.secondary
-                                    })} />
-                                    {params.InputProps.startAdornment}
-                                </>
+                            <>
+                                <GroupsIcon sx={(theme) => ({
+                                mr: 1.5,
+                                verticalAlign: 'middle',
+                                fontSize: '1.5rem',
+                                color: theme.palette.mode === 'light'
+                                    ? theme.palette.text.secondary
+                                    : theme.palette.text.secondary
+                                })} />
+                                {params.InputProps.startAdornment}
+                            </>
                             )
                         }}
                         sx={{
                             '& .MuiOutlinedInput-root': {
-                                borderRadius: 2,
-                                backgroundColor: (theme) => (theme.palette.background.paper, 0.5)
+                            borderRadius: 2,
+                            backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.5)
                             },
                             mt: 0
                         }}
-                    />
-                )}
-                renderOption={(props, option) => (
-                    <Box 
-                        component="li" 
+                        />
+                    )}
+                    renderOption={(props, option) => (
+                        <Box
+                        component="li"
                         {...props}
                         sx={{
                             display: 'flex',
@@ -263,105 +279,136 @@ export default function IndexAI() {
                             gap: 2,
                             py: 1.5
                         }}
-                    >
-                        <Avatar 
+                        >
+                        <Avatar
                             src={`${URL_SERVER}/utils/uploads/${option.image || 'logoEquipo.jpg'}`}
                             sx={{ width: 32, height: 32 }}
                         />
                         <Box>
                             <Typography variant="subtitle1">{option.name}</Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {option.members} members
+                            {option.members} members
                             </Typography>
                         </Box>
-                    </Box>
-                )}
-            />
+                        </Box>
+                    )}
+                    />
                 </CardContent>
-                
+
                 {selectedTeam && (
-                <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>
-                    <Button 
-                    variant="contained"
-                    size="large"
-                    startIcon={<FitnessCenterIcon />}
-                    endIcon={<ArrowForwardIcon />}
-                    href={`/dashboard/trainning/IA/${selectedTeam.equipo_id}/${selectedTeam.name}`}
-                    sx={{
+                    <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>
+                    <Button
+                        variant="contained"
+                        size="large"
+                        startIcon={<FitnessCenterIcon />}
+                        endIcon={<ArrowForwardIcon />}
+                        href={`/dashboard/trainning/IA/${selectedTeam.equipo_id}/${selectedTeam.name}`}
+                        sx={{
                         borderRadius: 2,
                         px: 3,
                         py: 1,
                         background: (theme) => `linear-gradient(135deg, ${theme.palette.secondary.dark}, ${theme.palette.primary.main})`,
                         '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: (theme) => theme.shadows[4]
+                            transform: 'translateY(-2px)',
+                            boxShadow: (theme) => theme.shadows[4]
                         },
                         transition: 'all 0.3s ease'
-                    }}
+                        }}
                     >
-                    AI Training Analysis
+                        AI Training Analysis
                     </Button>
-                </CardActions>
+                    </CardActions>
                 )}
-            </Card>
+                </Card>
 
-            {/* Personal Stats Card */}
+
+           {/* Personal Stats Card */}
             <Card
-                sx={(theme) => ({
+            sx={(theme) => ({
                 width: '100%',
                 borderRadius: 2,
-                borderColor: (theme.palette.secondary.light, 0.3),
+                border: `1px solid ${theme.palette.secondary.light}`,
                 boxShadow: theme.shadows[2],
-                background: theme.palette.mode === 'dark' 
-                    ? (theme.palette.background.paper, 0.7) 
-                    : (theme.palette.grey[50], 0.8),
+                backgroundColor: theme.palette.mode === 'dark'
+                ? alpha(theme.palette.background.paper, 0.5)
+                : alpha(theme.palette.grey[50], 0.8),
                 '&:hover': {
-                    boxShadow: theme.shadows[4],
-                    borderColor: theme.palette.primary.main
+                boxShadow: theme.shadows[4],
+                borderColor: theme.palette.primary.main
                 }
-                })}
+            })}
             >
-                <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            <CardContent
+                sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2
+                }}
+            >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <PersonSearchIcon sx={(theme) => ({
-                                                        mr: 1.5,
-                                                        verticalAlign: 'middle',
-                                                        fontSize: '2.5rem',
-                                                        color:
-                                                            theme.palette.mode === 'light'
-                                                            ? theme.palette.secondary.dark
-                                                            : theme.palette.warning.light
-                                                        })} />
-                    <Typography variant="h6" color="primary.light">
+                <PersonSearchIcon
+                    sx={(theme) => ({
+                    mr: 1.5,
+                    verticalAlign: 'middle',
+                    fontSize: '2.5rem',
+                    color: theme.palette.mode === 'light'
+                        ? theme.palette.text.secondary
+                        : theme.palette.warning.light
+                    })}
+                />
+                <Typography
+                    variant="h6"
+                    sx={(theme) => ({
+                        color: theme.palette.mode === 'light' 
+                        ? theme.palette.primary.dark // Color para el modo claro
+                        : theme.palette.primary.light // Mantener el color para el modo oscuro
+                    })}
+                            >
                     Individual Performance
                     </Typography>
+
                 </Box>
-                
-                <Typography variant="body2" color="text.primary" textAlign="center">
-                    Analyze and improve your personal stats with our AI assistant
+
+                <Typography
+                variant="body2"
+                color="text.primary"
+                textAlign="center"
+                >
+                Analyze and improve your personal stats with our AI assistant
                 </Typography>
-                
-                <Button 
-                    variant="outlined"
-                    size="large"
-                    fullWidth
-                    startIcon={<TrendingUpIcon />}
-                    endIcon={<InsightsIcon />}
-                    href={`/dashboard/trainning/personal/IA/${user.userName}`}
-                    sx={{
+
+                <Button
+                variant="outlined"
+                size="large"
+                fullWidth
+                startIcon={<TrendingUpIcon />}
+                endIcon={<InsightsIcon />}
+                href={`/dashboard/trainning/personal/IA/${user.userName}`}
+                sx={(theme) => ({
                     mt: 1,
                     borderRadius: 2,
                     py: 1.5,
                     borderWidth: 2,
+                    borderColor: theme.palette.mode === 'light' 
+                    ? theme.palette.success.main // Usando verde del tema para el modo claro
+                    : theme.palette.success.light, // Usando verde más claro del tema para el modo oscuro
+                    color: theme.palette.mode === 'light' 
+                    ? theme.palette.text.primary 
+                    : theme.palette.success.light, // Color del texto también en verde
                     '&:hover': {
-                        borderWidth: 2,
-                        backgroundColor: (theme) => (theme.palette.primary.light, 0.1)
+                    borderWidth: 2,
+                    backgroundColor: theme.palette.mode === 'light'
+                        ? alpha(theme.palette.secondary.dark, 0.9)
+                        : alpha(theme.palette.secondary.main, 0.15),
+                    borderColor: theme.palette.success.main, // Hover con el verde del tema
+                    color: theme.palette.success.main // Hover de texto en verde
                     }
-                    }}
+                })}
                 >
-                    My Personal Stats
+                My Personal Stats
                 </Button>
-                </CardContent>
+            </CardContent>
             </Card>
             </Container>
         </LayoutLogin>

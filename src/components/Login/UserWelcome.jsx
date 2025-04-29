@@ -58,24 +58,29 @@ const WelcomeSection = ({ user, loading, subtitle = 'To your tournaments!', desc
                 <>
                   Welcome back{' '}
                   <Box
-                    component="span"
-                    sx={{
-                      background: 'linear-gradient(to right, orange, gold, white)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      fontWeight: 900
-                    }}
-                  >
-                    {userName}
-                  </Box>
-                  <TrendingUpIcon
-                    sx={{
-                      fontSize: '2rem',
-                      background: 'linear-gradient(to right, orange, gold, gray)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent'
-                    }}
-                  />
+                        component="span"
+                        sx={(theme) => ({
+                          background: theme.palette.mode === 'dark'
+                            ? 'linear-gradient(to right, orange, gold, white)'
+                            : 'linear-gradient(to right, dimgray, darkorange)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          fontWeight: 900
+                        })}
+                      >
+                        {user?.userName?.toUpperCase() || 'GUEST'}
+                      </Box>
+
+                      <TrendingUpIcon
+                        sx={(theme) => ({
+                          fontSize: '2rem',
+                          background: theme.palette.mode === 'dark'
+                            ? 'linear-gradient(to right, orange, gold, gray)'
+                            : 'linear-gradient(to right, darkorange, goldenrod, dimgray)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent'
+                        })}
+                      />
                 </>
               )}
             </Typography>
@@ -87,7 +92,7 @@ const WelcomeSection = ({ user, loading, subtitle = 'To your tournaments!', desc
                 mb: 2,
                 ml: 4,
                 fontWeight: 700,
-                background: 'linear-gradient(to right, #ff7e5f, #feb47b)',
+                background: 'linear-gradient(to right,rgb(238, 89, 52), #feb47b)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent'
               }}
@@ -97,17 +102,25 @@ const WelcomeSection = ({ user, loading, subtitle = 'To your tournaments!', desc
 
             {/* Línea subtítulo */}
             <Typography
-              variant="subtitle2"
-              sx={{
-                mt: 1,
-                fontWeight: 500,
-                background: 'linear-gradient(to right,rgb(17, 235, 82),rgb(27, 233, 181))',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent'
-              }}
-            >
-              {loading ? <Skeleton variant="rounded" width={'60%'} /> : description}
-            </Typography>
+                variant="subtitle2"
+                sx={(theme) => ({
+                  mt: 3,
+                  fontWeight: 500,
+                  background: theme.palette.mode === 'dark'
+                    ? 'linear-gradient(to right, rgb(17, 235, 82), rgb(27, 233, 181))'
+                    : 'linear-gradient(to right, rgb(5, 116, 60), rgb(12, 10, 12))',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  transition: 'background 0.3s ease-in-out' // transición suave de fondo entre modos
+                })}
+              >
+                {loading ? (
+                  <Skeleton variant="rounded" width="60%" />
+                ) : (
+                  description
+                )}
+              </Typography>
+
           </Box>
         </Grid>
 
@@ -126,8 +139,8 @@ const WelcomeSection = ({ user, loading, subtitle = 'To your tournaments!', desc
                 height: 120,
                 bgcolor:
                   theme.palette.mode === 'dark'
-                    ? alpha(theme.palette.primary.light, 0.2)
-                    : alpha(theme.palette.primary.dark, 0.1),
+                    ? alpha(theme.palette.primary.light, 0.9)
+                    : alpha(theme.palette.primary.dark, 0.9),
                 border: `2px solid ${alpha(theme.palette.secondary.dark, 0.3)}`
               })}
             >

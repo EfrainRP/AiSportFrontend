@@ -71,7 +71,7 @@ const StyledTitle = styled(Typography)(({ theme }) => ({
 const GradientCard = styled(Card)(({ theme }) => ({
   background: theme.palette.mode === 'dark' ?
     `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.8)} 0%, ${alpha(theme.palette.background.default, 0.9)} 100%)` :
-    `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.grey[100], 0.8)} 100%)`,
+    `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.grey[300], 0.8)} 100%)`,
   borderRadius: 16,
   boxShadow: theme.shadows[4],
   transition: 'transform 0.3s ease, box-shadow 0.3s ease',
@@ -255,7 +255,7 @@ export default function Dashboard() {
                   borderRadius: 4,
                   background:
                     theme.palette.mode === 'light'
-                      ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.primary.light, 0.3)} 100%)`
+                      ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.info.light, 0.2)} 100%)`
                       : `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.primary.dark, 0.2)} 100%)`,
                   boxShadow: theme.shadows[2]
                 })}
@@ -270,7 +270,7 @@ export default function Dashboard() {
                     background:
                       theme.palette.mode === 'dark'
                         ? 'linear-gradient(to right, hsl(210, 100%, 70%), hsl(143, 88.70%, 51.40%), gold)'
-                        : 'linear-gradient(to right, hsl(219, 77%, 40%), hsl(143, 88.70%, 35.40%), goldenrod)',
+                        : 'linear-gradient(to right, hsl(219, 77%, 40%), hsl(340, 88.40%, 47.50%), goldenrod)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                     letterSpacing: 0.5
@@ -283,30 +283,47 @@ export default function Dashboard() {
                       Welcome back
                       <Box
                         component="span"
-                        sx={{
-                          background: 'linear-gradient(to right, orange, gold, white)',
+                        sx={(theme) => ({
+                          background: theme.palette.mode === 'dark'
+                            ? 'linear-gradient(to right, orange, gold, white)'
+                            : 'linear-gradient(to right, dimgray, darkorange)',
                           WebkitBackgroundClip: 'text',
                           WebkitTextFillColor: 'transparent',
                           fontWeight: 900
-                        }}
+                        })}
                       >
                         {user?.userName?.toUpperCase() || 'GUEST'}
                       </Box>
+
                       <TrendingUpIcon
                         sx={(theme) => ({
                           fontSize: '2rem',
-                          background: 'linear-gradient(to right, orange, gold, gray)',
+                          background: theme.palette.mode === 'dark'
+                            ? 'linear-gradient(to right, orange, gold, gray)'
+                            : 'linear-gradient(to right, darkorange, goldenrod, dimgray)',
                           WebkitBackgroundClip: 'text',
                           WebkitTextFillColor: 'transparent'
                         })}
                       />
+
                     </>
                   )}
                 </Typography>
 
-                <Typography variant="subtitle1" sx={{ mt: 1.5, color: 'text.secondary' }}>
+                <Typography
+                  variant="subtitle1"
+                  sx={(theme) => ({
+                    mt: 1.5,
+                    color: theme.palette.mode === 'dark'
+                      ? theme.palette.text.secondary
+                      : 'linear-gradient(to right, orange, gold, yellow)',
+                    fontWeight: 500,
+                    textAlign: 'center',
+                    transition: 'color 0.3s ease-in-out' 
+                  })}
+                >
                   {loading ? (
-                    <Skeleton variant="rounded" width={'60%'} />
+                    <Skeleton variant="rounded" width="60%" />
                   ) : (
                     'Manage your tournaments, teams and upcoming matches all in one place.'
                   )}
@@ -328,8 +345,8 @@ export default function Dashboard() {
                     height: 120,
                     bgcolor:
                       theme.palette.mode === 'dark'
-                        ? alpha(theme.palette.primary.light, 0.2)
-                        : alpha(theme.palette.primary.dark, 0.1),
+                        ? alpha(theme.palette.primary.light, 0.9)
+                        : alpha(theme.palette.primary.dark, 0.8),
                     border: `2px solid ${alpha(theme.palette.secondary.dark, 0.3)}`
                   })}
                 >
@@ -366,7 +383,7 @@ export default function Dashboard() {
                 fontSize: '2rem',
                 color:
                   theme.palette.mode === 'light'
-                    ? theme.palette.secondary.dark
+                    ? theme.palette.warning.dark
                     : theme.palette.primary.main
               })}
             />
@@ -429,7 +446,7 @@ export default function Dashboard() {
                             mb: 2,
                             color:
                               theme.palette.mode === 'light'
-                                ? theme.palette.secondary.dark
+                                ? theme.palette.primary.dark
                                 : theme.palette.primary.light
                           })}
                             > <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -440,7 +457,7 @@ export default function Dashboard() {
                                       fontSize: '2.5rem',
                                       color:
                                         theme.palette.mode === 'light'
-                                          ? theme.palette.warning.light
+                                          ? theme.palette.warning.main
                                           : theme.palette.primary.main
                                     })}
                                   />
@@ -450,17 +467,32 @@ export default function Dashboard() {
                           </Box>
                         </Typography>
 
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5, color: 'text.secondary' }}>
+                        <Box
+                          sx={(theme) => ({
+                            display: 'flex',
+                            alignItems: 'center',
+                            mb: 1.5,
+                            color: theme.palette.mode === 'light' ? theme.palette.error.dark : 'text.secondary',
+                          })}
+                        >
                           <EventIcon sx={{ mr: 1, fontSize: 20 }} />
                           <Typography variant="body2">
                             {new Date(torneo.fechaInicio).toLocaleDateString()} - {new Date(torneo.fechaFin).toLocaleDateString()}
                           </Typography>
                         </Box>
 
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, color: 'text.primary' }}>
-                          <Box component="span" sx={{ mr: 1 }}>📍</Box>
-                          <Typography variant="body2">{torneo.ubicacion}</Typography>
-                        </Box>
+
+                        <Box
+                            sx={(theme) => ({
+                              display: 'flex',
+                              alignItems: 'center',
+                              mb: 2,
+                              color: theme.palette.mode === 'light' ? 'text.primary' : 'text.primary',
+                            })}
+                          >
+                            <Box component="span" sx={{ mr: 1 }}>📍</Box>
+                            <Typography variant="body2">{torneo.ubicacion}</Typography>
+                          </Box>
 
                         <Divider sx={{ my: 1.5 }} />
 
@@ -484,14 +516,17 @@ export default function Dashboard() {
                             size="small"
                             sx={(theme) => ({
                               fontWeight: 600,
-                              bgcolor: alpha(theme.palette.primary.main, 0.1),
+                              bgcolor: alpha(theme.palette.background.paper, 0.3),
                               color: theme.palette.primary.main,
+                              border: `1px solid ${theme.palette.primary.dark}`, // << Añadido borde azul fuerte
                               '&:hover': {
-                                bgcolor: alpha(theme.palette.primary.main, 0.2)
+                                bgcolor: alpha(theme.palette.success.light, 0.4),
+                                borderColor: theme.palette.text.primary, // Cambia el borde al hacer hover
                               }
                             })}
                           />
                         </Box>
+
                       </Box>
                     </CardActionArea>
                   </GradientCard>
@@ -528,7 +563,7 @@ export default function Dashboard() {
                 fontSize: '2rem',
                 color:
                   theme.palette.mode === 'light'
-                    ? theme.palette.secondary.dark
+                    ? theme.palette.error.dark
                     : theme.palette.secondary.main
               })}
             />
@@ -596,7 +631,7 @@ export default function Dashboard() {
                             width: 120, 
                             height: 120, 
                             mb: 3,
-                            border: `3px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                            border: `3px solid ${alpha(theme.palette.primary.main, 0.4)}`,
                             transition: 'transform 0.3s ease',
                             '&:hover': {
                               transform: 'scale(1.05)'
@@ -612,7 +647,7 @@ export default function Dashboard() {
                             mb: 2,
                             color:
                               theme.palette.mode === 'light'
-                                ? theme.palette.secondary.dark
+                                ? theme.palette.primary.dark
                                 : theme.palette.primary.light
                           })}
                             ><GroupsIcon
@@ -622,24 +657,25 @@ export default function Dashboard() {
                                   fontSize: '2.5rem',
                                   color:
                                     theme.palette.mode === 'light'
-                                      ? theme.palette.secondary.dark
+                                      ? theme.palette.text.secondary
                                       : theme.palette.secondary.main
                                 })}
                           />
                           {equipo.name}
                         </Typography>
                         
-                        <Box sx={{ 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          mb: 2,
-                          color: 'text.secondary'
-                        }}>
+                        <Box
+                          sx={(theme) => ({
+                            display: 'flex',
+                            alignItems: 'center',
+                            mb: 2,
+                            color: theme.palette.mode === 'light' ? theme.palette.secondary.dark : 'text.secondary',
+                          })}
+                        >
                           <Typography variant="body2" sx={{ fontWeight: 500 }}>
                             Leader: {equipo['users'].name}
                           </Typography>
                         </Box>
-                        
                         <Box sx={{ 
                           mt: 'auto', 
                           width: '100%',
@@ -651,10 +687,12 @@ export default function Dashboard() {
                             size="small" 
                             sx={(theme) => ({
                               fontWeight: 600,
-                              bgcolor: alpha(theme.palette.secondary.main, 0.1),
-                              color: theme.palette.secondary.main,
+                              bgcolor: alpha(theme.palette.background.paper, 0.3),
+                              color: theme.palette.primary.main,
+                              border: `1px solid ${theme.palette.primary.dark}`, // << Añadido borde azul fuerte
                               '&:hover': {
-                                bgcolor: alpha(theme.palette.secondary.main, 0.2)
+                                bgcolor: alpha(theme.palette.success.light, 0.4),
+                                borderColor: theme.palette.text.primary, // Cambia el borde al hacer hover
                               },
                               transition: 'all 0.3s ease'
                             })} 
@@ -671,16 +709,31 @@ export default function Dashboard() {
         )}
       </Box>
       {/* Matches Section */}
-      <Box>
+      <Box sx={{ mb: 6 }}>
         <StyledTitle
           variant="h4"
           sx={(theme) => ({
             display: 'flex',
             alignItems: 'center',
             fontWeight: 800,
+            letterSpacing: '0.5px',
+            mb: 3,
             color: theme.palette.mode === 'light' 
               ? theme.palette.success.dark 
               : theme.palette.warning.light,
+            position: 'relative',
+            '&:after': {
+              content: '""',
+              position: 'absolute',
+              bottom: -8,
+              left: 0,
+              width: '50%',
+              height: '3px',
+              background: theme.palette.mode === 'light'
+                ? `linear-gradient(to right, ${theme.palette.success.dark}, transparent)`
+                : `linear-gradient(to right, ${theme.palette.warning.light}, transparent)`,
+              borderRadius: '2px'
+            }
           })}
         >
           <EventIcon
@@ -697,7 +750,14 @@ export default function Dashboard() {
         </StyledTitle>
 
         {loading ? (
-          <Skeleton variant="rounded" height={440} sx={{ borderRadius: 4 }} />
+          <Skeleton 
+            variant="rounded" 
+            height={440} 
+            sx={{ 
+              borderRadius: 4,
+              boxShadow: (theme) => theme.shadows[2]
+            }} 
+          />
         ) : data.proximosPartidos.length > 0 ? (
           <Paper 
             sx={(theme) => ({ 
@@ -706,13 +766,13 @@ export default function Dashboard() {
               borderRadius: 4,
               background: theme.palette.mode === 'dark'
                 ? alpha(theme.palette.background.paper, 0.9)
-                : alpha(theme.palette.grey[100], 0.8),
-              boxShadow: theme.shadows[4],
-              border: `1px solid ${
-                theme.palette.mode === 'dark'
-                  ? alpha(theme.palette.divider, 0.2)
-                  : alpha(theme.palette.divider, 0.1)
-              }`
+                : alpha(theme.palette.common.white, 0.95),
+              boxShadow: theme.shadows[6],
+              border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                boxShadow: theme.shadows[8]
+              }
             })}
           >
             <TableContainer sx={{ maxHeight: 440 }}>
@@ -727,9 +787,11 @@ export default function Dashboard() {
                           ? alpha(theme.palette.background.paper, 0.7)
                           : alpha(theme.palette.grey[100], 0.9),
                         color: theme.palette.mode === 'light'
-                          ? theme.palette.success.dark
+                          ? theme.palette.secondary.dark
                           : theme.palette.warning.light,
-                        borderBottom: `1px solid ${alpha(theme.palette.divider, 0.2)}`
+                        borderBottom: `2px solid ${alpha(theme.palette.divider, 0.3)}`,
+                        fontSize: '1.1rem',
+                        py: 2
                       })}
                     >
                       #️⃣
@@ -744,10 +806,12 @@ export default function Dashboard() {
                             ? alpha(theme.palette.background.paper, 0.7)
                             : alpha(theme.palette.grey[100], 0.9),
                           color: theme.palette.mode === 'light'
-                            ? theme.palette.success.dark
+                            ? theme.palette.text.primary
                             : theme.palette.warning.light,
-                          borderBottom: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
-                          minWidth: column.minWidth
+                          borderBottom: `2px solid ${alpha(theme.palette.divider, 0.3)}`,
+                          minWidth: column.minWidth,
+                          fontSize: '1rem',
+                          py: 2
                         })}
                       >
                         {column.label}
@@ -770,22 +834,33 @@ export default function Dashboard() {
                             '&:nth-of-type(even)': {
                               backgroundColor: theme.palette.mode === 'dark'
                                 ? alpha(theme.palette.background.paper, 0.5)
-                                : alpha(theme.palette.grey[100], 0.5)
+                                : alpha(theme.palette.grey[100], 0.7) // Gris claro para filas pares
+                            },
+                            '&:nth-of-type(odd)': {
+                              backgroundColor: theme.palette.mode === 'dark'
+                                ? alpha(theme.palette.background.paper, 0.3)
+                                : alpha(theme.palette.grey[50], 0.9) // Gris muy claro para filas impares
                             },
                             '&:hover': {
                               backgroundColor: theme.palette.mode === 'dark'
                                 ? alpha(theme.palette.primary.main, 0.2)
-                                : alpha(theme.palette.primary.main, 0.1)
+                                : alpha(theme.palette.primary.light, 0.2),
+                              transform: 'translateY(-1px)',
+                              boxShadow: (theme) => theme.shadows[1]
                             },
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
                           })}
                         >
                           <TableCell 
                             align="center"
                             sx={(theme) => ({
                               fontWeight: 600,
-                              borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-                              color: theme.palette.text.secondary
+                              borderBottom: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+                              color: theme.palette.mode === 'dark'
+                                ? theme.palette.text.secondary
+                                : theme.palette.text.primary,
+                              backgroundColor: 'inherit'
                             })}
                           >
                             {page * rowsPerPage + index + 1}
@@ -796,17 +871,21 @@ export default function Dashboard() {
                               row[column.id];
                             return (
                               <TableCell 
-                                key={column.id} 
+                                key={`${column.id}-${column.extraIndex || ''}-${index}`}
                                 align={column.align}
-                                sx={(theme) => ({
-                                  fontWeight: 500,
-                                  borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-                                  color: column.id.includes('equipoLocal') 
-                                    ? theme.palette.text.secondary 
-                                    : column.id.includes('equipoVisitante') 
-                                      ? theme.palette.primary.light 
-                                      : theme.palette.text.primary
-                                })}
+                                sx={(theme) => {
+                                  const isLight = theme.palette.mode === 'light';
+                                  return {
+                                    fontWeight: 500,
+                                    borderBottom: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+                                    color: column.id.includes('equipoLocal')
+                                      ? (isLight ? theme.palette.secondary.dark : theme.palette.text.secondary)
+                                      : column.id.includes('equipoVisitante')
+                                        ? (isLight ? theme.palette.primary.dark : theme.palette.primary.light)
+                                        : (isLight ? theme.palette.text.primary : theme.palette.text.primary),
+                                    backgroundColor: 'inherit'
+                                  };
+                                }}
                               >
                                 {column.format ? 
                                   column.format(value) : value
@@ -829,14 +908,21 @@ export default function Dashboard() {
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
               sx={(theme) => ({
-                borderTop: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                borderTop: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
                 '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
                   fontWeight: 500,
-                  color: theme.palette.text.secondary
+                  color: theme.palette.mode === 'dark'
+                    ? theme.palette.text.secondary
+                    : theme.palette.text.primary
                 },
                 backgroundColor: theme.palette.mode === 'dark'
                   ? alpha(theme.palette.background.paper, 0.7)
-                  : alpha(theme.palette.grey[100], 0.9)
+                  : alpha(theme.palette.grey[50], 0.8),
+                '& .MuiSvgIcon-root': {
+                  color: theme.palette.mode === 'dark'
+                    ? theme.palette.warning.light
+                    : theme.palette.primary.dark
+                }
               })}
             />
           </Paper>

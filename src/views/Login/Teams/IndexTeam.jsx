@@ -12,7 +12,7 @@ import {
     Container,
     Grid,
     Chip,
-    Pagination
+    Pagination, alpha, Avatar, useTheme
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import WelcomeSection from '../../../components/Login/UserWelcome.jsx';
@@ -88,7 +88,7 @@ export default function IndexTeam() {
                             transform: 'scale(1.05)',
                             },
                             transition: 'all 0.3s ease',
-                            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.3)',
+                            boxShadow: '0px 4px 10px rgba(248, 242, 242, 0.3)',
                             ...theme.applyStyles('dark', {
                             backgroundColor: 'primary.main',
                             '&:hover': {
@@ -120,106 +120,144 @@ export default function IndexTeam() {
                     <Skeleton variant="rounded" width={'95%'} height={350} />
                   ) : (
                     <>
-                      <Grid container spacing={3}>
-                        {teams.length > 0 ? (
-                          teams.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((team) => (
-                            <Grid item xs={12} sm={6} md={4} lg={3} key={team.id}>
-                              <Card 
-                                variant="outlined" 
-                                sx={{
-                                  height: '100%',
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  transition: 'all 0.3s ease',
-                                  '&:hover': {
-                                    transform: 'translateY(-5px)',
-                                    boxShadow: 3,
-                                    borderColor: 'primary.main'
-                                  }
-                                }}
-                              >
-                                <CardActionArea 
-                                  href={`/team/${team.name}/${team.id}`} 
-                                  sx={{
-                                    p: 2,
+                     <Grid container spacing={3}>
+                          {teams.length > 0 ? (
+                            teams.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((team) => (
+                              <Grid item xs={12} sm={6} md={4} lg={3} key={team.id}>
+                                <Card 
+                                  variant="outlined"
+                                  sx={(theme) => ({
                                     height: '100%',
                                     display: 'flex',
-                                    flexDirection: 'column'
-                                  }}
+                                    flexDirection: 'column',
+                                    borderRadius: 2,
+                                    transition: 'all 0.3s ease',
+                                    background: theme.palette.mode === 'light'
+                                      ? alpha(theme.palette.background.paper, 0.8)
+                                      : alpha(theme.palette.background.default, 0.7),
+                                    boxShadow: theme.shadows[4],
+                                    border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+                                    '&:hover': {
+                                      transform: 'translateY(-5px)',
+                                      boxShadow: theme.shadows[8],
+                                      borderColor: theme.palette.primary.main
+                                    }
+                                  })}
                                 >
-                                  <Box sx={{
-                                    position: 'relative',
-                                    width: '100%',
-                                    pt: '100%', // Mantener relación de aspecto 1:1
-                                    mb: 2,
-                                    borderRadius: '50%',
-                                    overflow: 'hidden',
-                                    backgroundColor: 'background.paper'
-                                  }}>
-                                    <CardMedia
-                                      component="img"
-                                      crossOrigin="use-credentials"
-                                      image={`${URL_SERVER}/utils/uploads/${team && team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`}
-                                      alt={team.name}
-                                      sx={{
-                                        position: 'absolute',
-                                        top: 0,
-                                        left: 0,
-                                        width: '100%',
-                                        height: '100%',
-                                        objectFit: 'contain',
-                                        p: 2
-                                      }}
-                                    />
-                                  </Box>
-                                  
-                                  <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
-                                    <Typography 
-                                      gutterBottom 
-                                      variant="h6" 
-                                      component="div"
-                                      sx={{
-                                        fontWeight: 700,
-                                        color: 'text.primary',
-                                        whiteSpace: 'nowrap',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis'
-                                      }}
-                                    > <Groups
-                                            sx={(theme) => ({
-                                              mr: 1.5,
-                                              verticalAlign: 'middle',
-                                              fontSize: '2.5rem',
-                                              color:
-                                                theme.palette.mode === 'light'
-                                                  ? theme.palette.secondary.dark
-                                                  : theme.palette.primary.light
-                                            })}
+                                  <CardActionArea 
+                                    href={`/team/${team.name}/${team.id}`} 
+                                    sx={{
+                                      p: 3,
+                                      height: '100%',
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      alignItems: 'center'
+                                    }}
+                                  >
+                                      <Avatar
+                                        src={`${URL_SERVER}/utils/uploads/${team && team.image !== 'logoEquipo.jpg' ? team.image : 'logoEquipo.jpg'}`}
+                                        alt={team.name}
+                                        sx={(theme) => ({
+                                          width: 120,
+                                          height: 120,
+                                          mb: 3,
+                                          borderRadius: '50%', // <-  Avatar circular
+                                          border: `3px solid ${theme.palette.mode === 'dark'
+                                            ? theme.palette.primary.light
+                                            : theme.palette.primary.main}`,
+                                          backgroundColor: 'transparent',
+                                          '& .MuiAvatar-img': {
+                                            objectFit: 'cover', // <- Mejor "cover" para que rellene bien el círculo
+                                            borderRadius: '50%' 
+                                          },
+                                          '&:hover': {
+                                            transform: 'scale(1.05)',
+                                            boxShadow: theme.shadows[4]
+                                          },
+                                          transition: 'all 0.3s ease'
+                                        })}
                                       />
-                                      {team.name}
-                                    </Typography>
-                                    
-                                    <Chip
-                                      label="View Details"
-                                      size="small"
-                                      sx={{
-                                        mt: 1,
-                                        fontWeight: 600,
-                                        backgroundColor: 'primary.light',
-                                        color: 'primary.contrastText'
-                                      }}
-                                    />
-                                  </CardContent>
-                                </CardActionArea>
-                              </Card>
+                                                  
+                                    <CardContent sx={{ 
+                                      flexGrow: 1, 
+                                      textAlign: 'center',
+                                      px: 0,
+                                      width: '100%'
+                                    }}>
+                                      <Box sx={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        mb: 2
+                                      }}>
+                                        <Groups
+                                          sx={(theme) => ({
+                                            mr: 1.5,
+                                            fontSize: '2rem',
+                                            color: theme.palette.mode === 'light'
+                                              ? theme.palette.secondary.dark
+                                              : theme.palette.secondary.main
+                                          })}
+                                        />
+                                        <Typography 
+                                          variant="h6" 
+                                          component="div"
+                                          sx={(theme) => ({
+                                            fontWeight: 700,
+                                            color: theme.palette.mode === 'light'
+                                              ? theme.palette.primary.dark
+                                              : theme.palette.primary.light,
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis'
+                                          })}
+                                        >
+                                          {team.name}
+                                        </Typography>
+                                      </Box>
+                                      
+                                      <Box sx={(theme) => ({
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        mb: 2,
+                                        color: theme.palette.mode === 'light'
+                                          ? theme.palette.text.secondary
+                                          : theme.palette.text.primary
+                                      })}>
+                                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                          Leader: {team['users']?.name || 'Unknown'}
+                                        </Typography>
+                                      </Box>
+                                      
+                                      <Chip 
+                                        label="Team Profile" 
+                                        size="medium"
+                                        sx={(theme) => ({
+                                          mt: 1,
+                                          fontWeight: 600,
+                                          bgcolor: alpha(theme.palette.background.paper, 0.3),
+                                          color: theme.palette.primary.main,
+                                          border: `1px solid ${theme.palette.primary.dark}`,
+                                          '&:hover': {
+                                            bgcolor: alpha(theme.palette.primary.light, 0.2),
+                                            borderColor: theme.palette.text.primary,
+                                            transform: 'scale(1.05)'
+                                          },
+                                          transition: 'all 0.3s ease'
+                                        })} 
+                                      />
+                                    </CardContent>
+                                  </CardActionArea>
+                                </Card>
+                              </Grid>
+                            ))
+                          ) : (
+                            <Grid item xs={12}>
+                              <LoadingCard message={"You don't have any teams registered yet."} />
                             </Grid>
-                          ))
-                        ) : (
-                          <Grid item xs={12}>
-                            <LoadingCard message={"You don't have any teams registered yet."} />
-                          </Grid>
-                        )}
-                      </Grid>
+                          )}
+                        </Grid>
               
                       {teams.length > 0 && (
                         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
