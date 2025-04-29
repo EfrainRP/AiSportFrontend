@@ -43,7 +43,7 @@ export default function LogoCollection(prop) {//pt es padding top
         component="p"
         variant="subtitle2"
         align="center"
-        sx={{ color: 'text.secondary' }}
+        sx={{ color: 'text.primary' }}
       >
         Companies that support you:
       </Typography>

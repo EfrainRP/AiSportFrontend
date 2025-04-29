@@ -77,6 +77,7 @@ export default function IndexTournaments() {
                 loading={loading} 
                 subtitle="To your Tournaments!" 
                 description="All your tournaments in one beautiful dashboard." 
+                iconName="EmojiEventsIcon"
                 />
             {loading?
                 <Skeleton variant="rounded" width={'5%'} height={40} sx={{my: 3}} /> 

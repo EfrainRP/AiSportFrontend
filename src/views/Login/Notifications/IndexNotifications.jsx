@@ -146,6 +146,7 @@ export default function IndexNotifications() {
                 loading={loading} 
                 subtitle="To your AiSport Notifications!" 
                 description="In this section you will be able to administer your notifications." 
+                iconName="NotificationsActiveIcon"
                 />
             <Box sx={{ width: '100%', height: 'auto', my:3, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 

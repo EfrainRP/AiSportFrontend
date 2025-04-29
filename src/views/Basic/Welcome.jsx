@@ -58,7 +58,7 @@ export default function Welcome(props) {
             spacing={2}
             useFlexGap
             align="justify"
-            color="text.secondary"
+            color="text.primary"
             sx={{
               alignItems: 'center',
               zIndex: 1,

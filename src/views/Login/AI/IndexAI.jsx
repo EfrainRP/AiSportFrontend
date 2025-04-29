@@ -129,6 +129,7 @@ export default function IndexAI() {
                 loading={loading} 
                 subtitle="To AiSport Performance Analyzer!" 
                 description="In this section you will be able to train." 
+                iconName="SmartToyOutlinedIcon"
                 />
             <Container 
             sx={{

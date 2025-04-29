@@ -38,6 +38,8 @@ import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 import GroupsIcon from '@mui/icons-material/Groups';
 import EventIcon from '@mui/icons-material/Event';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+
 const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 const centerJustify = {display: 'flex', alignContent:'center', textAlign:'justify', justifyContent:'space-evenly'};
 
@@ -295,7 +297,7 @@ export default function Dashboard() {
                         {user?.userName?.toUpperCase() || 'GUEST'}
                       </Box>
 
-                      <TrendingUpIcon
+                      <DashboardIcon
                         sx={(theme) => ({
                           fontSize: '2rem',
                           background: theme.palette.mode === 'dark'
@@ -350,7 +352,7 @@ export default function Dashboard() {
                     border: `2px solid ${alpha(theme.palette.secondary.dark, 0.3)}`
                   })}
                 >
-                  <SmartToyOutlinedIcon sx={{ fontSize: 60 }} />
+                  <DashboardIcon sx={{ fontSize: 60 }} />
                 </Avatar>
               </Box>
             </Grid>

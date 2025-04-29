@@ -1,10 +1,42 @@
 import { Box, Grid, Typography, Skeleton, Avatar } from '@mui/material';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import { alpha } from '@mui/material/styles';
 
-const WelcomeSection = ({ user, loading, subtitle = 'To your tournaments!', description = 'Here you can manage your tournaments and consult your information.' }) => {
+// Íconos disponibles
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import SportsBasketballIcon from '@mui/icons-material/SportsBasketball';
+import StarRateIcon from '@mui/icons-material/StarRate';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import GroupsIcon from '@mui/icons-material/Groups'; 
+
+const iconMap = {
+  TrendingUpIcon: TrendingUpIcon,
+  SmartToyOutlinedIcon: SmartToyOutlinedIcon,
+  SportsEsportsIcon: SportsEsportsIcon,
+  SportsSoccerIcon: SportsSoccerIcon,
+  EmojiEventsIcon: EmojiEventsIcon,
+  SportsBasketballIcon: SportsBasketballIcon,
+  StarRateIcon: StarRateIcon,
+  WorkspacePremiumIcon: WorkspacePremiumIcon,
+  NotificationsActiveIcon: NotificationsActiveIcon, 
+  DashboardIcon: DashboardIcon, 
+  GroupsIcon: GroupsIcon,
+};
+
+const WelcomeSection = ({
+  user,
+  loading,
+  subtitle = 'To your tournaments!',
+  description = 'Here you can manage your tournaments and consult your information.',
+  iconName = 'SmartToyOutlinedIcon' // default
+}) => {
   const userName = user?.userName?.toUpperCase() || 'INVITADO';
+  const SelectedIcon = iconMap[iconName] || SmartToyOutlinedIcon;
 
   return (
     <Box
@@ -35,7 +67,6 @@ const WelcomeSection = ({ user, loading, subtitle = 'To your tournaments!', desc
               boxShadow: theme.shadows[2]
             })}
           >
-            {/* Línea principal */}
             <Typography
               variant="h4"
               sx={(theme) => ({
@@ -58,34 +89,33 @@ const WelcomeSection = ({ user, loading, subtitle = 'To your tournaments!', desc
                 <>
                   Welcome back{' '}
                   <Box
-                        component="span"
-                        sx={(theme) => ({
-                          background: theme.palette.mode === 'dark'
-                            ? 'linear-gradient(to right, orange, gold, white)'
-                            : 'linear-gradient(to right, dimgray, darkorange)',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          fontWeight: 900
-                        })}
-                      >
-                        {user?.userName?.toUpperCase() || 'GUEST'}
-                      </Box>
+                    component="span"
+                    sx={(theme) => ({
+                      background: theme.palette.mode === 'dark'
+                        ? 'linear-gradient(to right, orange, gold, white)'
+                        : 'linear-gradient(to right, dimgray, darkorange)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      fontWeight: 900
+                    })}
+                  >
+                    {userName}
+                  </Box>
 
-                      <TrendingUpIcon
-                        sx={(theme) => ({
-                          fontSize: '2rem',
-                          background: theme.palette.mode === 'dark'
-                            ? 'linear-gradient(to right, orange, gold, gray)'
-                            : 'linear-gradient(to right, darkorange, goldenrod, dimgray)',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent'
-                        })}
-                      />
+                  <DashboardIcon
+                    sx={(theme) => ({
+                      fontSize: '2rem',
+                      background: theme.palette.mode === 'dark'
+                        ? 'linear-gradient(to right, orange, gold, gray)'
+                        : 'linear-gradient(to right, darkorange, goldenrod, dimgray)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent'
+                    })}
+                  />
                 </>
               )}
             </Typography>
 
-            {/* Línea tipo h3 */}
             <Typography
               variant="h5"
               sx={{
@@ -100,27 +130,25 @@ const WelcomeSection = ({ user, loading, subtitle = 'To your tournaments!', desc
               {loading ? <Skeleton variant="rounded" width={'40%'} sx={{ my: 2 }} /> : subtitle}
             </Typography>
 
-            {/* Línea subtítulo */}
             <Typography
-                variant="subtitle2"
-                sx={(theme) => ({
-                  mt: 3,
-                  fontWeight: 500,
-                  background: theme.palette.mode === 'dark'
-                    ? 'linear-gradient(to right, rgb(17, 235, 82), rgb(27, 233, 181))'
-                    : 'linear-gradient(to right, rgb(5, 116, 60), rgb(12, 10, 12))',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  transition: 'background 0.3s ease-in-out' // transición suave de fondo entre modos
-                })}
-              >
-                {loading ? (
-                  <Skeleton variant="rounded" width="60%" />
-                ) : (
-                  description
-                )}
-              </Typography>
-
+              variant="subtitle2"
+              sx={(theme) => ({
+                mt: 3,
+                fontWeight: 500,
+                background: theme.palette.mode === 'dark'
+                  ? 'linear-gradient(to right, rgb(17, 235, 82), rgb(27, 233, 181))'
+                  : 'linear-gradient(to right, rgb(5, 116, 60), rgb(12, 10, 12))',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                transition: 'background 0.3s ease-in-out'
+              })}
+            >
+              {loading ? (
+                <Skeleton variant="rounded" width="60%" />
+              ) : (
+                description
+              )}
+            </Typography>
           </Box>
         </Grid>
 
@@ -144,7 +172,7 @@ const WelcomeSection = ({ user, loading, subtitle = 'To your tournaments!', desc
                 border: `2px solid ${alpha(theme.palette.secondary.dark, 0.3)}`
               })}
             >
-              <SmartToyOutlinedIcon sx={{ fontSize: 60 }} />
+              <SelectedIcon sx={{ fontSize: 60 }} />
             </Avatar>
           </Box>
         </Grid>

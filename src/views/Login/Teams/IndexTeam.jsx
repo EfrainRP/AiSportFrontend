@@ -57,6 +57,7 @@ export default function IndexTeam() {
                 loading={loading} 
                 subtitle="To your Teams!" 
                 description="All your teams in one beautiful dashboard." 
+                iconName="GroupsIcon"
                 />
              {loading ? (
                  <Skeleton variant="rounded" width={'5%'} height={40} sx={{ my: 3 }} />
