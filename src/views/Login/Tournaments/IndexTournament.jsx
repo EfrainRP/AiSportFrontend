@@ -92,7 +92,7 @@ export default function IndexTournaments() {
               }}>
                <IconButton
                     component="a"
-                    href="/team/create"
+                    href="/tournament/create"
                     sx={(theme) => ({
                         backgroundColor: 'primary.dark',
                         color: 'white',

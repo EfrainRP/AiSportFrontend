@@ -38,7 +38,7 @@ import {
 } from '@mui/material';
 // import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-
+const apiUrl = import.meta.env.VITE_PROXY_SERVER;
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import DoDisturbOnTwoToneIcon from '@mui/icons-material/DoDisturbOnTwoTone';
 import UploadIcon from '@mui/icons-material/Upload';
@@ -280,7 +280,7 @@ export default function ShowAI() {
                     setVideoDuration(video.duration); // Guardar la duración del video
                 };
 
-                websocketRef.current = new WebSocket("wss://w43sc9hv-8765.usw3.devtunnels.ms");
+                websocketRef.current = new WebSocket(import.meta.env.VITE_URL_IA);
                 websocketRef.current.onopen = () => {
                     setDataAlert({ severity: "success", message: "AiSport: Successful Training Connection."});
                     setOpenSnackBar(true);
@@ -396,8 +396,8 @@ export default function ShowAI() {
                 }
 
                 if (data && data.prediction) {
-                    sendDataToServer(`http://localhost:5000/sporthub/api/entrenamiento/equipo/AI/${equipoId}`, data, data.prediction);
-                    sendDataToServer(`http://localhost:5000/sporthub/api/entrenamiento/user/AI/${user.userId}`, data, data.prediction);
+                    sendDataToServer(`${apiUrl}/sporthub/api/entrenamiento/equipo/AI/${teamId}`, data, data.prediction);
+                    sendDataToServer(`${apiUrl}/sporthub/api/entrenamiento/user/AI/${user.userId}`, data, data.prediction);
                 }
 
                 if (canvasRef.current && data.image) {

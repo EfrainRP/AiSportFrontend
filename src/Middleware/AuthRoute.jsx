@@ -5,7 +5,7 @@ import axiosInstance from "../services/axiosConfig";
 
 const AuthRoute = ({ children, restricted = false, requireTorneoOwnership = false, requireEquipoOwnership = false }) => {
   const { user, isAuthenticated, setLoading, loading } = useAuth(); // Accede al usuario autenticado y al método isAuthenticated
-  const { torneoName, torneoId, equipoName , equipoId } = useParams(); // Obtiene los parametros desde la URL
+  const { tournamentName, tournamentId, teamName , teamId } = useParams(); // Obtiene los parametros desde la URL
   const location = useLocation(); // Hook para obtener la ubicación actual
   const [isValidTorneo, setIsValidTorneo] = React.useState(true); // Estado para verificar si el usuario es dueño del torneo
   const [isValidEquipo, setIsValidEquipo] = React.useState(true); // Estado para verificar si el usuario es dueño del equipo
@@ -17,12 +17,12 @@ const AuthRoute = ({ children, restricted = false, requireTorneoOwnership = fals
     setIsValidEquipo(true);
 
     // Verificación de propiedad del torneo <-
-    const checkTorneoOwnership = async () => {
-      if (requireTorneoOwnership && user && torneoId) {
-        await axiosInstance.get(`/torneo/${torneoName}/${torneoId}`)
+    const checkTorneoOwnership = async () => { 
+      if (requireTorneoOwnership && user && tournamentId) {
+        await axiosInstance.get(`/torneo/${tournamentName}/${tournamentId}`)
         .then((response)=>{
-          const torneo = response.data;
-          console.log("Torneo", torneo);
+          const torneo = response.data.torneo;
+          console.log("Torneo obtenido middl", torneo.user_id);
           // Si el user_id del torneo no coincide con el userId del usuario autenticado, redirigir al dashboard
           if (torneo.user_id !== user.userId) {
             setIsValidTorneo(false);
@@ -39,8 +39,8 @@ const AuthRoute = ({ children, restricted = false, requireTorneoOwnership = fals
 
     // Verificación de propiedad del equipo <-
     const checkEquipoOwnership = async () => {
-      if (requireEquipoOwnership && user && equipoId) {
-        await axiosInstance.get(`/equipo/${equipoName}/${equipoId}`)
+      if (requireEquipoOwnership && user && teamId) {
+        await axiosInstance.get(`/equipo/${teamName}/${teamId}`)
         .then((response)=>{
           const equipo = response.data;
           console.log("Equipo", equipo);
@@ -63,7 +63,7 @@ const AuthRoute = ({ children, restricted = false, requireTorneoOwnership = fals
     checkEquipoOwnership();
 
     setLoading(false);
-  }, [user, torneoId, torneoName, equipoId, requireTorneoOwnership, requireEquipoOwnership, location]); // Añadir `location` como dependencia para que se refresque al cambiar de ruta
+  }, [user, tournamentId, tournamentName, teamId, requireTorneoOwnership, requireEquipoOwnership, location]); // Añadir `location` como dependencia para que se refresque al cambiar de ruta
 
   // Cargando datos
   // if (isLoading) {
