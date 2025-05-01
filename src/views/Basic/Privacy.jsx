@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { styled } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -7,6 +8,16 @@ import Typography from '@mui/material/Typography';
 import VideoBackground from '../../components/videoBackground.jsx';
 import LayoutBasic from '../LayoutBasic.jsx'
 import {orange} from '../../components/shared-theme/themePrimitives.jsx';
+
+const BackgroundBox = styled(Stack)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark'
+    ? 'rgba(0, 0, 0, 0.6)'  // Fondo oscuro semi-transparente
+    : 'rgba(255, 255, 255, 0.7)', // Fondo blanco semi-transparente
+  padding: theme.spacing(1),
+  borderRadius: theme.shape.borderRadius * 2, // Bordes más redondeados
+  boxShadow: theme.shadows[5], // Sombra para que flote mejor
+  backdropFilter: 'blur(4px)', // Efecto de desenfoque elegante
+}));
 
 export default function Privacy(props){
   return (
@@ -25,14 +36,19 @@ export default function Privacy(props){
               zIndex: 1, // Asegura que el contenido esté encima del video
             }}
           >
-            <Stack
+            <BackgroundBox
               useFlexGap
               sx={{width: { xs: '80vw', sm: '55%' }, spacing: 1}}
               // align='justify'
               color= 'text.primary'
               spacing={1.5}
             >
-              <Typography variant="h1" gutterBottom sx={{color:orange[300], pb: { xs: 6, sm: 2 }}}>
+              <Typography variant="h1" gutterBottom 
+                sx={[(theme) => ({
+                    color: theme.palette.mode === 'dark' ? orange[300] : orange[900],
+                    textAlign: 'center'
+                  }),
+                ]}>
                 Privacy Policy
               </Typography>
               
@@ -43,7 +59,7 @@ export default function Privacy(props){
               </Typography>
 
               {/* Section 1 */}
-              <Typography variant="h6" color='orange' gutterBottom>
+              <Typography variant="h4">
                 Information We Collect
               </Typography>
               <Typography variant="body2" paragraph>
@@ -62,7 +78,7 @@ export default function Privacy(props){
               </Typography>
 
               {/* Section 2 */}
-              <Typography variant="h6" color='orange' gutterBottom>
+              <Typography variant="h4">
                 How We Use Your Information
               </Typography>
               <Typography variant="body2" paragraph>
@@ -71,7 +87,7 @@ export default function Privacy(props){
               </Typography>
 
               {/* Section 3 */}
-              <Typography variant="h6" color='orange' gutterBottom>
+              <Typography variant="h4">
                 Sharing Your Information
               </Typography>
               <Typography variant="body2" paragraph>
@@ -80,7 +96,7 @@ export default function Privacy(props){
               </Typography>
 
               {/* Additional Sections */}
-              <Typography variant="h6" color='orange' gutterBottom>
+              <Typography variant="h4">
                 Data Security
               </Typography>
               <Typography variant="body2" paragraph>
@@ -88,7 +104,7 @@ export default function Privacy(props){
                 credentials safe and notify us of suspicious activity.
               </Typography>
 
-              <Typography variant="h6" color='orange' gutterBottom>
+              <Typography variant="h4">
                 Your Rights
               </Typography>
               <Typography variant="body2" paragraph>
@@ -96,14 +112,14 @@ export default function Privacy(props){
                 available.
               </Typography>
 
-              <Typography variant="h6" color='orange' gutterBottom>
+              <Typography variant="h4">
                 Contact Us
               </Typography>
               <Typography variant="body2" paragraph>
                 If you have any questions, contact us at <Typography component="span" sx={{ color: orange[500], fontWeight: 'bold' }}>AiSport@gmail.com</Typography>.
               </Typography>
 
-              </Stack>
+              </BackgroundBox>
         </Container>
       </LayoutBasic>
   );

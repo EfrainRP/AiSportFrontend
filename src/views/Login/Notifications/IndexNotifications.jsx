@@ -44,8 +44,6 @@ const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
 export default function IndexNotifications() {
     const [notifications, setNotifications] = React.useState([]);
     const { user, loading, setLoading } = useAuth(); // Accede al usuario autenticado 
-    const [check, setCheck] = React.useState(false);
-    const [checkDelete, setCheckDelete] = React.useState(false);
     const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
     const [openSnackBar, setOpenSnackBar] = React.useState(false); // Mecanismo snackbar
 
@@ -76,11 +74,10 @@ export default function IndexNotifications() {
         if (user) {
             fetchData(); // Llamar a la función solo si el usuario está definido
         }
-    }, [user]);
+    }, [user, notifications]);
 
     // Función para manejar la actualizar de notificaciones
     const denyNotifications = async (notificacionId) => {
-        setCheckDelete(true);
         await axiosInstance.put(`/notificaciones/${notificacionId}`, {status: "rejected"})
         .then((response)=>{
             console.log(response.data);
@@ -89,7 +86,6 @@ export default function IndexNotifications() {
             setDataAlert({ severity: "warning", message: 'Notification successfully denied.' });
         }).catch((err)=>{
             console.error(err);
-            setCheckDelete(false);
             // Verifica si hay una respuesta del servidor con un mensaje de error
             if (err.response && err.response.data && err.response.data.message) {
                 // alert(err.response.data.message); // Muestra el mensaje del backend
@@ -104,7 +100,6 @@ export default function IndexNotifications() {
     };
     // Función para manejar la aceptación de notificaciones
     const acceptNotification = async (notificacionId, torneoId) => {
-        setCheck(true);
         // Enviar la solicitud DELETE para aceptar la notificación
         await axiosInstance.delete(`/notificacion/${user.userId}/${torneoId}`)
         .then((response)=>{
@@ -115,7 +110,6 @@ export default function IndexNotifications() {
             // alert('Notificación aceptada con éxito.');
         }).catch((err)=>{
             console.error('Error al aceptar la notificación:', err);
-            setCheck(false);
             // Verifica si hay una respuesta del servidor con un mensaje de error
             if (err.response && err.response.data && err.response.data.message) {
                 // alert(err.response.data.message); // Muestra el mensaje del backend
@@ -162,10 +156,10 @@ export default function IndexNotifications() {
                                 <ListItem key={i}
                                     secondaryAction={
                                         <ButtonGroup edge="end" variant="contained">
-                                            <Button color="success" aria-label="actionNote" startIcon={ check? <CheckCircleRoundedIcon/> : <RadioButtonUncheckedIcon/> } onClick={() => acceptNotification(note.id, note.torneo_id)}>
+                                            <Button color="success" aria-label="actionNote" startIcon={ note.status != 'rejected'? <CheckCircleRoundedIcon/> : <RadioButtonUncheckedIcon/> } onClick={() => acceptNotification(note.id, note.torneo_id)}>
                                                 Accept
                                             </Button>
-                                            <Button color="error" aria-label="actionNote" startIcon={checkDelete? <CheckCircleRoundedIcon/> : <DoDisturbAltOutlinedIcon/>} onClick={() => denyNotifications(note.id)}>
+                                            <Button color="error" aria-label="actionNote" startIcon={note.status == 'rejected'? <CheckCircleRoundedIcon/> : <DoDisturbAltOutlinedIcon/>} onClick={() => denyNotifications(note.id)}>
                                                 Deny
                                             </Button>
                                         </ButtonGroup>

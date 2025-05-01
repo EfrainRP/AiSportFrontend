@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { styled } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -13,10 +14,20 @@ import VideoBackground from '../../components/videoBackground.jsx';
 import LayoutBasic from '../LayoutBasic.jsx'
 import {orange} from '../../components/shared-theme/themePrimitives.jsx';
 
+const BackgroundBox = styled(Stack)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark'
+    ? 'rgba(0, 0, 0, 0.6)'  // Fondo oscuro semi-transparente
+    : 'rgba(255, 255, 255, 0.7)', // Fondo blanco semi-transparente
+  padding: theme.spacing(1),
+  borderRadius: theme.shape.borderRadius * 2, // Bordes más redondeados
+  boxShadow: theme.shadows[5], // Sombra para que flote mejor
+  backdropFilter: 'blur(4px)', // Efecto de desenfoque elegante
+}));
+
 export default function Terms(props){
   return (
       <LayoutBasic>
-              <VideoBackground myHeight={{ xs: '19.8vh', sm: '108vh' }}/>
+              <VideoBackground myHeight={{ xs: '19.8vh', sm: '110vh' }}/>
                 <Container
                   sx={{
                     position: 'relative',
@@ -30,7 +41,7 @@ export default function Terms(props){
                     zIndex: 1, // Asegura que el contenido esté encima del video
                   }}
                 >
-                  <Stack
+                  <BackgroundBox
                         useFlexGap
                         sx={{ alignItems: 'center', width: { xs: '80vw', sm: '52%' }, spacing: 1}}
                         align='justify'
@@ -127,7 +138,7 @@ export default function Terms(props){
                           >
                           <LinkedInIcon size='medium'/></IconButton>
                         </Stack>
-                    </Stack>
+                    </BackgroundBox>
               </Container>
       </LayoutBasic>
   );

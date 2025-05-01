@@ -283,6 +283,7 @@ const MatchBracket = ({onwerTournament}) => {
           </Typography>
         </Grid>
         <Grid item>
+          {party.name != 'TBD' &&
           <Chip
             label={isWinner ? 'WIN' : (topWon === bottomWon ? party?.resultText : 'LOST')}
             size="small"
@@ -292,11 +293,10 @@ const MatchBracket = ({onwerTournament}) => {
               fontWeight: 'bold',
               fontSize: '0.75rem',
             }}
-          />
+          />}
         </Grid>
       </Grid>
     );
-
     return (
       <Box sx={{ position: 'relative' }}>
         {match?.partidosHijos && 
@@ -321,7 +321,7 @@ const MatchBracket = ({onwerTournament}) => {
                   sx={{ ml: 1 }}
                 />
               </>
-            ) : (
+            ) : onwerTournament && 
               <Fab 
                 variant="extended" 
                 color="success" 
@@ -335,7 +335,7 @@ const MatchBracket = ({onwerTournament}) => {
               > 
                 <AddIcon sx={{ mr: 0.5 }} /> Add Match
               </Fab>
-            )}
+            }
           </Box>
         }
         

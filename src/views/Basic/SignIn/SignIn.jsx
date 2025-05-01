@@ -362,7 +362,7 @@ export default function SignIn(props) {
                 <Link
                   href="/signup"
                   variant="body2"
-                  sx={{ alignSelf: 'center' }}
+                  sx={{ alignSelf: 'center', color: 'secondary.main'}}
                 >
                   Sign up
                 </Link>

@@ -191,12 +191,13 @@ export default function StatsAI() {
 
     return (
         <LayoutLogin>
+            <BackButton url={`/dashboard/trainning/IA`} />
             <WelcomeSection 
-                            user={user} 
-                            loading={loading} 
-                            subtitle="To Stats AI Training" 
-                            description="In this section you will be able to consult your stats analyzer." 
-                            />
+                user={user} 
+                loading={loading} 
+                subtitle="To Stats AI Training" 
+                description="In this section you will be able to consult your stats analyzer." 
+                />
             {/* Controles de entrenamiento */}
             <Container sx={{width:"100%", mt:4, flexDirection:'column', gap:2}}>
                 <Card>
