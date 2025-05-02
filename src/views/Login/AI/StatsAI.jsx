@@ -24,7 +24,7 @@ import {
 } from '@mui/material';
 // import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-
+import WelcomeSection from '../../../components/Login/UserWelcome.jsx';
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
@@ -191,14 +191,13 @@ export default function StatsAI() {
 
     return (
         <LayoutLogin>
-            <Container sx={{display:'flex', textAlign:'justify',m:1, gap:'5%'}}>
-                <BackButton url={`/dashboard/trainning/IA`}/>
-                <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `Stats AI Trainning`} </Typography>
-            </Container>
-            <Typography variant='subtitle2' sx={{ mt:3,ml:20 }}>
-                Here you can consult you stats analyzer.
-            </Typography>
-
+            <BackButton url={`/dashboard/trainning/IA`} />
+            <WelcomeSection 
+                user={user} 
+                loading={loading} 
+                subtitle="To Stats AI Training" 
+                description="In this section you will be able to consult your stats analyzer." 
+                />
             {/* Controles de entrenamiento */}
             <Container sx={{width:"100%", mt:4, flexDirection:'column', gap:2}}>
                 <Card>

@@ -11,7 +11,12 @@ import {
   Avatar,
   Fab,
   Snackbar,
-  Alert
+  Alert,
+  Paper,
+  Divider,
+  Chip,
+  Grid,
+  useMediaQuery
 } from '@mui/material';
 import { useTheme } from "@mui/material/styles";
 import { useParams, useNavigate } from 'react-router-dom';
@@ -23,77 +28,48 @@ import DialogComponent from './DialogComponent.jsx';
 import LoadingCard from './LodingCard.jsx';
 
 import AddIcon from '@mui/icons-material/Add';
+import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import EventIcon from '@mui/icons-material/Event';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
-const URL_SERVER = import.meta.env.VITE_URL_SERVER; //Url de nuestro server
+const URL_SERVER = import.meta.env.VITE_URL_SERVER;
 
-//TBD -----significa---->   to be decided
-
-/*const example = [
-  {
-    id: 1,
-    nextMatchId: 3,
-    tournamentRoundText: "Round 1",
-    myMatchDB:34,
-    participants: [
-      { id: "team1", resultText: "2", isWinner: false, name: "Team A" },
-      { id: "team2", resultText: "3", isWinner: true, name: "Team B" },
-    ],
-  },
-  {
-    id: 2,
-    nextMatchId: 3,
-    tournamentRoundText: "Round 1",
-    participants: [],
-  },
-  {
-    id: 3,
-    nextMatchId: null,
-    tournamentRoundText: "Final",
-    participants: [],
-  },
-];*/
-
-const MatchBracket = ({onwerTournament}) => { //TO DO: falta hacer el proceso de eliminacion y verificar el mecanismo de Editar
+const MatchBracket = ({onwerTournament}) => {
   const navigate = useNavigate();
   const { tournamentName, tournamentId } = useParams();
   const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [matches, setMatches] = React.useState([]);
   const [matchesCount, setMatchesCount] = React.useState(0);
   const [cantEquipoTorneo, setCantEquipoTorneo] = React.useState(0);
-  const [flag, setFlag] = React.useState(true); // State para controlar el componente MatchBracket, evitar re-renders
+  const [flag, setFlag] = React.useState(true);
 
   React.useEffect(() => {
     if(flag){
-      const fetchMatches = async () => { // Peticion INDEX Partidos del torneo
-        await axiosInstance.get(`/partidos/${tournamentId}`).
-        then((res)=> {
-            setMatches(res.data.brackets); // Datos de los partidos
-            // console.log(res.data.brackets);
-            // console.log('res',res.data.getPartidosCount);
-            // console.log('d',res.data.cantEquipoTorneo);
-            // console.log('d21',cantEquipoTorneo);
+      const fetchMatches = async () => {
+        await axiosInstance.get(`/partidos/${tournamentId}`)
+        .then((res)=> {
+            setMatches(res.data.brackets);
             setMatchesCount(res.data.getPartidosCount);
             setCantEquipoTorneo(res.data.cantEquipoTorneo);
         })
         .catch ((err)=>{
-            // console.error('Error al cargar los partidos del torneo:', err);
             setMatchesCount(0);
             setCantEquipoTorneo(0);
         })
     };
     fetchMatches(); // Llamada para obtener los partidos del torneo
-    }
     setFlag(false);  
+  }
   },[flag]);
 
-  const [dataAlert, setDataAlert] = React.useState({}); //Mecanismo Alert
-  const [openSnackBar, setOpenSnackBar] = React.useState(false); // Mecanismo snackbar
+  const [dataAlert, setDataAlert] = React.useState({});
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
     
   const handleCloseSnackBar = (event, reason) => {
-    if (reason === 'clickaway') {
-        return;
-    }
+    if (reason === 'clickaway') return;
     setOpenSnackBar(false);
   };
   
@@ -102,30 +78,29 @@ const MatchBracket = ({onwerTournament}) => { //TO DO: falta hacer el proceso de
     setSelectedMatch(match);
     setConfirm(true);
   };
-  const [openConfirm, setConfirm] = React.useState(false); //Mecanismo confirm
-  const handleCloseConfirm = () => { //Boton cancel del dialog
+  const [openConfirm, setConfirm] = React.useState(false);
+  const handleCloseConfirm = () => {
       setSelectedMatch(null);
       setConfirm(false);
   };
-  const handleDelete = () => { // Peticion DELETE Partido
+  const handleDelete = () => {
     setShowModal(false);
     if(!selectedMatch) return;
     axiosInstance.delete(`/partido/${tournamentId}/${selectedMatch.myIdMatch}`)
       .then((res)=>{
           setOpenSnackBar(true);
-          setDataAlert({severity:"success", message:'Delete match success!'});
+          setDataAlert({severity:"success", message:'Match deleted successfully!'});
       })
       .catch ((err) => {
-          // console.error('Error deleting the match:', err);
           setOpenSnackBar(true);
-          setDataAlert({severity:"error", message:'Error delete match.'});
+          setDataAlert({severity:"error", message:'Error deleting match.'});
       });
     setFlag(true);
     setConfirm(false);
     handleCloseConfirm;
   };
 
-  const handleEdit = (match) => { // Cambio de vista a Edit form
+  const handleEdit = (match) => {
     navigate(`/match/${tournamentName}/${tournamentId}/${match.myIdMatch}/edit`,{state:{ matchIdBracket: match.id }});
   };
 
@@ -138,9 +113,27 @@ const MatchBracket = ({onwerTournament}) => { //TO DO: falta hacer el proceso de
       backgroundColor: theme.palette.mode === "light" ? theme.palette.primary.main : theme.palette.grey[800],
       fontColor: theme.palette.mode === "light" ? theme.palette.common.white : theme.palette.common.white,
     },
-    connectorColor: theme.palette.mode === "light" ? theme.palette.secondary.light : theme.palette.secondary.dark,
-    connectorColorHighlight: theme.palette.mode === "light" ? theme.palette.secondary.dark : theme.palette.grey[500],
+    connectorColor: theme.palette.mode === "light" ? theme.palette.primary.dark : theme.palette.warning.main,
+    connectorColorHighlight: theme.palette.mode === "light" ? theme.palette.text.primary : theme.palette.grey[500],
   };
+
+  const MatchDetailItem = ({ icon, label, value }) => (
+    <Grid container alignItems="center" spacing={1} sx={{ mb: 1 }}>
+      <Grid item>
+        {icon}
+      </Grid>
+      <Grid item xs>
+        <Typography variant="subtitle2" color="text.secondary">
+          {label}
+        </Typography>
+      </Grid>
+      <Grid item>
+        <Typography variant="body2" fontWeight="medium">
+          {value || 'N/A'}
+        </Typography>
+      </Grid>
+    </Grid>
+  );
 
   const MyMatch = (props) => {
     const {
@@ -163,240 +156,400 @@ const MatchBracket = ({onwerTournament}) => { //TO DO: falta hacer el proceso de
       resultFallback,
     } = props;
 
-    // console.log(props)
-    const centerJustify = {display:'flex', justifyContent:'space-between', alignContent:'center', gap:1};
     const message = (
-      <Container sx={{p:0,m:0}}>
-        <Container sx={{...centerJustify}}>
-            <Typography variant='subtitle2' color='primary'>
-              <strong>Home team:</strong>
+      <Paper
+        elevation={3}
+        sx={(theme) => ({
+          p: 2,
+          borderRadius: 3,
+          backgroundColor: theme.palette.background.paper,
+          minWidth: 320,
+          maxWidth: 420,
+          mx: 'auto',
+          boxShadow: theme.shadows[4],
+        })}
+      >
+        <MatchDetailItem 
+          icon={<SportsSoccerIcon color="primary" fontSize="small" />} 
+          label="Home team:" 
+          value={topParty?.name || teamNameFallback} 
+        />
+        <MatchDetailItem 
+          icon={
+            <Typography 
+              color="secondary" 
+              sx={{ width: 24, textAlign: 'center', fontWeight: 'bold' }}
+            >
+              H
             </Typography>
-            <Typography variant='body2'>
-              {topParty?.name || teamNameFallback}
+          } 
+          label="Home result:" 
+          value={topParty?.resultText || 'No result'} 
+        />
+    
+        <Divider sx={{ my: 2 }} />
+    
+        <MatchDetailItem 
+          icon={<SportsSoccerIcon color="primary" fontSize="small" />} 
+          label="Guest team:" 
+          value={bottomParty?.name || teamNameFallback} 
+        />
+        <MatchDetailItem 
+          icon={
+            <Typography 
+              color="secondary" 
+              sx={{ width: 24, textAlign: 'center', fontWeight: 'bold' }}
+            >
+              G
             </Typography>
-        </Container>
+          } 
+          label="Guest result:" 
+          value={bottomParty?.resultText || 'No result'} 
+        />
+    
+        <Divider sx={{ my: 2 }} />
+    
+        <MatchDetailItem 
+          icon={<ScheduleIcon color="primary" fontSize="small" />} 
+          label="Match time:" 
+          value={match.horaPartido || 'N/A'} 
+        />
+        <MatchDetailItem 
+          icon={<EventIcon color="primary" fontSize="small" />} 
+          label="Match date:" 
+          value={match.fechaPartido || 'N/A'} 
+        />
+        <MatchDetailItem 
+          icon={
+            <Typography 
+              color="primary" 
+              sx={{ width: 24, textAlign: 'center', fontWeight: 'bold' }}
+            >
+              #
+            </Typography>
+          } 
+          label="Match day:" 
+          value={match.jornada || 'N/A'} 
+        />
+      </Paper>
+    );
+    
 
-        <Container sx={{...centerJustify}}>
-            <Typography variant='subtitle2' color='secondary'>
-              <strong>Home result:</strong>
-            </Typography>
-            <Typography variant='body2' color='primary'>
-              <strong>{topParty?.resultText || 'No result'}</strong>
-            </Typography>
-        </Container>
-
-        <Container sx={{...centerJustify}}>
-            <Typography variant='subtitle2' color='primary'>
-              <strong>Guest team:</strong>
-            </Typography>
-            <Typography variant='body2'>
-              {bottomParty?.name || teamNameFallback}
-            </Typography>
-        </Container>
-
-        <Container sx={{...centerJustify}}>
-            <Typography variant='subtitle2' color='secondary'>
-              <strong>Guest result:</strong>
-            </Typography>
-            <Typography variant='body2' color='primary'>
-              <strong>{bottomParty?.resultText || 'No result'}</strong>
-            </Typography>
-        </Container>
-
-        <Container sx={{...centerJustify}}>
-            <Typography variant='subtitle2' color='primary'>
-              <strong>Match time:</strong>
-            </Typography>
-            <Typography variant='body2'>
-              {match.horaPartido || 'No data'}
-            </Typography>
-        </Container>
-
-        <Container sx={{...centerJustify}}>
-            <Typography variant='subtitle2' color='primary'>
-              <strong>Match date:</strong>
-            </Typography>
-            <Typography variant='body2'>
-              {match.fechaPartido || 'No data'}
-            </Typography>
-        </Container>
-
-        <Container sx={{...centerJustify}}>
-            <Typography variant='subtitle2' color='primary'>
-              <strong>Match day:</strong>
-            </Typography>
-            <Typography variant='body2'>
-              {match.jornada || 'No data'}
-            </Typography>
-        </Container>
-      </Container>
+    const TeamRow = ({ party, isWinner, isTop }) => (
+      <Grid
+        container
+        alignItems="center"
+        spacing={1}
+        sx={(theme) => ({
+          p: 1,
+          backgroundColor: isWinner
+            ? theme.palette.mode === 'dark'
+              ? theme.palette.success.dark
+              : theme.palette.success.main
+            : 'transparent',
+          borderRadius: 2,
+          transition: 'background-color 0.3s ease',
+          '&:hover': {
+            backgroundColor: isWinner
+              ? theme.palette.mode === 'dark'
+                ? theme.palette.success.main
+                : theme.palette.success.main
+              : theme.palette.action.hover,
+            cursor: 'pointer',
+          },
+          width: '100%',
+        })}
+      >
+        <Grid item>
+          <Avatar
+            src={`${URL_SERVER}/utils/uploads/${party?.image || 'logoEquipo.jpg'}`}
+            alt={party?.name || 'Team'}
+            sx={{ width: 34, height: 25 }}
+            crossOrigin="use-credentials"
+          />
+        </Grid>
+        <Grid item xs>
+          <Typography
+            variant="body2"
+            fontWeight="medium"
+            sx={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              fontSize: '0.875rem',
+            }}
+          >
+            {party?.name || teamNameFallback}
+          </Typography>
+        </Grid>
+        <Grid item>
+          {party.name != 'TBD' &&
+          <Chip
+            label={isWinner ? 'WIN' : (topWon === bottomWon ? party?.resultText : 'LOST')}
+            size="small"
+            color={isWinner ? 'success' : (topWon === bottomWon ? 'default' : 'error')}
+            sx={{
+              minWidth: 69,
+              fontWeight: 'bold',
+              fontSize: '0.75rem',
+            }}
+          />}
+        </Grid>
+      </Grid>
     );
     return (
-      <Box>
-        {/* <Typography variant="caption" >{match.id}</Typography> */}
+      <Box sx={{ position: 'relative' }}>
         {match?.partidosHijos && 
-          <Container sx={[{display:'flex', textAlign: 'center', alignItems: 'center'}, match?.myIdMatch ?{justifyContent:'space-between'}:{justifyContent:'center'}]}>
-            {match?.myIdMatch ?
-              (<>
-                <Typography variant="caption">{match.fechaPartido}</Typography>
-                <Typography variant="caption" >{match.horaPartido}</Typography>
-                
-              </>)
-            :
-              (<Fab variant="extended" color='success' sx={{height:20, fontSize:12}} 
-                onClick={
-                  () => navigate(`/match/create/${tournamentName}/${tournamentId}`, {state:{ matchIdBracket: match.id }}) }> 
-                <AddIcon sx={{ mr: 1, fontSize:18}} /> match
-              </Fab>)
-            }
-          </Container>
-        }
-        <Card sx={{
-          p: 1,
-          // backgroundColor: isWinner ? '#87b2c4' : '#f5f5f5',
-          boxShadow: 3,
-          borderRadius: 2,
-        }}>
-
-        <CardActionArea 
-          sx={[match.id === (cantEquipoTorneo - 2) && (match.myIdMatch) ? //Cambia el color si es el partido ganador
-            (theme) => ({
-              backgroundColor: theme.palette.grey[800],
-              ...theme.applyStyles('dark', {
-                backgroundColor: theme.palette.secondary.dark,
-              }),
-            })
-            : null,
-          ]}
-          onClick={() => {
-            setModalTittle(match.name?? "TBD"); 
-            setModalMessage(message); 
-            setSelectedMatch(match);
-            setShowModal(true);
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: match?.myIdMatch ? 'space-between' : 'center',
+            mb: 1,
+            px: 1
           }}>
-            <Container 
-              sx={{display:'flex', justifyContent:'space-between', textAlign: 'center', alignItems: 'center'}}>
-                <Avatar
-                  // src={`${URL_SERVER}/utils/uploads/logoEquipo.jpg`}
-                  src={`${URL_SERVER}/utils/uploads/${topParty?.image || 'logoEquipo.jpg'}`}
-                  alt="Guest team"
-                  sx={{ width: 35, height: 35 }}
-                  crossOrigin="use-credentials"
+            {match?.myIdMatch ? (
+              <>
+                <Chip 
+                  label={match.fechaPartido} 
+                  size="small" 
+                  icon={<EventIcon fontSize="small" />}
                 />
-                <Typography variant='body2'>{topParty?.name || teamNameFallback}</Typography>
-                <Typography variant='body2' color={topWon? 'success' : (topWon === bottomWon? topParty?.resultText : 'error')}>
-                  <strong>{topWon? 'WIN' : (topWon === bottomWon? topParty?.resultText : 'LOST')}</strong>
-                </Typography>
-            </Container>
-            <Container 
-              sx={{display:'flex', justifyContent:'space-between', textAlign: 'center', alignItems: 'center'}}>
-                <Avatar
-                  // src={`${URL_SERVER}/utils/uploads/logoEquipo.jpg`}
-                  src={`${URL_SERVER}/utils/uploads/${bottomParty?.image || 'logoEquipo.jpg'}`}
-                  alt="Guest team"
-                  sx={{ width: 35, height: 35 }}
-                  crossOrigin="use-credentials"
+                <Chip 
+                  label={match.horaPartido} 
+                  size="small" 
+                  icon={<ScheduleIcon fontSize="small" />}
+                  sx={{ ml: 1 }}
                 />
-                <Typography variant='body2'>{bottomParty.name || teamNameFallback}</Typography>
-                <Typography variant='body2' color={bottomParty?.isWinner? 'success' : (topWon === bottomWon? bottomParty?.resultText : 'error')}>
-                <strong>{bottomParty?.isWinner? 'WIN' : (topWon === bottomWon? bottomParty?.resultText : 'LOST')}</strong>
-                </Typography>
-            </Container>
+              </>
+            ) : onwerTournament && 
+              <Fab 
+                variant="extended" 
+                color="success" 
+                size="small"
+                sx={{ 
+                  height: 28, 
+                  fontSize: 12,
+                  '& .MuiSvgIcon-root': { fontSize: 16 }
+                }} 
+                onClick={() => navigate(`/match/create/${tournamentName}/${tournamentId}`, {state:{ matchIdBracket: match.id }})}
+              > 
+                <AddIcon sx={{ mr: 0.5 }} /> Add Match
+              </Fab>
+            }
+          </Box>
+        }
+        
+        <Card sx={{
+          p: 0,
+          borderRadius: 4,
+          boxShadow: 9,
+          overflow: 'hidden',
+          border: match.id === (cantEquipoTorneo - 2) && match.myIdMatch ? 
+            `2px solid ${theme.palette.secondary.main}` : 'none'
+        }}>
+          <CardActionArea 
+            onClick={() => {
+              setModalTittle(match.name?? "TBD"); 
+              setModalMessage(message); 
+              setSelectedMatch(match);
+              setShowModal(true);
+            }}
+          >
+            <Box sx={{ 
+              backgroundColor: match.id === (cantEquipoTorneo - 2) && match.myIdMatch ? 
+                theme.palette.mode === 'light' ? 
+                  theme.palette.error.main : 
+                  theme.palette.error.dark : 
+                'transparent'
+            }}>
+              <TeamRow 
+                party={topParty} 
+                isWinner={topWon} 
+                isTop={true} 
+              />
+              <Divider />
+              <TeamRow 
+                party={bottomParty} 
+                isWinner={bottomParty?.isWinner} 
+                isTop={false} 
+              />
+            </Box>
           </CardActionArea>
         </Card>
       </Box>
     );
   };
-  const getWinner = (match) =>{
+
+  const getWinner = (match) => {
     const home = match.participants[0];
     const guest = match.participants[1];
-    const champion = home.isWinner !== guest.isWinner ? (home.isWinner? home.name : guest.name) : 'Error';
+    const champion = home.isWinner !== guest.isWinner ? (home.isWinner ? home.name : guest.name) : 'Error';
     return champion.toUpperCase();
   }
-  // console.log(matchesCount);
-  // console.log(cantEquipoTorneo);
-  // console.log(selectedMatch);
-  // console.log(matches);
+
   return (
     <>
-      {/*     	Section {Modal / Dialog}         */}
       <DialogComponent 
-        modalTittle={modalTittle}
+        modalTittle={
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <SportsSoccerIcon color="primary" sx={{ mr: 1 }} />
+            {modalTittle}
+          </Box>
+        }
         modalBody={modalMessage} 
         open={showModal} 
         handleClose={() => setShowModal(false)} 
-        buttons={onwerTournament && matchesCount < cantEquipoTorneo-1 && selectedMatch?.partidosHijos &&// valida si es el admin del torneo y esten completos los partidos del TORNEO
-          <Container sx={{display:'flex', justifyContent:'center', gap:1}}>
-            {!selectedMatch?.myIdMatch ?
-              <Fab variant="extended" color='success' size='small' 
-                onClick={
-                  () => navigate(`/match/create/${tournamentName}/${tournamentId}`, {state: { matchIdBracket: selectedMatch.id }})}> 
-                <AddIcon sx={{ mr: 1}} /> match
-              </Fab>
-              :
+        buttons={onwerTournament && matchesCount < cantEquipoTorneo-1 && selectedMatch?.partidosHijos &&
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
+            {!selectedMatch?.myIdMatch ? (
+              <Button
+                variant="contained"
+                color="success"
+                startIcon={<AddIcon />}
+                onClick={() => navigate(`/match/create/${tournamentName}/${tournamentId}`, {state: { matchIdBracket: selectedMatch.id }})}
+                size={isSmallScreen ? 'small' : 'medium'}
+              >
+                Add Match
+              </Button>
+            ) : (
               <>
-                <Fab variant="extended" size="small" color="primary" onClick={() => handleEdit(selectedMatch)}>Edit</Fab>
-                <Fab variant="extended" size="small" color="error" onClick={() => handleOpenDialog(selectedMatch)}>Delete</Fab>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleEdit(selectedMatch)}
+                  size={isSmallScreen ? 'small' : 'medium'}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => handleOpenDialog(selectedMatch)}
+                  size={isSmallScreen ? 'small' : 'medium'}
+                >
+                  Delete
+                </Button>
               </>
-            }
-          </Container>
-        }/>
+            )}
+          </Box>
+        }
+      />
 
-      <Snackbar open={openSnackBar} autoHideDuration={6000} onClose={handleCloseSnackBar} anchorOrigin={{ vertical: 'top', horizontal: 'center'}}>
-          <Alert
-              severity={dataAlert.severity}
-              variant='filled'
-              sx={{ width: '100%'}}
-              onClose={handleCloseSnackBar}
-          >
-              {dataAlert.message}
-          </Alert>
+      <Snackbar 
+        open={openSnackBar} 
+        autoHideDuration={6000} 
+        onClose={handleCloseSnackBar} 
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          severity={dataAlert.severity}
+          variant="filled"
+          sx={{ width: '100%' }}
+          onClose={handleCloseSnackBar}
+        >
+          {dataAlert.message}
+        </Alert>
       </Snackbar>
 
-      <ConfirmDialog open={openConfirm} handleClose={handleCloseConfirm} handleConfirm={handleDelete} messageTitle={'Delete match'} message={'Are you sure to delete this match?'}/>
+      <ConfirmDialog 
+        open={openConfirm} 
+        handleClose={handleCloseConfirm} 
+        handleConfirm={handleDelete} 
+        messageTitle="Delete Match"
+        message="Are you sure you want to delete this match?"
+      />
 
-      {matches.length ?
-        <>
-          {matchesCount === cantEquipoTorneo - 1 ?
-              <Typography variant='h3' sx={{textAlign: 'center'}}>
-                <strong>
-                  🏆 <u> Champion team: {getWinner(matches[cantEquipoTorneo-2])} </u> 🏆
-                </strong>
-              </Typography>
-            :
-            <Typography variant='caption'>
-                * TBD - to be decided
-            </Typography>
-          }
-          <SingleEliminationBracket
-            matches={matches}
-            matchComponent={MyMatch}
-            // theme={MatchTheme}
-            options={{
-              style: {
-                roundHeader: {
-                  backgroundColor: MatchTheme.roundHeader.backgroundColor,
-                  fontColor: MatchTheme.roundHeader.fontColor,
-                },
-                connectorColor: MatchTheme.connectorColor,
-                connectorColorHighlight: MatchTheme.connectorColorHighlight,
-              },
+{matches.length ? (
+  <>
+    {matchesCount === cantEquipoTorneo - 1 ? (
+      <Paper
+        elevation={3}
+        sx={(theme) => ({
+          p: 2,
+          mb: 3,
+          textAlign: 'center',
+          backgroundColor:
+            theme.palette.mode === 'light'
+              ? theme.palette.success.light
+              : theme.palette.success.dark,
+          borderRadius: 2,
+        })}
+      >
+        <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
+          <EmojiEventsIcon
+            sx={{
+              fontSize: '2rem',
+              verticalAlign: 'middle',
+              mr: 1,
+              color: theme.palette.warning.main,
             }}
-            svgWrapper={({ children }) => (
-              <Box 
-                sx={{
-                  overflowX: "auto", // Permite el scroll horizontal
-                  width: "100%", // Asegura que el contenedor ocupe todo el ancho disponible
-                  display: {sm: "flex" },
-                  justifyContent: {sm: "center" }
-                }}
-              >{children}</Box>
-            )}
           />
-        </>
-      :
-        <LoadingCard CircularSize={'2%'} message={"Maybe no matches are scheduled for this tournament or the number of teams is invalid."}/>
-      }
+          CHAMPION TEAM: {getWinner(matches[cantEquipoTorneo - 2])}
+          <EmojiEventsIcon
+            sx={{
+              fontSize: '2rem',
+              verticalAlign: 'middle',
+              ml: 1,
+              color: theme.palette.warning.main,
+            }}
+          />
+        </Typography>
+      </Paper>
+    ) : (
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        sx={{ display: 'block', mb: 1 }}
+      >
+        * TBD - to be decided
+      </Typography>
+    )}
+
+    <Paper elevation={2} sx={{ p: 2, mb: 3 }}>
+      <SingleEliminationBracket
+        matches={matches}
+        matchComponent={MyMatch}
+        options={{
+          style: {
+            roundHeader: {
+              backgroundColor: MatchTheme.roundHeader.backgroundColor,
+              fontColor: MatchTheme.roundHeader.fontColor,
+              fontSize: isSmallScreen ? '0.8rem' : '1rem',
+              padding: isSmallScreen ? '8px 4px' : '12px 8px',
+            },
+            connectorColor: MatchTheme.connectorColor,
+            connectorColorHighlight: MatchTheme.connectorColorHighlight,
+          },
+        }}
+        svgWrapper={({ children }) => (
+          <Box
+            sx={{
+              overflowX: 'auto',
+              width: '100%',
+              py: 2,
+              '&::-webkit-scrollbar': {
+                height: '8px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                backgroundColor: theme.palette.grey[500],
+                borderRadius: '4px',
+              },
+              display: { sm: 'flex' },
+              justifyContent: { sm: 'center' },
+            }}
+          >
+            {children}
+          </Box>
+        )}
+      />
+    </Paper>
+  </>
+) : (
+  <LoadingCard
+    CircularSize={'2%'}
+    message="Maybe no matches are scheduled for this tournament or the number of teams is invalid."
+  />
+      )}
     </>
   );
 };

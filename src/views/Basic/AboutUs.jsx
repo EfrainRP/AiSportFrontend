@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
@@ -17,6 +18,16 @@ import VideoBackground from '../../components/videoBackground.jsx';
 import LayoutBasic from '../LayoutBasic.jsx'
 import {orange} from '../../components/shared-theme/themePrimitives.jsx';
 
+const BackgroundBox = styled(Stack)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark'
+    ? 'rgba(0, 0, 0, 0.6)'  // Fondo oscuro semi-transparente
+    : 'rgba(255, 255, 255, 0.7)', // Fondo blanco semi-transparente
+  padding: theme.spacing(2),
+  borderRadius: theme.shape.borderRadius * 2, // Bordes más redondeados
+  boxShadow: theme.shadows[5], // Sombra para que flote mejor
+  backdropFilter: 'blur(4px)', // Efecto de desenfoque elegante
+}));
+
 export default function AboutUs(props){
   return (
       <LayoutBasic>
@@ -32,7 +43,7 @@ export default function AboutUs(props){
                 mb: { xs: 4, sm: 4 }, //padding bottom, sm para pantallas anchas
               }}
               >
-              <Stack
+              <BackgroundBox
                 spacing={2}
                 useFlexGap
                 sx={{ 
@@ -43,7 +54,13 @@ export default function AboutUs(props){
                 align='justify'
                 color= 'text.primary'
               >
-                <Typography variant="h1" gutterBottom align='center' sx={{color:orange[300]}}>
+                <Typography variant="h1" gutterBottom align='center' 
+                  sx={[
+                    (theme) => ({
+                      color: theme.palette.mode === 'dark' ? orange[300] : orange[900],
+                    }),
+                  ]}
+                >
                   About Us
                 </Typography>
                 
@@ -98,7 +115,7 @@ export default function AboutUs(props){
                   >
                   <LinkedInIcon size='medium'/></IconButton>
                 </Typography>
-              </Stack>
+              </BackgroundBox>
           </Container>
         <LogoCollection myMb={{ xs: '1%', sm: '1%' }} myP={{ xs: '7%', sm: '2%' } }/>
       </LayoutBasic>

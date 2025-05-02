@@ -189,7 +189,7 @@ export default function SideMenu(props) {
       fetchData(); // Llamar a la función solo si el usuario está definido
       fetchProfile();
     }
-  }, [user.userId, user.userName]);
+  }, [user.userId, user.userName, countNotification]);
   
   const handleLogout = () => {
     logout(); // Llama a la función logout del contexto

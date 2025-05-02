@@ -38,15 +38,17 @@ import {
 } from '@mui/material';
 // import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-
+const apiUrl = import.meta.env.VITE_URL_SERVER;
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import DoDisturbOnTwoToneIcon from '@mui/icons-material/DoDisturbOnTwoTone';
 import UploadIcon from '@mui/icons-material/Upload';
+import InsertChartIcon from '@mui/icons-material/InsertChart';
+import PieChartIcon from '@mui/icons-material/PieChart';
 
 import axiosInstance from "../../../services/axiosConfig.js";
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../services/AuthContext.jsx'; //  AuthContext
-
+import WelcomeSection from '../../../components/Login/UserWelcome.jsx';
 import LayoutLogin from '../../LayoutLogin.jsx';
 import LoadingView from '../../../components/Login/LoadingView.jsx';
 import DialogComponent from '../../../components/Login/DialogComponent.jsx';
@@ -280,7 +282,7 @@ export default function ShowAI() {
                     setVideoDuration(video.duration); // Guardar la duración del video
                 };
 
-                websocketRef.current = new WebSocket("wss://w43sc9hv-8765.usw3.devtunnels.ms");
+                websocketRef.current = new WebSocket(import.meta.env.VITE_URL_IA);
                 websocketRef.current.onopen = () => {
                     setDataAlert({ severity: "success", message: "AiSport: Successful Training Connection."});
                     setOpenSnackBar(true);
@@ -396,8 +398,10 @@ export default function ShowAI() {
                 }
 
                 if (data && data.prediction) {
-                    sendDataToServer(`http://localhost:5000/sporthub/api/entrenamiento/equipo/AI/${equipoId}`, data, data.prediction);
-                    sendDataToServer(`http://localhost:5000/sporthub/api/entrenamiento/user/AI/${user.userId}`, data, data.prediction);
+                    console.log(data);
+                    console.log(data.prediction);
+                    sendDataToServer(`${apiUrl}/entrenamiento/equipo/AI/${teamId}`, data, data.prediction);
+                    sendDataToServer(`${apiUrl}/entrenamiento/user/AI/${user.userId}`, data, data.prediction);
                 }
 
                 if (canvasRef.current && data.image) {
@@ -522,7 +526,6 @@ export default function ShowAI() {
         return (
             <LoadingView />);
     }
-    console.log(devices);
     return (
         <LayoutLogin>
             {/* Aqui puso un spinner de carga */}
@@ -536,15 +539,13 @@ export default function ShowAI() {
                     {dataAlert.message}
                 </Alert>
             </Snackbar>
-
-            <Container sx={{ display: 'flex', textAlign: 'justify', m: 1, gap: '5%' }}>
-                <BackButton url={`/dashboard/trainning/IA`} />
-                <Typography variant='h2'> {loading ? <Skeleton variant="rounded" width={'50%'} /> : `AI Trainning`} </Typography>
-            </Container>
-            <Typography variant='subtitle2' sx={{ mt: 3, ml: 20 }}>
-                Here you can consult the general analyzer.
-            </Typography>
-
+            <BackButton url={`/dashboard/trainning/IA`} />
+             <WelcomeSection 
+                            user={user} 
+                            loading={loading} 
+                            subtitle="To AI Training" 
+                            description="In this section you will be able to train and prove your habilities." 
+                            />
             {/* Controles de entrenamiento */}
             <Stack useFlexGap spacing={2} sx={{ ...centerJustifyAlign, mt: 4 }}>
                 <Container>
@@ -706,6 +707,12 @@ export default function ShowAI() {
                                         <Typography variant='body1' sx={{ ml: 5, mt: 2 }}>No data yet...</Typography>
                                     )}
                                 </CardContent>
+                                {!isTraining &&
+                                    <CardActions sx={{display: 'flex', justifyContent: 'center', mt:3}}>
+                                        <Button variant='contained' sx={{fontSize:9}} startIcon={<InsertChartIcon/>} href={`/dashboard/trainning/personal/IA/${user.userName}`}>Ind. Stats</Button>
+                                        <Button variant='contained' sx={{fontSize:9}} startIcon={<PieChartIcon fontSize='small'/>} href={`/team/${teamName}/${teamId}/stats`}>Team Stats</Button>
+                                    </CardActions>
+                                }
                             </Card>
                         </Container>
                     </Container>
@@ -722,6 +729,10 @@ export default function ShowAI() {
                         {prediction.data[9] && (
                             <Typography variant='body1'><strong>Suggestion:</strong> {prediction.data[9]}</Typography>
                         )}
+                        <Container sx={{display: 'flex', flexDirection:'row', justifyContent: 'center', mt:1}}>
+                            <Button variant='outlined' startIcon={<InsertChartIcon/>} href={`/dashboard/trainning/personal/IA/${user.userName}`}>See Stats</Button>
+                            <Button variant='outlined' startIcon={<PieChartIcon fontSize='small'/>} href={`/team/${teamName}/${teamId}/stats`}>See Team Stats</Button>
+                        </Container>
                     </Container>
                 ) : (
                     <Typography variant='body1'>No prediction data available.</Typography>
