@@ -49,7 +49,7 @@ export default function IndexTeam() {
         };
         fetchTeams();
     }, [user.userId]);
-
+    console.log(teams[0]);
     return (
         <LayoutLogin>
             <WelcomeSection 
@@ -226,9 +226,7 @@ export default function IndexTeam() {
                                           ? theme.palette.text.secondary
                                           : theme.palette.text.primary
                                       })}>
-                                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                          Leader: {team['users']?.name || 'Unknown'}
-                                        </Typography>
+                                        
                                       </Box>
                                       
                                       <Chip 
