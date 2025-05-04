@@ -162,6 +162,10 @@ export default function ResetPassword(props) {
       setDataAlert({ severity: "success"});
       setMessage(`✅ ${response.data.message}`); // Ej: "Contraseña actualizada con éxito"
       setOpenSnackBar(true);
+      // Redirige automáticamente luego de 2 segundos
+      setTimeout(() => {
+        navigate('/signin');
+      }, 2000);
     })
     .catch ((error) => {
       console.error(error);
