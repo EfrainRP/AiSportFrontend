@@ -676,7 +676,13 @@ export default function ShowAI() {
                                     {jsonData ? (//className="list-group list-group-flush" TO DO: checar con datos
                                         <StyledList >
                                             <ListItem>
-                                                <ListItemText>Shots: <strong>{jsonData.shots < 0 ? 0 : jsonData.shots}</strong></ListItemText>
+                                                <ListItemText>
+                                                    Shot Accuracy: <strong>
+                                                    {jsonData.attempted_shot > 0 
+                                                        ? `${((jsonData.shots / jsonData.attempted_shot) * 100).toFixed(2)}%` 
+                                                        : '0.00%'}
+                                                    </strong>
+                                                </ListItemText>
                                             </ListItem>
                                             <ListItem>
                                                 <ListItemText>Shooting attempts: <strong>{jsonData.attempted_shot < 0 ? 0 : jsonData.attempted_shot}</strong></ListItemText>
