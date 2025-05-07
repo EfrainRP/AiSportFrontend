@@ -265,23 +265,23 @@ export default function ShowAI() {
             setOpenSnackBar(true);
             return;
         }
-
-        setIsTraining(true);
+    
+        setIsTraining(true); 
         setIsManualClose(false);
-
+    
         try {
             if (videoFile) {
-                // Si se subió un video, usarlo en lugar de la cámara
+                // Si se sube un video, usa el archivo en lugar de la cámara
                 setIsAnalyzing(true); // Mostrar el spinner
                 const video = document.createElement('video');
                 video.src = URL.createObjectURL(videoFile);
                 video.play();
-
-                // Esperar a que el video cargue la duración
+    
+                // Espera a que el video cargue su metadata
                 video.onloadedmetadata = () => {
                     setVideoDuration(video.duration); // Guardar la duración del video
                 };
-
+    
                 websocketRef.current = new WebSocket(import.meta.env.VITE_URL_IA);
                 websocketRef.current.onopen = () => {
                     setDataAlert({ severity: "success", message: "AiSport: Successful Training Connection."});
@@ -290,55 +290,45 @@ export default function ShowAI() {
                         start: true,
                         time: Math.ceil(videoDuration), // Enviar la duración del video
                     }));
-
-                    let lastSendTime = 0;
-                    const frameInterval = 1 / 155;  // 15 FPS
-
-                    const sendFrame = async () => {
+    
+                    const desiredFPS = 30; // Control de FPS
+                    const frameInterval = 1000 / desiredFPS;
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.width = 320; // Resolución reducida
+                    canvas.height = 240;
+                    const sendFrame = () => {
                         if (!websocketRef.current || websocketRef.current.readyState !== WebSocket.OPEN) {
-                            return; // No envía si el WebSocket no está abierto
+                            return;
                         }
-
-                        const now = performance.now();
-                        if (now - lastSendTime >= frameInterval) {
-                            if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                                const canvas = new OffscreenCanvas(640, 480);
-                                const context = canvas.getContext('2d');
-                                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-                                // Convertir el frame a WebP usando convertToBlob()
-                                const blob = await canvas.convertToBlob({ type: 'image/webp', quality: 0.7 });
-
-                                // Convertir Blob a Base64 para enviarlo por WebSocket
-                                const reader = new FileReader();
-                                reader.readAsDataURL(blob);
-                                reader.onloadend = () => {
-                                    const imageData = reader.result;
-                                    if (imageData.length > 100) {
-                                        websocketRef.current.send(imageData);
-                                    }
-                                };
-
-                                lastSendTime = now; // Actualiza el tiempo del último envío
-                            }
-                        }
-
-                        if (!video.ended) {
-                            requestAnimationFrame(sendFrame);
+    
+                        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+                            canvas.toBlob((blob) => {
+                                if (blob) {
+                                    websocketRef.current.send(blob);
+                                }
+                            }, 'image/webp', 0.9);
+    
+                            // Después de enviar el frame, esperar el intervalo de tiempo
+                            setTimeout(sendFrame, frameInterval);
+                        } else {
+                            setTimeout(sendFrame, frameInterval); // Volver a intentar después de un corto intervalo
                         }
                     };
-
-                    sendFrame();
+    
+                    sendFrame(); // Comienza a enviar frames del video
                 };
             } else {
-                // Si no se subió un video, usar la cámara
+                // Si no se sube un video, usar la cámara
                 setIsAnalyzing(false); // No mostrar el spinner
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: selectedDeviceId } } });
                 mediaStreamRef.current = stream;
                 const video = document.createElement('video');
                 video.srcObject = stream;
                 video.play();
-
+    
                 websocketRef.current = new WebSocket(import.meta.env.VITE_URL_IA);
                 websocketRef.current.onopen = () => {
                     setDataAlert({ severity: "success", message: "AiSport: Successful Training Connection."});
@@ -347,79 +337,70 @@ export default function ShowAI() {
                         start: true,
                         time: parseInt(selectedTime), // Enviar el tiempo seleccionado
                     }));
-
-                    let lastSendTime = 0;
-                    const frameInterval = 1 / 155;  // 15 FPS
-
-                    const sendFrame = async () => {
+    
+                    const desiredFPS = 30; // Control de FPS
+                    const frameInterval = 1000 / desiredFPS;
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 320;
+                    canvas.height = 240;
+                    const context = canvas.getContext('2d');
+                    const sendFrame = () => {
                         if (!websocketRef.current || websocketRef.current.readyState !== WebSocket.OPEN) {
-                            return; // No envía si el WebSocket no está abierto
+                            return;
+                        }  
+                        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+                            canvas.toBlob((blob) => {
+                                if (blob) {
+                                    websocketRef.current.send(blob);
+                                }
+                            }, 'image/webp', 0.9);
+    
+                            // Después de enviar el frame, esperar el intervalo de tiempo
+                            setTimeout(sendFrame, frameInterval);
+                        } else {
+                            setTimeout(sendFrame, frameInterval); // Volver a intentar después de un corto intervalo
                         }
-
-                        const now = performance.now();
-                        if (now - lastSendTime >= frameInterval) {
-                            if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                                const canvas = new OffscreenCanvas(640, 480);
-                                const context = canvas.getContext('2d');
-                                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-                                // Convertir el frame a WebP usando convertToBlob()
-                                const blob = await canvas.convertToBlob({ type: 'image/webp', quality: 0.7 });
-
-                                // Convertir Blob a Base64 para enviarlo por WebSocket
-                                const reader = new FileReader();
-                                reader.readAsDataURL(blob);
-                                reader.onloadend = () => {
-                                    const imageData = reader.result;
-                                    if (imageData.length > 100) {
-                                        websocketRef.current.send(imageData);
-                                    }
-                                };
-
-                                lastSendTime = now; // Actualiza el tiempo del último envío
-                            }
-                        }
-
-                        requestAnimationFrame(sendFrame);
                     };
-
-                    sendFrame();
+    
+                    sendFrame(); // Comienza a enviar frames de la cámara
                 };
             }
-
+    
             websocketRef.current.onmessage = (event) => {
                 const data = JSON.parse(event.data);
-
+    
                 if (data.prediction) {
                     setPrediction(data.prediction);
                     setIsAnalyzing(false); // Ocultar el spinner cuando se recibe la predicción
                 } else {
                     setJsonData(data);
                 }
-
+    
                 if (data && data.prediction) {
-                    console.log(data);
-                    console.log(data.prediction);
                     sendDataToServer(`${apiUrl}/entrenamiento/equipo/AI/${teamId}`, data, data.prediction);
                     sendDataToServer(`${apiUrl}/entrenamiento/user/AI/${user.userId}`, data, data.prediction);
                 }
-
+    
                 if (canvasRef.current && data.image) {
                     const img = new Image();
                     img.src = `data:image/jpeg;base64,${data.image}`;
                     img.onload = () => {
-                        const context = canvasRef.current.getContext("2d");
-                        context.drawImage(img, 0, 0, canvasRef.current.width, canvasRef.current.height);
+                        const ctx = canvasRef.current.getContext("2d");
+                        ctx.imageSmoothingEnabled = true; // activa suavizado al escalar
+                        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+                        ctx.drawImage(img, 0, 0, canvasRef.current.width, canvasRef.current.height); // escalar imagen recibida
                     };
                 }
             };
-
+    
             websocketRef.current.onerror = (error) => {
                 setDataAlert({ severity: "error", message: `AiSport: WebSocket error: ${error.message}`});
                 setOpenSnackBar(true);
                 setIsAnalyzing(false); // Ocultar el spinner en caso de error
             };
-
+    
             websocketRef.current.onclose = () => {
                 if (isManualClose) {
                     setDataAlert({ severity: "error", message: "The training has been interrupted due to an unexpected problem, the connection has been terminated."});
